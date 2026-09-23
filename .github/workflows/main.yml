@@ -1,0 +1,1514 @@
+name: Build Monopoly Arabia APK
+
+on:
+  push:
+    branches: [ "**" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: 🎲 بناء تطبيق مونوبولي العرب (APK)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 جلب الكود
+        uses: actions/checkout@v4
+
+      - name: ☕ تثبيت بيئة جافا (JDK 17)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: 🐘 تثبيت وإعداد Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: ⚙️ تجهيز وبرمجة كامل ملفات لعبة مونوبولي العرب تلقائياً
+        run: |
+          python3 - << 'PYEOF'
+          import os
+
+          files = {}
+
+          # 1. settings.gradle
+          files["settings.gradle"] = """pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+          rootProject.name = "MonopolyArabia"
+          include ':app'
+          """
+
+          # 2. build.gradle
+          files["build.gradle"] = """plugins {
+              id 'com.android.application' version '8.2.2' apply false
+          }
+          task clean(type: Delete) {
+              delete rootProject.buildDir
+          }
+          """
+
+          # 3. gradle.properties
+          files["gradle.properties"] = """org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+          android.useAndroidX=true
+          android.nonTransitiveRClass=true
+          """
+
+          # 4. app/build.gradle
+          files["app/build.gradle"] = """plugins {
+              id 'com.android.application'
+          }
+          android {
+              namespace 'com.monopoly.arabia'
+              compileSdk 34
+              defaultConfig {
+                  applicationId "com.monopoly.arabia"
+                  minSdk 21
+                  targetSdk 34
+                  versionCode 1
+                  versionName "1.0.0"
+                  vectorDrawables {
+                      useSupportLibrary true
+                  }
+              }
+              buildTypes {
+                  release {
+                      minifyEnabled false
+                      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+                  }
+                  debug {
+                      applicationIdSuffix ""
+                      debuggable true
+                  }
+              }
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_17
+                  targetCompatibility JavaVersion.VERSION_17
+              }
+          }
+          dependencies {
+              implementation 'androidx.appcompat:appcompat:1.6.1'
+              implementation 'com.google.android.material:material:1.11.0'
+          }
+          """
+
+          # 5. AndroidManifest.xml
+          files["app/src/main/AndroidManifest.xml"] = """<?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <uses-permission android:name="android.permission.INTERNET" />
+              <application
+                  android:allowBackup="true"
+                  android:icon="@drawable/ic_monopoly"
+                  android:roundIcon="@drawable/ic_monopoly"
+                  android:label="@string/app_name"
+                  android:supportsRtl="true"
+                  android:theme="@style/Theme.MonopolyArabia">
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:screenOrientation="portrait"
+                      android:configChanges="orientation|screenSize">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          """
+
+          # 6. Strings
+          files["app/src/main/res/values/strings.xml"] = """<?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <string name="app_name">مونوبولي العرب</string>
+          </resources>
+          """
+
+          # 7. Colors
+          files["app/src/main/res/values/colors.xml"] = """<?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <color name="bg_main">#0B0E14</color>
+              <color name="gold">#F59E0B</color>
+              <color name="gold_dark">#D97706</color>
+          </resources>
+          """
+
+          # 8. Themes
+          files["app/src/main/res/values/themes.xml"] = """<?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <style name="Theme.MonopolyArabia" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+                  <item name="colorPrimary">@color/gold</item>
+                  <item name="colorPrimaryVariant">@color/gold_dark</item>
+                  <item name="android:statusBarColor">@color/bg_main</item>
+                  <item name="android:navigationBarColor">@color/bg_main</item>
+                  <item name="android:windowBackground">@color/bg_main</item>
+              </style>
+          </resources>
+          """
+
+          # 9. App Icon
+          files["app/src/main/res/drawable/ic_monopoly.xml"] = """<vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="128dp"
+              android:height="128dp"
+              android:viewportWidth="100"
+              android:viewportHeight="100">
+              <path android:fillColor="#0B0E14" android:pathData="M50,4 C75.4,4 96,24.6 96,50 C96,75.4 75.4,96 50,96 C24.6,96 4,75.4 4,50 C4,24.6 24.6,4 50,4 Z" />
+              <path android:fillColor="#F59E0B" android:pathData="M50,10 L86,30 L86,70 L50,90 L14,70 L14,30 Z" />
+              <path android:fillColor="#1E293B" android:pathData="M50,16 L80,33 L80,67 L50,84 L20,67 L20,33 Z" />
+              <path android:fillColor="#FBBF24" android:pathData="M32,38 L40,55 L50,42 L60,55 L68,38 L68,64 L32,64 Z" />
+              <path android:fillColor="#EF4444" android:pathData="M50,55 C53,55 55,57 55,60 C55,63 53,65 50,65 C47,65 45,63 45,60 C45,57 47,55 50,55 Z" />
+          </vector>
+          """
+
+          # 10. Layout
+          files["app/src/main/res/layout/activity_main.xml"] = """<?xml version="1.0" encoding="utf-8"?>
+          <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/bg_main">
+
+              <WebView
+                  android:id="@+id/webView"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:background="@color/bg_main" />
+          </FrameLayout>
+          """
+
+          # 11. MainActivity.java
+          files["app/src/main/java/com/monopoly/arabia/MainActivity.java"] = """package com.monopoly.arabia;
+
+          import android.annotation.SuppressLint;
+          import android.os.Bundle;
+          import android.webkit.WebChromeClient;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+          import androidx.appcompat.app.AppCompatActivity;
+
+          public class MainActivity extends AppCompatActivity {
+              private WebView webView;
+
+              @SuppressLint("SetJavaScriptEnabled")
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  setContentView(R.layout.activity_main);
+
+                  webView = findViewById(R.id.webView);
+                  WebSettings settings = webView.getSettings();
+                  settings.setJavaScriptEnabled(true);
+                  settings.setDomStorageEnabled(true);
+                  settings.setAllowFileAccess(true);
+                  settings.setAllowContentAccess(true);
+                  settings.setLoadWithOverviewMode(true);
+                  settings.setUseWideViewPort(true);
+                  settings.setMediaPlaybackRequiresUserGesture(false);
+
+                  webView.setWebViewClient(new WebViewClient());
+                  webView.setWebChromeClient(new WebChromeClient());
+                  webView.loadUrl("file:///android_asset/index.html");
+              }
+
+              @Override
+              public void onBackPressed() {
+                  if (webView.canGoBack()) {
+                      webView.goBack();
+                  } else {
+                      super.onBackPressed();
+                  }
+              }
+          }
+          """
+
+          # 12. Full Game HTML / CSS / JS Assets
+          files["app/src/main/assets/index.html"] = """
+          <!DOCTYPE html>
+          <html lang="ar" dir="rtl">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+              <title>مونوبولي العرب • بنك الحظ الملكي</title>
+              <style>
+                  :root {
+                      --bg-main: #0B0E14;
+                      --bg-board: #121722;
+                      --bg-tile: #1A202E;
+                      --border-gold: #F59E0B;
+                      --gold-light: #FDE68A;
+                      --text-main: #F8FAFC;
+                      --text-dim: #94A3B8;
+                      --p1-color: #EF4444;
+                      --p2-color: #38BDF8;
+                  }
+
+                  * {
+                      box-sizing: border-box;
+                      margin: 0;
+                      padding: 0;
+                      user-select: none;
+                      -webkit-user-select: none;
+                      -webkit-tap-highlight-color: transparent;
+                      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+                  }
+
+                  body {
+                      background-color: var(--bg-main);
+                      color: var(--text-main);
+                      min-height: 100vh;
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      justify-content: flex-start;
+                      padding: 6px;
+                      overflow-x: hidden;
+                  }
+
+                  .header {
+                      width: 100%;
+                      max-width: 480px;
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                      padding: 6px 10px;
+                      background: linear-gradient(135deg, #1E293B, #0F172A);
+                      border-radius: 12px;
+                      border: 1px solid rgba(245, 158, 11, 0.3);
+                      margin-bottom: 6px;
+                  }
+
+                  .header-title {
+                      display: flex;
+                      align-items: center;
+                      gap: 6px;
+                      font-size: 0.95rem;
+                      font-weight: 900;
+                      color: var(--border-gold);
+                      text-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+                  }
+
+                  .header-controls {
+                      display: flex;
+                      gap: 6px;
+                  }
+
+                  .btn-mode, .btn-sound {
+                      background: #2D3748;
+                      border: 1px solid #4B5563;
+                      color: #E2E8F0;
+                      padding: 4px 8px;
+                      border-radius: 6px;
+                      font-size: 0.75rem;
+                      font-weight: bold;
+                      cursor: pointer;
+                      transition: all 0.2s;
+                  }
+
+                  .btn-mode.active {
+                      background: var(--border-gold);
+                      color: #0F172A;
+                      border-color: #D97706;
+                  }
+
+                  .scoreboard {
+                      width: 100%;
+                      max-width: 480px;
+                      display: grid;
+                      grid-template-columns: 1fr 1fr;
+                      gap: 8px;
+                      margin-bottom: 6px;
+                  }
+
+                  .player-card {
+                      background: #161D2B;
+                      border: 2px solid #2B3548;
+                      border-radius: 10px;
+                      padding: 6px 10px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: space-between;
+                      position: relative;
+                      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                  }
+
+                  .player-card.active-turn {
+                      border-color: var(--border-gold);
+                      box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+                      background: linear-gradient(135deg, #1C2436, #232D42);
+                  }
+
+                  .player-info {
+                      display: flex;
+                      align-items: center;
+                      gap: 8px;
+                  }
+
+                  .player-avatar {
+                      font-size: 1.4rem;
+                      width: 32px;
+                      height: 32px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      border-radius: 50%;
+                      background: rgba(255, 255, 255, 0.08);
+                  }
+
+                  .player-meta {
+                      display: flex;
+                      flex-direction: column;
+                  }
+
+                  .player-name {
+                      font-size: 0.78rem;
+                      font-weight: bold;
+                  }
+
+                  .player-cash {
+                      font-size: 0.95rem;
+                      font-weight: 900;
+                      color: #10B981;
+                  }
+
+                  .player-props-count {
+                      font-size: 0.65rem;
+                      color: var(--text-dim);
+                  }
+
+                  .turn-badge {
+                      position: absolute;
+                      top: -6px;
+                      left: 10px;
+                      background: var(--border-gold);
+                      color: #000;
+                      font-size: 0.6rem;
+                      font-weight: 900;
+                      padding: 1px 6px;
+                      border-radius: 10px;
+                      animation: pulse 1.5s infinite;
+                  }
+
+                  @keyframes pulse {
+                      0% { transform: scale(1); opacity: 1; }
+                      50% { transform: scale(1.05); opacity: 0.85; }
+                      100% { transform: scale(1); opacity: 1; }
+                  }
+
+                  .board-wrapper {
+                      width: 100%;
+                      max-width: 480px;
+                      aspect-ratio: 1 / 1;
+                      position: relative;
+                      background: var(--bg-board);
+                      border-radius: 14px;
+                      border: 3px solid var(--border-gold);
+                      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+                      display: grid;
+                      grid-template-columns: repeat(11, 1fr);
+                      grid-template-rows: repeat(11, 1fr);
+                      gap: 2px;
+                      padding: 2px;
+                  }
+
+                  .tile {
+                      background: var(--bg-tile);
+                      border-radius: 4px;
+                      position: relative;
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      justify-content: space-between;
+                      padding: 2px 1px;
+                      overflow: hidden;
+                      font-size: 0.55rem;
+                      border: 1px solid rgba(255, 255, 255, 0.05);
+                      transition: all 0.2s;
+                  }
+
+                  .tile-color-bar {
+                      width: 100%;
+                      height: 6px;
+                      border-radius: 2px;
+                      margin-bottom: 2px;
+                  }
+
+                  .tile-name {
+                      font-size: 0.48rem;
+                      font-weight: bold;
+                      text-align: center;
+                      line-height: 1.1;
+                      color: var(--text-main);
+                      word-break: break-word;
+                      padding: 0 1px;
+                  }
+
+                  .tile-price {
+                      font-size: 0.48rem;
+                      font-weight: bold;
+                      color: var(--gold-light);
+                  }
+
+                  .tile-icon {
+                      font-size: 0.85rem;
+                      line-height: 1;
+                  }
+
+                  .tile-owner-badge {
+                      position: absolute;
+                      top: 1px;
+                      right: 1px;
+                      font-size: 0.55rem;
+                      border-radius: 50%;
+                      background: rgba(0, 0, 0, 0.7);
+                      padding: 1px;
+                  }
+
+                  .tile-pawns {
+                      position: absolute;
+                      bottom: 1px;
+                      display: flex;
+                      gap: 2px;
+                      z-index: 5;
+                  }
+
+                  .pawn {
+                      width: 14px;
+                      height: 14px;
+                      border-radius: 50%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 0.65rem;
+                      box-shadow: 0 0 5px rgba(0,0,0,0.8);
+                      border: 1px solid #fff;
+                      animation: bounce 0.4s ease;
+                  }
+
+                  @keyframes bounce {
+                      0% { transform: scale(0.3) translateY(-10px); }
+                      100% { transform: scale(1) translateY(0); }
+                  }
+
+                  .pawn-p1 {
+                      background: radial-gradient(circle, #EF4444, #B91C1C);
+                  }
+
+                  .pawn-p2 {
+                      background: radial-gradient(circle, #38BDF8, #0284C7);
+                  }
+
+                  .corner-tile {
+                      background: #232B3C;
+                      border: 1px solid rgba(245, 158, 11, 0.4);
+                      justify-content: center;
+                      gap: 2px;
+                  }
+
+                  .corner-tile .tile-name {
+                      font-size: 0.52rem;
+                      color: var(--border-gold);
+                  }
+
+                  .board-center {
+                      grid-column: 2 / span 9;
+                      grid-row: 2 / span 9;
+                      background: radial-gradient(circle at center, #192233, #0D131F);
+                      border-radius: 10px;
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      justify-content: space-between;
+                      padding: 8px;
+                      position: relative;
+                      border: 1px solid rgba(245, 158, 11, 0.2);
+                      overflow: hidden;
+                  }
+
+                  .center-watermark {
+                      position: absolute;
+                      top: 50%;
+                      left: 50%;
+                      transform: translate(-50%, -50%);
+                      font-size: 3.5rem;
+                      opacity: 0.04;
+                      font-weight: 900;
+                      pointer-events: none;
+                      white-space: nowrap;
+                  }
+
+                  .turn-announcer {
+                      background: rgba(15, 23, 42, 0.85);
+                      border: 1px solid var(--border-gold);
+                      padding: 4px 14px;
+                      border-radius: 20px;
+                      font-size: 0.78rem;
+                      font-weight: bold;
+                      color: var(--border-gold);
+                      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+                  }
+
+                  .dice-container {
+                      display: flex;
+                      gap: 12px;
+                      align-items: center;
+                      justify-content: center;
+                      margin: 6px 0;
+                  }
+
+                  .dice {
+                      width: 44px;
+                      height: 44px;
+                      background: #FFFFFF;
+                      border-radius: 8px;
+                      box-shadow: inset 0 -3px 0 #CBD5E1, 0 4px 12px rgba(0,0,0,0.5);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      font-size: 1.6rem;
+                      font-weight: 900;
+                      color: #0F172A;
+                      transition: transform 0.2s;
+                  }
+
+                  .dice.rolling {
+                      animation: rollShake 0.4s infinite;
+                  }
+
+                  @keyframes rollShake {
+                      0% { transform: rotate(0deg) scale(1.05); }
+                      25% { transform: rotate(15deg) scale(0.95); }
+                      50% { transform: rotate(-15deg) scale(1.05); }
+                      75% { transform: rotate(10deg) scale(0.95); }
+                      100% { transform: rotate(0deg) scale(1); }
+                  }
+
+                  .center-actions {
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      gap: 6px;
+                      width: 100%;
+                  }
+
+                  .btn-roll {
+                      background: linear-gradient(135deg, #F59E0B, #D97706);
+                      border: none;
+                      color: #0F172A;
+                      font-size: 0.95rem;
+                      font-weight: 900;
+                      padding: 8px 24px;
+                      border-radius: 24px;
+                      cursor: pointer;
+                      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+                      display: flex;
+                      align-items: center;
+                      gap: 6px;
+                      transition: all 0.2s;
+                  }
+
+                  .btn-roll:active {
+                      transform: scale(0.96);
+                  }
+
+                  .btn-roll:disabled {
+                      background: #475569;
+                      color: #94A3B8;
+                      box-shadow: none;
+                      cursor: not-allowed;
+                  }
+
+                  .action-row {
+                      display: flex;
+                      gap: 6px;
+                      width: 100%;
+                      justify-content: center;
+                  }
+
+                  .btn-action {
+                      background: #1E293B;
+                      border: 1px solid #334155;
+                      color: #E2E8F0;
+                      padding: 4px 10px;
+                      border-radius: 6px;
+                      font-size: 0.7rem;
+                      font-weight: bold;
+                      cursor: pointer;
+                      transition: all 0.2s;
+                  }
+
+                  .btn-action:hover:not(:disabled) {
+                      background: #334155;
+                  }
+
+                  .btn-action:disabled {
+                      opacity: 0.4;
+                      cursor: not-allowed;
+                  }
+
+                  .event-log {
+                      width: 100%;
+                      height: 48px;
+                      background: rgba(0, 0, 0, 0.4);
+                      border-radius: 6px;
+                      padding: 4px 8px;
+                      font-size: 0.65rem;
+                      color: #CBD5E1;
+                      overflow-y: auto;
+                      text-align: right;
+                      border: 1px solid rgba(255, 255, 255, 0.05);
+                      display: flex;
+                      flex-direction: column-reverse;
+                  }
+
+                  .log-entry {
+                      margin-bottom: 2px;
+                      animation: fadeIn 0.3s;
+                  }
+
+                  @keyframes fadeIn {
+                      from { opacity: 0; transform: translateY(-4px); }
+                      to { opacity: 1; transform: translateY(0); }
+                  }
+
+                  .modal-overlay {
+                      position: fixed;
+                      top: 0;
+                      left: 0;
+                      right: 0;
+                      bottom: 0;
+                      background: rgba(0, 0, 0, 0.75);
+                      backdrop-filter: blur(4px);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      z-index: 100;
+                      padding: 16px;
+                      opacity: 0;
+                      pointer-events: none;
+                      transition: opacity 0.25s ease;
+                  }
+
+                  .modal-overlay.show {
+                      opacity: 1;
+                      pointer-events: auto;
+                  }
+
+                  .deed-card {
+                      background: #1E293B;
+                      border: 3px solid var(--border-gold);
+                      border-radius: 16px;
+                      width: 100%;
+                      max-width: 320px;
+                      padding: 16px;
+                      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      text-align: center;
+                      animation: zoomIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+                  }
+
+                  @keyframes zoomIn {
+                      from { transform: scale(0.85); opacity: 0; }
+                      to { transform: scale(1); opacity: 1; }
+                  }
+
+                  .deed-header {
+                      width: 100%;
+                      padding: 8px;
+                      border-radius: 8px;
+                      color: #FFF;
+                      font-size: 1.1rem;
+                      font-weight: 900;
+                      margin-bottom: 12px;
+                      text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+                  }
+
+                  .deed-body {
+                      width: 100%;
+                      font-size: 0.85rem;
+                      color: #E2E8F0;
+                      margin-bottom: 16px;
+                      display: flex;
+                      flex-direction: column;
+                      gap: 6px;
+                  }
+
+                  .deed-row {
+                      display: flex;
+                      justify-content: space-between;
+                      padding: 3px 0;
+                      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+                  }
+
+                  .deed-actions {
+                      display: flex;
+                      gap: 10px;
+                      width: 100%;
+                  }
+
+                  .btn-buy {
+                      flex: 1;
+                      background: linear-gradient(135deg, #10B981, #059669);
+                      border: none;
+                      color: #FFF;
+                      padding: 10px;
+                      border-radius: 10px;
+                      font-weight: bold;
+                      font-size: 0.9rem;
+                      cursor: pointer;
+                  }
+
+                  .btn-pass {
+                      flex: 1;
+                      background: #374151;
+                      border: none;
+                      color: #9CA3AF;
+                      padding: 10px;
+                      border-radius: 10px;
+                      font-weight: bold;
+                      font-size: 0.9rem;
+                      cursor: pointer;
+                  }
+
+                  .winner-card {
+                      background: linear-gradient(135deg, #1E1B4B, #0F172A);
+                      border: 3px solid var(--border-gold);
+                      border-radius: 20px;
+                      padding: 24px;
+                      text-align: center;
+                      max-width: 320px;
+                      width: 100%;
+                      box-shadow: 0 0 40px rgba(245, 158, 11, 0.5);
+                  }
+              </style>
+          </head>
+          <body>
+
+              <div class="header">
+                  <div class="header-title">
+                      <span>👑</span>
+                      <span>مونوبولي العرب • بنك الحظ</span>
+                  </div>
+                  <div class="header-controls">
+                      <button id="btnMode" class="btn-mode active" onclick="toggleMode()">🤖 ضد الكمبيوتر</button>
+                      <button id="btnSound" class="btn-sound" onclick="toggleSound()">🔊</button>
+                  </div>
+              </div>
+
+              <div class="scoreboard">
+                  <div id="playerCard0" class="player-card active-turn">
+                      <div id="turnBadge0" class="turn-badge">دورك الآن</div>
+                      <div class="player-info">
+                          <div class="player-avatar">🦁</div>
+                          <div class="player-meta">
+                              <span class="player-name">أبو أسد</span>
+                              <span id="playerCash0" class="player-cash">1500$</span>
+                          </div>
+                      </div>
+                      <div id="playerProps0" class="player-props-count">عقارات: 0</div>
+                  </div>
+
+                  <div id="playerCard1" class="player-card">
+                      <div id="turnBadge1" class="turn-badge" style="display:none;">دور الكمبيوتر</div>
+                      <div class="player-info">
+                          <div class="player-avatar">🦅</div>
+                          <div class="player-meta">
+                              <span id="player1Name" class="player-name">الصقر (الذكاء)</span>
+                              <span id="playerCash1" class="player-cash">1500$</span>
+                          </div>
+                      </div>
+                      <div id="playerProps1" class="player-props-count">عقارات: 0</div>
+                  </div>
+              </div>
+
+              <div id="board" class="board-wrapper">
+                  <div class="board-center">
+                      <div class="center-watermark">MONOPOLY</div>
+                      
+                      <div id="turnAnnouncer" class="turn-announcer">
+                          دور: 🦁 أبو أسد
+                      </div>
+
+                      <div class="dice-container">
+                          <div id="dice1" class="dice">⚀</div>
+                          <div id="dice2" class="dice">⚀</div>
+                      </div>
+
+                      <div class="center-actions">
+                          <button id="btnRoll" class="btn-roll" onclick="handleRollClick()">
+                              <span>🎲</span>
+                              <span>ارمِ النرد</span>
+                          </button>
+                          <div class="action-row">
+                              <button id="btnEndTurn" class="btn-action" onclick="endTurn()" disabled>إنهاء الدور ⏭️</button>
+                          </div>
+                      </div>
+
+                      <div id="eventLog" class="event-log">
+                          <div class="log-entry">🏁 مرحباً بك في لعبة مونوبولي العرب! حظاً موفقاً.</div>
+                      </div>
+                  </div>
+              </div>
+
+              <div id="deedModal" class="modal-overlay">
+                  <div class="deed-card">
+                      <div id="deedHeader" class="deed-header">شارع المعز</div>
+                      <div class="deed-body">
+                          <div class="deed-row">
+                              <span>ثمن الشراء:</span>
+                              <span id="deedPrice" style="color:var(--border-gold); font-weight:bold;">100$</span>
+                          </div>
+                          <div class="deed-row">
+                              <span>الإيجار الأساسي:</span>
+                              <span id="deedRent">10$</span>
+                          </div>
+                          <div class="deed-row">
+                              <span>مع كامل المجموعة (مضاعف):</span>
+                              <span id="deedDoubleRent">20$</span>
+                          </div>
+                      </div>
+                      <div class="deed-actions">
+                          <button class="btn-buy" onclick="confirmBuyProperty()">✅ شراء العقار</button>
+                          <button class="btn-pass" onclick="closeDeedModal()">❌ تخطي</button>
+                      </div>
+                  </div>
+              </div>
+
+              <div id="cardModal" class="modal-overlay">
+                  <div class="deed-card" style="border-color:#38BDF8;">
+                      <div id="cardType" class="deed-header" style="background:#0284C7;">❓ بطاقة فرصة</div>
+                      <div id="cardMessage" class="deed-body" style="font-size:0.95rem; font-weight:bold; padding:10px 0;">
+                          رسالة البطاقة...
+                      </div>
+                      <button class="btn-buy" style="background:#0284C7;" onclick="closeCardModal()">حسناً 👍</button>
+                  </div>
+              </div>
+
+              <div id="winnerModal" class="modal-overlay">
+                  <div class="winner-card">
+                      <div style="font-size:3rem; margin-bottom:8px;">🏆</div>
+                      <h2 id="winnerText" style="color:var(--border-gold); margin-bottom:12px;">مبروك الفوز!</h2>
+                      <p id="winnerSubtext" style="color:#CBD5E1; font-size:0.9rem; margin-bottom:20px;">لقد أفلس الخصم وتمت السيطرة الكاملة على السوق.</p>
+                      <button class="btn-roll" style="width:100%; justify-content:center;" onclick="restartGame()">🔄 لعبة جديدة</button>
+                  </div>
+              </div>
+
+              <script>
+                  const AudioFX = {
+                      ctx: null,
+                      enabled: true,
+                      init() {
+                          if (!this.ctx) {
+                              const AC = window.AudioContext || window.webkitAudioContext;
+                              if (AC) this.ctx = new AC();
+                          }
+                      },
+                      play(type) {
+                          if (!this.enabled) return;
+                          this.init();
+                          if (!this.ctx) return;
+                          const now = this.ctx.currentTime;
+                          const osc = this.ctx.createOscillator();
+                          const gain = this.ctx.createGain();
+                          osc.connect(gain);
+                          gain.connect(this.ctx.destination);
+
+                          if (type === 'roll') {
+                              osc.type = 'triangle';
+                              osc.frequency.setValueAtTime(150, now);
+                              osc.frequency.exponentialRampToValueAtTime(40, now + 0.15);
+                              gain.gain.setValueAtTime(0.3, now);
+                              gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                              osc.start(now);
+                              osc.stop(now + 0.15);
+                          } else if (type === 'step') {
+                              osc.type = 'sine';
+                              osc.frequency.setValueAtTime(400, now);
+                              gain.gain.setValueAtTime(0.15, now);
+                              gain.gain.linearRampToValueAtTime(0.01, now + 0.06);
+                              osc.start(now);
+                              osc.stop(now + 0.06);
+                          } else if (type === 'cash') {
+                              osc.type = 'sine';
+                              osc.frequency.setValueAtTime(587.33, now);
+                              osc.frequency.setValueAtTime(880, now + 0.08);
+                              gain.gain.setValueAtTime(0.2, now);
+                              gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+                              osc.start(now);
+                              osc.stop(now + 0.25);
+                          } else if (type === 'jail') {
+                              osc.type = 'sawtooth';
+                              osc.frequency.setValueAtTime(120, now);
+                              osc.frequency.linearRampToValueAtTime(60, now + 0.3);
+                              gain.gain.setValueAtTime(0.3, now);
+                              gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                              osc.start(now);
+                              osc.stop(now + 0.3);
+                          } else if (type === 'win') {
+                              osc.type = 'triangle';
+                              osc.frequency.setValueAtTime(440, now);
+                              osc.frequency.setValueAtTime(554.37, now + 0.12);
+                              osc.frequency.setValueAtTime(659.25, now + 0.24);
+                              gain.gain.setValueAtTime(0.3, now);
+                              gain.gain.linearRampToValueAtTime(0.01, now + 0.5);
+                              osc.start(now);
+                              osc.stop(now + 0.5);
+                          }
+                      }
+                  };
+
+                  const BOARD_TILES = [
+                      { id: 0, name: "انطلق", type: "go", price: 0, color: "#10B981", icon: "🏁" },
+                      { id: 1, name: "شارع المعز", type: "property", group: "brown", price: 60, rent: 6, color: "#8B4513" },
+                      { id: 2, name: "صندوق الجماعة", type: "chest", price: 0, color: "#3B82F6", icon: "📦" },
+                      { id: 3, name: "خان الخليلي", type: "property", group: "brown", price: 60, rent: 6, color: "#8B4513" },
+                      { id: 4, name: "ضريبة الدخل", type: "tax", price: 200, color: "#EF4444", icon: "💰" },
+                      { id: 5, name: "قطار الحجاز", type: "railroad", price: 200, rent: 25, color: "#64748B", icon: "🚂" },
+                      { id: 6, name: "شارع الحمراء", type: "property", group: "lightblue", price: 100, rent: 10, color: "#38BDF8" },
+                      { id: 7, name: "فرصة", type: "chance", price: 0, color: "#F59E0B", icon: "❓" },
+                      { id: 8, name: "الروشة", type: "property", group: "lightblue", price: 100, rent: 10, color: "#38BDF8" },
+                      { id: 9, name: "وسط بيروت", type: "property", group: "lightblue", price: 120, rent: 12, color: "#38BDF8" },
+                      { id: 10, name: "السجن / زيارة", type: "jail", price: 0, color: "#6B7280", icon: "🚔" },
+                      { id: 11, name: "باب توما", type: "property", group: "pink", price: 140, rent: 14, color: "#EC4899" },
+                      { id: 12, name: "شركة الكهرباء", type: "utility", price: 150, color: "#EAB308", icon: "💡" },
+                      { id: 13, name: "الصالحية", type: "property", group: "pink", price: 140, rent: 14, color: "#EC4899" },
+                      { id: 14, name: "سوق الحميدية", type: "property", group: "pink", price: 160, rent: 16, color: "#EC4899" },
+                      { id: 15, name: "قطار الحرمين", type: "railroad", price: 200, rent: 25, color: "#64748B", icon: "🚂" },
+                      { id: 16, name: "شارع الرشيد", type: "property", group: "orange", price: 180, rent: 18, color: "#F97316" },
+                      { id: 17, name: "صندوق الجماعة", type: "chest", price: 0, color: "#3B82F6", icon: "📦" },
+                      { id: 18, name: "المنصور", type: "property", group: "orange", price: 180, rent: 18, color: "#F97316" },
+                      { id: 19, name: "الكرادة", type: "property", group: "orange", price: 200, rent: 20, color: "#F97316" },
+                      { id: 20, name: "مواقف مجانية", type: "parking", price: 0, color: "#10B981", icon: "🅿️" },
+                      { id: 21, name: "شارع النيل", type: "property", group: "red", price: 220, rent: 22, color: "#EF4444" },
+                      { id: 22, name: "فرصة", type: "chance", price: 0, color: "#F59E0B", icon: "❓" },
+                      { id: 23, name: "المقرن", type: "property", group: "red", price: 220, rent: 22, color: "#EF4444" },
+                      { id: 24, name: "حي الرياض", type: "property", group: "red", price: 240, rent: 24, color: "#EF4444" },
+                      { id: 25, name: "قطار المشرق", type: "railroad", price: 200, rent: 25, color: "#64748B", icon: "🚂" },
+                      { id: 26, name: "شارع العليا", type: "property", group: "yellow", price: 260, rent: 26, color: "#EAB308" },
+                      { id: 27, name: "طريق الملك فهد", type: "property", group: "yellow", price: 260, rent: 26, color: "#EAB308" },
+                      { id: 28, name: "شركة المياه", type: "utility", price: 150, color: "#06B6D4", icon: "💧" },
+                      { id: 29, name: "حي النخيل", type: "property", group: "yellow", price: 280, rent: 28, color: "#EAB308" },
+                      { id: 30, name: "إلى السجن!", type: "gotojail", price: 0, color: "#DC2626", icon: "🚨" },
+                      { id: 31, name: "الكورنيش", type: "property", group: "green", price: 300, rent: 30, color: "#22C55E" },
+                      { id: 32, name: "اللؤلؤة", type: "property", group: "green", price: 300, rent: 30, color: "#22C55E" },
+                      { id: 33, name: "صندوق الجماعة", type: "chest", price: 0, color: "#3B82F6", icon: "📦" },
+                      { id: 34, name: "لوسيل", type: "property", group: "green", price: 320, rent: 32, color: "#22C55E" },
+                      { id: 35, name: "قطار الخليج", type: "railroad", price: 200, rent: 25, color: "#64748B", icon: "🚂" },
+                      { id: 36, name: "فرصة", type: "chance", price: 0, color: "#F59E0B", icon: "❓" },
+                      { id: 37, name: "شارع الشيخ زايد", type: "property", group: "darkblue", price: 350, rent: 35, color: "#1E40AF" },
+                      { id: 38, name: "ضريبة الرفاهية", type: "tax", price: 100, color: "#EF4444", icon: "💎" },
+                      { id: 39, name: "برج خليفة", type: "property", group: "darkblue", price: 400, rent: 50, color: "#1E40AF" }
+                  ];
+
+                  const CHANCE_CARDS = [
+                      { text: "فزت بجائزة يانصيب كبرى! استلم 150$", amount: 150 },
+                      { text: "غرامة تجاوز السرعة المقررة. ادفع 50$", amount: -50 },
+                      { text: "أرباح أسهم تجارية ممتازة! استلم 100$", amount: 100 },
+                      { text: "رسوم تجديد رخصة القيادة. ادفع 50$", amount: -50 },
+                      { text: "تقدم مباشرة إلى خانة انطلق واجمع 200$!", action: "go" },
+                      { text: "ارتكبت مخالفة جسيمة! اذهب إلى السجن فوراً!", action: "jail" }
+                  ];
+
+                  const CHEST_CARDS = [
+                      { text: "استرداد ضريبي غير متوقع! استلم 100$", amount: 100 },
+                      { text: "تكاليف علاج بالمستشفى. ادفع 100$", amount: -100 },
+                      { text: "هدية عيد ميلاد من الأصدقاء! استلم 50$", amount: 50 },
+                      { text: "أقساط تأمين مستحقة. ادفع 50$", amount: -50 },
+                      { text: "مبروك! فزت بالمركز الثاني في مسابقة تجارية، استلم 100$", amount: 100 }
+                  ];
+
+                  const Game = {
+                      mode: 'ai',
+                      turn: 0,
+                      isBusy: false,
+                      doublesInRow: 0,
+                      pendingTile: null,
+                      pendingCard: null,
+                      players: [
+                          { id: 0, name: "أبو أسد", avatar: "🦁", money: 1500, pos: 0, inJail: false, jailTurns: 0, props: [] },
+                          { id: 1, name: "الصقر (الذكاء)", avatar: "🦅", money: 1500, pos: 0, inJail: false, jailTurns: 0, props: [] }
+                      ]
+                  };
+
+                  function getGridCoords(i) {
+                      if (i === 0) return { r: 11, c: 11 };
+                      if (i >= 1 && i <= 9) return { r: 11, c: 11 - i };
+                      if (i === 10) return { r: 11, c: 1 };
+                      if (i >= 11 && i <= 19) return { r: 11 - (i - 10), c: 1 };
+                      if (i === 20) return { r: 1, c: 1 };
+                      if (i >= 21 && i <= 29) return { r: 1, c: 1 + (i - 20) };
+                      if (i === 30) return { r: 1, c: 11 };
+                      if (i >= 31 && i <= 39) return { r: 1 + (i - 30), c: 11 };
+                      return { r: 11, c: 11 };
+                  }
+
+                  function renderBoard() {
+                      const boardEl = document.getElementById("board");
+                      BOARD_TILES.forEach((tile, index) => {
+                          const coords = getGridCoords(index);
+                          const tileDiv = document.createElement("div");
+                          tileDiv.id = "tile-" + index;
+                          tileDiv.className = "tile" + ([0, 10, 20, 30].includes(index) ? " corner-tile" : "");
+                          tileDiv.style.gridRow = coords.r;
+                          tileDiv.style.gridColumn = coords.c;
+
+                          let innerHtml = "";
+                          if (tile.type === "property") {
+                              innerHtml += `<div class="tile-color-bar" style="background:${tile.color}"></div>`;
+                              innerHtml += `<div class="tile-name">${tile.name}</div>`;
+                              innerHtml += `<div class="tile-price">${tile.price}$</div>`;
+                          } else if (tile.type === "railroad" || tile.type === "utility") {
+                              innerHtml += `<div class="tile-icon">${tile.icon}</div>`;
+                              innerHtml += `<div class="tile-name">${tile.name}</div>`;
+                              innerHtml += `<div class="tile-price">${tile.price}$</div>`;
+                          } else {
+                              innerHtml += `<div class="tile-icon">${tile.icon || "🏛️"}</div>`;
+                              innerHtml += `<div class="tile-name">${tile.name}</div>`;
+                          }
+
+                          innerHtml += `<div class="tile-pawns" id="pawns-${index}"></div>`;
+                          tileDiv.innerHTML = innerHtml;
+                          boardEl.appendChild(tileDiv);
+                      });
+                      updatePawns();
+                  }
+
+                  function updatePawns() {
+                      document.querySelectorAll(".tile-pawns").forEach(el => el.innerHTML = "");
+                      Game.players.forEach(p => {
+                          const pawnContainer = document.getElementById("pawns-" + p.pos);
+                          if (pawnContainer) {
+                              const pawn = document.createElement("div");
+                              pawn.className = `pawn pawn-${p.id === 0 ? "p1" : "p2"}`;
+                              pawn.innerText = p.avatar;
+                              pawnContainer.appendChild(pawn);
+                          }
+                      });
+                  }
+
+                  function updateUI() {
+                      document.getElementById("playerCash0").innerText = Game.players[0].money + "$";
+                      document.getElementById("playerCash1").innerText = Game.players[1].money + "$";
+                      document.getElementById("playerProps0").innerText = `عقارات: ${Game.players[0].props.length}`;
+                      document.getElementById("playerProps1").innerText = `عقارات: ${Game.players[1].props.length}`;
+
+                      const p0Active = Game.turn === 0;
+                      document.getElementById("playerCard0").className = "player-card" + (p0Active ? " active-turn" : "");
+                      document.getElementById("playerCard1").className = "player-card" + (!p0Active ? " active-turn" : "");
+                      document.getElementById("turnBadge0").style.display = p0Active ? "block" : "none";
+                      document.getElementById("turnBadge1").style.display = !p0Active ? "block" : "none";
+
+                      const curPlayer = Game.players[Game.turn];
+                      document.getElementById("turnAnnouncer").innerText = `دور: ${curPlayer.avatar} ${curPlayer.name}`;
+                      updatePawns();
+                  }
+
+                  function logEvent(msg) {
+                      const logEl = document.getElementById("eventLog");
+                      const entry = document.createElement("div");
+                      entry.className = "log-entry";
+                      entry.innerText = msg;
+                      logEl.prepend(entry);
+                  }
+
+                  const DICE_FACES = ["", "⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
+
+                  function handleRollClick() {
+                      if (Game.isBusy) return;
+                      if (Game.mode === "ai" && Game.turn === 1) return;
+                      playTurn();
+                  }
+
+                  function playTurn() {
+                      Game.isBusy = true;
+                      document.getElementById("btnRoll").disabled = true;
+                      document.getElementById("btnEndTurn").disabled = true;
+
+                      const curPlayer = Game.players[Game.turn];
+                      AudioFX.play('roll');
+
+                      const dice1El = document.getElementById("dice1");
+                      const dice2El = document.getElementById("dice2");
+                      dice1El.classList.add("rolling");
+                      dice2El.classList.add("rolling");
+
+                      setTimeout(() => {
+                          dice1El.classList.remove("rolling");
+                          dice2El.classList.remove("rolling");
+
+                          const d1 = Math.floor(Math.random() * 6) + 1;
+                          const d2 = Math.floor(Math.random() * 6) + 1;
+                          dice1El.innerText = DICE_FACES[d1];
+                          dice2El.innerText = DICE_FACES[d2];
+                          const sum = d1 + d2;
+                          const isDoubles = d1 === d2;
+
+                          logEvent(`🎲 ${curPlayer.name} رمى (${d1} + ${d2} = ${sum})${isDoubles ? " [متطابقان!]" : ""}`);
+
+                          if (curPlayer.inJail) {
+                              if (isDoubles) {
+                                  curPlayer.inJail = false;
+                                  curPlayer.jailTurns = 0;
+                                  logEvent(`🔓 خرج ${curPlayer.name} من السجن بفضل رمية متطابقة!`);
+                                  movePlayerSteps(curPlayer, sum, false);
+                              } else {
+                                  curPlayer.jailTurns--;
+                                  if (curPlayer.jailTurns <= 0) {
+                                      curPlayer.money -= 50;
+                                      curPlayer.inJail = false;
+                                      logEvent(`💸 دفع ${curPlayer.name} 50$ كفالة خروج من السجن.`);
+                                      movePlayerSteps(curPlayer, sum, false);
+                                  } else {
+                                      logEvent(`🔒 ما زال ${curPlayer.name} في السجن (المحاولات المتبقية: ${curPlayer.jailTurns}).`);
+                                      finishTurn(false);
+                                  }
+                              }
+                              return;
+                          }
+
+                          if (isDoubles) {
+                              Game.doublesInRow++;
+                              if (Game.doublesInRow === 3) {
+                                  logEvent(`🚔 3 رميات متطابقة متتالية! أُرسل ${curPlayer.name} إلى السجن.`);
+                                  sendToJail(curPlayer);
+                                  finishTurn(false);
+                                  return;
+                              }
+                          } else {
+                              Game.doublesInRow = 0;
+                          }
+
+                          movePlayerSteps(curPlayer, sum, isDoubles);
+                      }, 600);
+                  }
+
+                  function movePlayerSteps(player, steps, isDoubles = false) {
+                      let remaining = steps;
+                      const stepInterval = setInterval(() => {
+                          player.pos = (player.pos + 1) % 40;
+                          AudioFX.play('step');
+                          updatePawns();
+
+                          if (player.pos === 0) {
+                              player.money += 200;
+                              AudioFX.play('cash');
+                              logEvent(`💰 مر ${player.name} بخانة انطلق وجمع 200$!`);
+                              updateUI();
+                          }
+
+                          remaining--;
+                          if (remaining <= 0) {
+                              clearInterval(stepInterval);
+                              setTimeout(() => {
+                                  handleTileLanding(player, isDoubles);
+                              }, 200);
+                          }
+                      }, 140);
+                  }
+
+                  function handleTileLanding(player, isDoubles) {
+                      const tile = BOARD_TILES[player.pos];
+                      updateUI();
+
+                      if (tile.type === "property" || tile.type === "railroad" || tile.type === "utility") {
+                          if (tile.owner === undefined) {
+                              if (player.id === 1 && Game.mode === "ai") {
+                                  if (player.money >= tile.price + 100) {
+                                      buyProperty(player, tile);
+                                  } else {
+                                      logEvent(`🤖 فضّل الصقر تخطي شراء ${tile.name}.`);
+                                  }
+                                  finishTurn(isDoubles);
+                              } else {
+                                  openDeedModal(tile, isDoubles);
+                              }
+                              return;
+                          } else if (tile.owner !== player.id) {
+                              const owner = Game.players[tile.owner];
+                              let rent = tile.rent || 10;
+
+                              if (tile.type === "property" && checkMonopoly(tile.owner, tile.group)) {
+                                  rent *= 2;
+                              }
+
+                              player.money -= rent;
+                              owner.money += rent;
+                              AudioFX.play('cash');
+                              logEvent(`💸 دفع ${player.name} إيجاراً قدره ${rent}$ إلى ${owner.name} في (${tile.name}).`);
+                              checkBankruptcy(player);
+                              finishTurn(isDoubles);
+                              return;
+                          } else {
+                              logEvent(`🏠 ${player.name} يقف في عقاره الخاص (${tile.name}).`);
+                              finishTurn(isDoubles);
+                              return;
+                          }
+                      }
+
+                      if (tile.type === "tax") {
+                          player.money -= tile.price;
+                          AudioFX.play('jail');
+                          logEvent(`🚨 دفع ${player.name} ${tile.price}$ (${tile.name}).`);
+                          checkBankruptcy(player);
+                          finishTurn(isDoubles);
+                          return;
+                      }
+
+                      if (tile.type === "gotojail") {
+                          logEvent(`🚨 سقط ${player.name} في خانة اذهب إلى السجن!`);
+                          sendToJail(player);
+                          finishTurn(false);
+                          return;
+                      }
+
+                      if (tile.type === "chance" || tile.type === "chest") {
+                          const deck = tile.type === "chance" ? CHANCE_CARDS : CHEST_CARDS;
+                          const card = deck[Math.floor(Math.random() * deck.length)];
+
+                          if (player.id === 1 && Game.mode === "ai") {
+                              applyCardEffect(player, card);
+                              finishTurn(isDoubles);
+                          } else {
+                              openCardModal(tile.type === "chance" ? "❓ بطاقة فرصة" : "📦 صندوق الجماعة", card, isDoubles);
+                          }
+                          return;
+                      }
+
+                      if (tile.type === "go" || tile.type === "jail" || tile.type === "parking") {
+                          logEvent(`🛡️ ${player.name} استقر بأمان في (${tile.name}).`);
+                          finishTurn(isDoubles);
+                      }
+                  }
+
+                  function checkMonopoly(playerId, group) {
+                      if (!group) return false;
+                      const groupTiles = BOARD_TILES.filter(t => t.group === group);
+                      return groupTiles.every(t => t.owner === playerId);
+                  }
+
+                  function sendToJail(player) {
+                      player.pos = 10;
+                      player.inJail = true;
+                      player.jailTurns = 3;
+                      AudioFX.play('jail');
+                      updatePawns();
+                      updateUI();
+                  }
+
+                  function buyProperty(player, tile) {
+                      if (player.money >= tile.price) {
+                          player.money -= tile.price;
+                          tile.owner = player.id;
+                          player.props.push(tile.id);
+                          AudioFX.play('cash');
+                          logEvent(`🎉 اشترى ${player.name} (${tile.name}) بمبلغ ${tile.price}$!`);
+
+                          const tileDiv = document.getElementById("tile-" + tile.id);
+                          if (tileDiv) {
+                              let badge = tileDiv.querySelector(".tile-owner-badge");
+                              if (!badge) {
+                                  badge = document.createElement("div");
+                                  badge.className = "tile-owner-badge";
+                                  tileDiv.appendChild(badge);
+                              }
+                              badge.innerText = player.avatar;
+                              tileDiv.style.borderColor = player.id === 0 ? "var(--p1-color)" : "var(--p2-color)";
+                          }
+                          updateUI();
+                      }
+                  }
+
+                  function openDeedModal(tile, isDoubles) {
+                      Game.pendingTile = { tile, isDoubles };
+                      document.getElementById("deedHeader").innerText = tile.name;
+                      document.getElementById("deedHeader").style.background = tile.color || "#475569";
+                      document.getElementById("deedPrice").innerText = tile.price + "$";
+                      document.getElementById("deedRent").innerText = (tile.rent || 10) + "$";
+                      document.getElementById("deedDoubleRent").innerText = ((tile.rent || 10) * 2) + "$";
+                      document.getElementById("deedModal").classList.add("show");
+                  }
+
+                  function confirmBuyProperty() {
+                      if (Game.pendingTile) {
+                          const curPlayer = Game.players[Game.turn];
+                          buyProperty(curPlayer, Game.pendingTile.tile);
+                          const isDoubles = Game.pendingTile.isDoubles;
+                          closeDeedModal();
+                          finishTurn(isDoubles);
+                      }
+                  }
+
+                  function closeDeedModal() {
+                      document.getElementById("deedModal").classList.remove("show");
+                      if (Game.pendingTile) {
+                          const isDoubles = Game.pendingTile.isDoubles;
+                          Game.pendingTile = null;
+                          finishTurn(isDoubles);
+                      }
+                  }
+
+                  function openCardModal(title, card, isDoubles) {
+                      document.getElementById("cardType").innerText = title;
+                      document.getElementById("cardMessage").innerText = card.text;
+                      document.getElementById("cardModal").classList.add("show");
+                      Game.pendingCard = { card, isDoubles };
+                  }
+
+                  function closeCardModal() {
+                      document.getElementById("cardModal").classList.remove("show");
+                      if (Game.pendingCard) {
+                          const curPlayer = Game.players[Game.turn];
+                          applyCardEffect(curPlayer, Game.pendingCard.card);
+                          const isDoubles = Game.pendingCard.isDoubles;
+                          Game.pendingCard = null;
+                          finishTurn(isDoubles);
+                      }
+                  }
+
+                  function applyCardEffect(player, card) {
+                      if (card.amount) {
+                          player.money += card.amount;
+                          AudioFX.play(card.amount > 0 ? 'cash' : 'jail');
+                          logEvent(`📜 تأثير البطاقة: ${card.amount > 0 ? "+" : ""}${card.amount}$`);
+                          checkBankruptcy(player);
+                      } else if (card.action === "go") {
+                          player.pos = 0;
+                          player.money += 200;
+                          AudioFX.play('cash');
+                          updatePawns();
+                      } else if (card.action === "jail") {
+                          sendToJail(player);
+                      }
+                      updateUI();
+                  }
+
+                  function finishTurn(canRollAgain) {
+                      updateUI();
+                      Game.isBusy = false;
+
+                      if (canRollAgain) {
+                          logEvent(`✨ رمية إضافية لـ ${Game.players[Game.turn].name}!`);
+                          if (Game.mode === "ai" && Game.turn === 1) {
+                              setTimeout(playTurn, 1000);
+                          } else {
+                              document.getElementById("btnRoll").disabled = false;
+                          }
+                      } else {
+                          if (Game.mode === "ai" && Game.turn === 1) {
+                              setTimeout(endTurn, 900);
+                          } else {
+                              document.getElementById("btnEndTurn").disabled = false;
+                          }
+                      }
+                  }
+
+                  function endTurn() {
+                      document.getElementById("btnEndTurn").disabled = true;
+                      Game.doublesInRow = 0;
+                      Game.turn = 1 - Game.turn;
+                      updateUI();
+
+                      if (Game.mode === "ai" && Game.turn === 1) {
+                          document.getElementById("btnRoll").disabled = true;
+                          setTimeout(playTurn, 900);
+                      } else {
+                          document.getElementById("btnRoll").disabled = false;
+                      }
+                  }
+
+                  function checkBankruptcy(player) {
+                      if (player.money < 0) {
+                          const winner = Game.players[1 - player.id];
+                          AudioFX.play('win');
+                          document.getElementById("winnerText").innerText = `🏆 فاز ${winner.name}!`;
+                          document.getElementById("winnerSubtext").innerText = `أفلس ${player.name} تماماً بعد نفاذ السيولة المالية.`;
+                          document.getElementById("winnerModal").classList.add("show");
+                      }
+                  }
+
+                  function toggleMode() {
+                      Game.mode = Game.mode === 'ai' ? 'pvp' : 'ai';
+                      const btn = document.getElementById("btnMode");
+                      if (Game.mode === 'ai') {
+                          btn.innerText = "🤖 ضد الكمبيوتر";
+                          document.getElementById("player1Name").innerText = "الصقر (الذكاء)";
+                      } else {
+                          btn.innerText = "👥 لاعبان محلياً";
+                          document.getElementById("player1Name").innerText = "اللاعب 2 (الصقر)";
+                      }
+                      logEvent(`🎮 تم تغيير النمط إلى: ${btn.innerText}`);
+                  }
+
+                  function toggleSound() {
+                      AudioFX.enabled = !AudioFX.enabled;
+                      document.getElementById("btnSound").innerText = AudioFX.enabled ? "🔊" : "🔇";
+                  }
+
+                  function restartGame() {
+                      location.reload();
+                  }
+
+                  window.addEventListener("DOMContentLoaded", () => {
+                      renderBoard();
+                      updateUI();
+                  });
+              </script>
+          </body>
+          </html>
+          """
+
+          for path, content in files.items():
+              os.makedirs(os.path.dirname(path) if os.path.dirname(path) else ".", exist_ok=True)
+              with open(path, "w", encoding="utf-8") as f:
+                  f.write(content.strip() + "\n")
+
+          print("All Monopoly Arabia files generated successfully!")
+          PYEOF
+
+      - name: ⚙️ تجهيز وإعداد Gradle Wrapper
+        run: |
+          gradle wrapper --gradle-version 8.5
+          chmod +x gradlew
+
+      - name: 🔨 بناء ملف APK الرسمي
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: 📦 استخراج ملف APK
+        run: |
+          mkdir -p apk_output
+          APK_FILE=$(find app/build/outputs/apk/debug -name "*.apk" | head -n 1)
+          echo "تم العثور على التطبيق: $APK_FILE"
+          cp "$APK_FILE" "apk_output/Monopoly_Arabia.apk"
+
+      - name: 🚀 رفع ملف الـ APK للتحميل المباشر (Artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Monopoly_Arabia_APK
+          path: apk_output/Monopoly_Arabia.apk
+          retention-days: 30
+
+      - name: 🌟 إنشاء Release رسمي في جيت هوب
+        if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v1.0"
+          name: "🎲 مونوبولي العرب - الإصدار الملكي 1.0"
+          body: "تم بناء لعبة مونوبولي العرب (بنك الحظ الملكي) بنجاح بصيغة APK جاهز للتحميل والتثبيت المباشر."
+          files: apk_output/Monopoly_Arabia.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
