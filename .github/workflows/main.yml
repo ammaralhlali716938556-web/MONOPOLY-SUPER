@@ -209,14 +209,11 @@ jobs:
                   setContentView(R.layout.activity_main);
 
                   webView = findViewById(R.id.webView);
-                  WebSettings settings = webView.getSettings();
-                  settings.setJavaScriptEnabled(true);
-                  settings.setDomStorageEnabled(true);
-                  settings.setAllowFileAccess(true);
-                  settings.setAllowContentAccess(true);
-                  settings.setLoadWithOverviewMode(true);
-                  settings.setUseWideViewPort(true);
-                  settings.setMediaPlaybackRequiresUserGesture(false);
+                  WebSettings webSettings = webView.getSettings();
+                  webSettings.setJavaScriptEnabled(true);
+                  webSettings.setDomStorageEnabled(true);
+                  webSettings.setAllowFileAccess(true);
+                  webSettings.setMediaPlaybackRequiresUserGesture(false);
 
                   webView.setWebViewClient(new WebViewClient());
                   webView.setWebChromeClient(new WebChromeClient());
@@ -234,8 +231,9 @@ jobs:
           }
           """
 
-          # 12. Full Game HTML / CSS / JS Assets
-          files["app/src/main/assets/index.html"] = """<!DOCTYPE html>
+          # 12. app/src/main/assets/index.html
+          files["app/src/main/assets/index.html"] = r'''
+          <!DOCTYPE html>
           <html lang="ar" dir="rtl">
           <head>
           <meta charset="UTF-8">
@@ -253,390 +251,402 @@ jobs:
           .scoreboard{width:100%;max-width:480px;flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:3px;}
           .p-card{background:#161D2B;border:2px solid #2B3548;border-radius:10px;padding:5px 8px;display:flex;align-items:center;justify-content:space-between;position:relative;cursor:pointer;}
           .p-card.active{border-color:var(--gold);box-shadow:0 0 12px rgba(245,158,11,0.45);background:linear-gradient(135deg,#1C2436,#232D42);}
-          .p-info{display:flex;align-items:center;gap:7px;}
-          .p-avatar{font-size:1.5rem;width:38px;height:38px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.2);box-shadow:0 2px 6px rgba(0,0,0,0.5);flex-shrink:0;}
-          .p-meta{display:flex;flex-direction:column;}
-          .p-name{font-size:0.75rem;font-weight:bold;color:#E2E8F0;}
-          .p-cash{font-size:0.92rem;font-weight:900;color:var(--green);}
-          .turn-badge{position:absolute;top:-6px;left:10px;background:var(--gold);color:#000;font-size:0.6rem;font-weight:900;padding:1px 7px;border-radius:10px;}
-          [dir="ltr"] .turn-badge{left:auto;right:10px;}
-          .board-wrapper{width:100%;max-width:480px;flex:1;min-height:0;margin:0 auto;box-sizing:border-box;position:relative;background:var(--bg-board);border-radius:12px;border:3px solid var(--gold);box-shadow:0 8px 30px rgba(0,0,0,0.7);display:grid;grid-template-columns:1.15fr repeat(9,1fr) 1.15fr;grid-template-rows:1.1fr repeat(9,1fr) 1.1fr;gap:1.5px;padding:2px;}
-          .tile{background:var(--bg-tile);border-radius:4px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:2px 1px;overflow:visible;border:1px solid rgba(255,255,255,0.08);cursor:pointer;}
+          .p-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.15rem;background:#000;border:2px solid #fff;flex-shrink:0;}
+          .p-details{flex:1;margin:0 6px;}
+          .p-name{font-size:0.80rem;font-weight:900;line-height:1.2;}
+          .p-cash{font-size:0.92rem;font-weight:900;color:var(--gold-lt);line-height:1.2;}
+          .p-stats{font-size:0.65rem;color:var(--dim);}
+          .p-badge{position:absolute;top:-6px;left:6px;background:var(--gold);color:#000;font-size:0.58rem;font-weight:900;padding:1px 6px;border-radius:10px;}
+          .board-wrapper{direction:ltr!important;width:100%;max-width:480px;flex:1;min-height:0;margin:0 auto;box-sizing:border-box;position:relative;background:var(--bg-board);border-radius:12px;border:3px solid var(--gold);box-shadow:0 8px 30px rgba(0,0,0,0.7);display:grid;grid-template-columns:1.15fr repeat(9,1fr) 1.15fr;grid-template-rows:1.1fr repeat(9,1fr) 1.1fr;gap:1.5px;padding:2px;}
+          .tile{direction:rtl;background:var(--bg-tile);border-radius:4px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:2px 1px;overflow:visible;border:1px solid rgba(255,255,255,0.08);cursor:pointer;}
           .tile-bar{width:100%;height:6px;border-radius:2px;flex-shrink:0;}
           .tile-cnt{width:100%;height:calc(100% - 8px);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:1px 0;}
           .tile-name{font-size:clamp(0.40rem,1.8vw,0.52rem);font-weight:800;text-align:center;line-height:1.1;color:var(--text);word-break:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;padding:0 1px;}
           .tile-price{font-size:clamp(0.38rem,1.6vw,0.50rem);font-weight:900;color:var(--gold-lt);margin-top:auto;}
           .tile-icon{font-size:0.95rem;line-height:1;margin:auto 0;}
-          .corner-tile{background:#202738;border:1px solid rgba(245,158,11,0.4);justify-content:center;}
+          .corner-tile{background:radial-gradient(circle at center,#1E293B,#101726);justify-content:center;}
+          .corner-tile .tile-icon{font-size:1.35rem;}
           .corner-tile .tile-name{font-size:0.55rem;color:var(--gold);}
-          .tile-pawns{position:absolute;display:flex;justify-content:center;align-items:center;gap:2px;z-index:25;pointer-events:none;}
-          .side-bottom .tile-pawns{top:-21px;left:0;right:0;height:20px;}
-          .side-top .tile-pawns{bottom:-21px;left:0;right:0;height:20px;}
-          .side-left .tile-pawns{right:-21px;top:0;bottom:0;width:20px;flex-direction:column;}
-          .side-right .tile-pawns{left:-21px;top:0;bottom:0;width:20px;flex-direction:column;}
-          .corner-0 .tile-pawns{top:-18px;right:2px;left:auto;bottom:auto;height:auto;width:auto;}
-          .corner-10 .tile-pawns{top:-18px;left:2px;right:auto;bottom:auto;height:auto;width:auto;}
-          .corner-20 .tile-pawns{bottom:-18px;left:2px;right:auto;top:auto;height:auto;width:auto;}
-          .corner-30 .tile-pawns{bottom:-18px;right:2px;left:auto;top:auto;height:auto;width:auto;}
-          .side-bottom .tile-bar{margin-top:auto;margin-bottom:0;}
-          .side-top .tile-bar{margin-top:0;margin-bottom:auto;}
-          .pawn{width:clamp(16px,4.2vw,20px);height:clamp(16px,4.2vw,20px);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:clamp(0.68rem,2.8vw,0.82rem);box-shadow:0 2px 5px rgba(0,0,0,0.9);border:1.5px solid #fff;background:#000;animation:pawnPop 0.3s ease;}
-          @keyframes pawnPop{0%{transform:scale(0.3) translateY(-6px);}100%{transform:scale(1) translateY(0);}}
+          .pawn{width:clamp(25px,6vw,29px);height:clamp(25px,6vw,29px);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:clamp(0.95rem,3.8vw,1.15rem);box-shadow:0 2px 6px rgba(0,0,0,0.9);border:2px solid #fff;background:#000;flex-shrink:0;pointer-events:none;transition:none!important;animation:none!important;}
+          .pawn.moving-step{transform:translateY(-4px) scale(1.15);transition:transform 0.1s ease-out!important;}
           .pawn-p0{background:radial-gradient(circle,#EF4444,#991B1B);}
           .pawn-p1{background:radial-gradient(circle,#38BDF8,#075985);}
+          .tile-pawns{position:absolute;display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;justify-content:center;align-items:center;gap:3px;z-index:25;pointer-events:none;transition:none!important;animation:none!important;}
+          .side-bottom .tile-pawns{top:2px;bottom:auto;left:0;right:0;height:auto;justify-content:center;}
+          .side-top .tile-pawns{bottom:2px;top:auto;left:0;right:0;height:auto;justify-content:center;}
+          .side-left .tile-pawns{right:2px;left:auto;top:50%;transform:translateY(-50%);height:auto;width:auto;justify-content:flex-end;}
+          .side-right .tile-pawns{left:2px;right:auto;top:50%;transform:translateY(-50%);height:auto;width:auto;justify-content:flex-start;}
+          .corner-0 .tile-pawns{top:3px;left:3px;right:auto;bottom:auto;height:auto;width:auto;justify-content:flex-start;}
+          .corner-10 .tile-pawns{top:3px;right:3px;left:auto;bottom:auto;height:auto;width:auto;justify-content:flex-end;}
+          .corner-20 .tile-pawns{bottom:3px;right:3px;left:auto;top:auto;height:auto;width:auto;justify-content:flex-end;}
+          .corner-30 .tile-pawns{bottom:3px;left:3px;right:auto;top:auto;height:auto;width:auto;justify-content:flex-start;}
+          .side-bottom .tile-bar{margin-top:auto;margin-bottom:0;}
+          .side-top .tile-bar{margin-top:0;margin-bottom:auto;}
           .tile.owned-glow{box-shadow:inset 0 0 8px currentColor;}
           .tile.owned-tint{filter:brightness(1.25);}
           .tile.owned-border{border-width:2.5px!important;border-color:currentColor!important;}
           .tile-owner-badge{position:absolute;top:1px;right:1px;font-size:0.6rem;background:rgba(0,0,0,0.85);border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;border:1px solid var(--gold);z-index:5;}
           [dir="ltr"] .tile-owner-badge{right:auto;left:1px;}
           .tile-mortgaged-badge{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%) rotate(-20deg);background:#DC2626;color:#FFF;font-size:0.5rem;font-weight:900;padding:1px 4px;border-radius:3px;border:1px solid #FFF;z-index:8;}
-          .board-center{grid-column:2/span 9;grid-row:2/span 9;background:radial-gradient(circle at center,#182235,#0B101A);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px;position:relative;border:1px solid rgba(245,158,11,0.25);overflow:hidden;}
-          .center-watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2.8rem;opacity:0.04;font-weight:900;pointer-events:none;}
-          .turn-announcer{background:rgba(15,23,42,0.9);border:1px solid var(--gold);padding:3px 12px;border-radius:20px;font-size:0.75rem;font-weight:bold;color:var(--gold);text-align:center;}
-          .dice-area{display:flex;flex-direction:column;align-items:center;gap:5px;margin:2px 0;}
-          .dice-container{display:flex;gap:14px;perspective:400px;}
-          .cube-die{width:38px;height:38px;position:relative;transform-style:preserve-3d;transition:transform 0.4s ease-out;}
+          .board-center{direction:rtl;grid-column:2/span 9;grid-row:2/span 9;background:radial-gradient(circle at center,#182235,#0B101A);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px;position:relative;border:1px solid rgba(245,158,11,0.25);overflow:hidden;}
+          .center-brand{font-size:clamp(0.85rem,3.5vw,1.1rem);font-weight:900;color:var(--gold);letter-spacing:1px;text-align:center;text-shadow:0 0 10px rgba(245,158,11,0.5);}
+          .center-turn-announcer{font-size:clamp(0.72rem,2.8vw,0.88rem);font-weight:bold;color:var(--text);background:rgba(255,255,255,0.06);padding:3px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.1);}
+          .dice-area{display:flex;align-items:center;justify-content:center;gap:18px;margin:auto 0;perspective:800px;}
+          .cube-die{width:46px;height:46px;position:relative;transform-style:preserve-3d;transition:transform 0.1s linear;}
           .cube-die.rolling{animation:rollTumble 0.4s infinite linear;}
-          @keyframes rollTumble{0%{transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);}50%{transform:rotateX(360deg) rotateY(180deg) rotateZ(180deg);}100%{transform:rotateX(720deg) rotateY(720deg) rotateZ(360deg);}}
-          .cube-face{position:absolute;width:38px;height:38px;background:#FFF;border:1.5px solid #CBD5E1;border-radius:7px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:2px;box-shadow:inset 0 0 5px rgba(0,0,0,0.15);}
-          .pip{width:6px;height:6px;background:#0F172A;border-radius:50%;margin:auto;}
-          .face-1{transform:rotateY(0deg) translateZ(19px);}
-          .face-6{transform:rotateY(180deg) translateZ(19px);}
-          .face-2{transform:rotateY(-90deg) translateZ(19px);}
-          .face-4{transform:rotateY(90deg) translateZ(19px);}
-          .face-3{transform:rotateX(90deg) translateZ(19px);}
-          .face-5{transform:rotateX(-90deg) translateZ(19px);}
-          .dice-sum-badge{background:linear-gradient(135deg,var(--gold),#D97706);color:#0F172A;font-size:0.85rem;font-weight:900;padding:2px 12px;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,0.4);transition:transform 0.2s;}
-          .btn-roll{background:linear-gradient(135deg,var(--gold),#D97706);border:none;color:#0F172A;font-size:0.92rem;font-weight:900;padding:6px 20px;border-radius:24px;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 15px rgba(245,158,11,0.4);}
-          .btn-roll:disabled{background:#475569;color:#94A3B8;cursor:not-allowed;box-shadow:none;}
-          .event-log{width:100%;height:42px;background:rgba(0,0,0,0.45);border-radius:6px;padding:3px 6px;font-size:0.65rem;color:#CBD5E1;overflow-y:auto;text-align:start;border:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column-reverse;}
-          .log-entry{margin-bottom:2px;}
-          .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:100;padding:14px;opacity:0;pointer-events:none;transition:opacity 0.2s;}
-          .modal-overlay.show{opacity:1;pointer-events:auto;}
-          .modal-card{background:#1E293B;border:2px solid var(--gold);border-radius:14px;width:100%;max-width:320px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,0.85);display:flex;flex-direction:column;align-items:center;text-align:center;max-height:90vh;overflow-y:auto;}
-          .modal-hdr{width:100%;padding:6px;border-radius:8px;color:#FFF;font-size:1rem;font-weight:900;margin-bottom:10px;}
-          .modal-body{width:100%;font-size:0.82rem;color:#E2E8F0;margin-bottom:12px;display:flex;flex-direction:column;gap:5px;}
-          .modal-row{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.08);}
-          .modal-actions{display:flex;gap:6px;width:100%;}
-          .btn-m{flex:1;padding:8px;border-radius:8px;font-weight:bold;font-size:0.82rem;cursor:pointer;border:none;}
-          .btn-green{background:linear-gradient(135deg,#10B981,#059669);color:#FFF;}
-          .btn-blue{background:linear-gradient(135deg,#38BDF8,#0284C7);color:#FFF;}
-          .btn-gold{background:linear-gradient(135deg,var(--gold),#D97706);color:#0F172A;font-weight:900;}
-          .btn-red{background:linear-gradient(135deg,#EF4444,#B91C1C);color:#FFF;}
-          .btn-gray{background:#374151;color:#CBD5E1;}
-          .settings-grp{width:100%;background:#162032;border-radius:8px;padding:6px;margin-bottom:6px;text-align:start;border:1px solid rgba(255,255,255,0.05);}
-          .settings-t{font-size:0.75rem;font-weight:bold;color:var(--gold);margin-bottom:4px;}
-          .pills{display:flex;gap:4px;flex-wrap:wrap;}
-          .btn-pill{background:#2D3748;border:1px solid #4B5563;color:#CBD5E1;padding:3px 7px;border-radius:6px;font-size:0.7rem;font-weight:bold;cursor:pointer;}
-          .btn-pill.active{background:var(--gold);color:#0F172A;border-color:#D97706;}
-          .avatar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;width:100%;}
-          .avatar-opt{background:#243048;border:2px solid transparent;border-radius:6px;font-size:1.3rem;padding:3px;cursor:pointer;text-align:center;}
-          .avatar-opt.active{border-color:var(--gold);background:#324263;}
-          .mort-item{display:flex;justify-content:space-between;align-items:center;width:100%;background:#162032;padding:5px;border-radius:6px;margin-bottom:4px;font-size:0.73rem;}
+          @keyframes rollTumble{0%{transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);}100%{transform:rotateX(360deg) rotateY(720deg) rotateZ(360deg);}}
+          .cube-face{position:absolute;width:46px;height:46px;background:linear-gradient(145deg,#FFF,#E2E8F0);border:2px solid #CBD5E1;border-radius:8px;box-shadow:inset 0 0 6px rgba(0,0,0,0.15),0 4px 10px rgba(0,0,0,0.6);display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:5px;box-sizing:border-box;}
+          .dot{width:8px;height:8px;background:#B91C1C;border-radius:50%;align-self:center;justify-self:center;box-shadow:inset 0 1px 2px rgba(0,0,0,0.6);}
+          .face-1{transform:rotateY(0deg) translateZ(23px);}
+          .face-6{transform:rotateY(180deg) translateZ(23px);}
+          .face-2{transform:rotateY(-90deg) translateZ(23px);}
+          .face-5{transform:rotateY(90deg) translateZ(23px);}
+          .face-3{transform:rotateX(90deg) translateZ(23px);}
+          .face-4{transform:rotateX(-90deg) translateZ(23px);}
+          .center-btn-roll{background:linear-gradient(135deg,#F59E0B,#D97706);color:#000;border:none;border-radius:24px;padding:8px 24px;font-size:clamp(0.85rem,3.2vw,1.05rem);font-weight:900;cursor:pointer;box-shadow:0 4px 15px rgba(245,158,11,0.5);display:flex;align-items:center;gap:6px;}
+          .center-btn-roll:active{transform:scale(0.96);}
+          .center-btn-roll:disabled{opacity:0.4;cursor:not-allowed;}
+          .log-area{width:95%;height:22px;background:rgba(0,0,0,0.45);border-radius:6px;border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;padding:0 6px;overflow:hidden;white-space:nowrap;font-size:0.65rem;color:var(--gold-lt);}
+          .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:999;padding:12px;}
+          .modal-overlay.show{display:flex;}
+          .modal-card{background:linear-gradient(145deg,#1E293B,#0F172A);border:2px solid var(--gold);border-radius:16px;width:100%;max-width:360px;box-shadow:0 12px 35px rgba(0,0,0,0.9);overflow:hidden;display:flex;flex-direction:column;}
+          .modal-header{padding:10px 14px;background:rgba(0,0,0,0.3);border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;}
+          .modal-title{font-size:1rem;font-weight:900;color:var(--gold);}
+          .modal-body{padding:14px;font-size:0.85rem;line-height:1.5;max-height:65vh;overflow-y:auto;}
+          .modal-footer{padding:10px 14px;background:rgba(0,0,0,0.3);border-top:1px solid rgba(255,255,255,0.1);display:flex;gap:8px;justify-content:flex-end;}
+          .btn{padding:8px 16px;border-radius:8px;font-weight:bold;font-size:0.82rem;cursor:pointer;border:none;}
+          .btn-gold{background:var(--gold);color:#000;}
+          .btn-blue{background:#2563EB;color:#fff;}
+          .btn-red{background:#DC2626;color:#fff;}
+          .btn-gray{background:#4B5563;color:#fff;}
+          .btn-pill{padding:5px 12px;border-radius:20px;border:1px solid #4B5563;background:#1E293B;color:#FFF;cursor:pointer;font-size:0.75rem;}
+          .btn-pill.active{background:var(--gold);color:#000;border-color:var(--gold);font-weight:bold;}
+          .row-opts{display:flex;gap:6px;margin:6px 0 12px 0;flex-wrap:wrap;}
+          .settings-section{margin-bottom:12px;}
+          .settings-label{font-size:0.78rem;font-weight:bold;color:var(--dim);margin-bottom:4px;}
           </style>
           </head>
           <body>
-
+          
           <div class="header">
-              <div class="header-title"><span>👑</span><span id="txtAppTitle">مونوبولي العرب</span></div>
+              <div class="header-title">
+                  <span>👑</span>
+                  <span id="txtAppTitle">مونوبولي العرب</span>
+              </div>
               <div class="header-controls">
-                  <button id="btnMode" class="btn-hdr" onclick="toggleMode()"><span id="txtMode">🤖 ضد الكمبيوتر</span></button>
+                  <button class="btn-hdr" onclick="openPropsModal(0)">🎒 <span id="txtBtnP0Props">عقاراتي</span></button>
+                  <button class="btn-hdr" onclick="openTradeModal()">🤝 <span id="txtBtnTrade">مقايضة</span></button>
                   <button class="btn-hdr" onclick="openSettingsModal()">⚙️</button>
+                  <button class="btn-hdr" onclick="openAboutModal()">ℹ️</button>
               </div>
           </div>
-
+          
           <div class="scoreboard">
-              <div id="pCard0" class="p-card active" onclick="openMortgageModal()">
-                  <div id="turnBadge0" class="turn-badge">دورك الآن</div>
-                  <div class="p-info">
-                      <div id="avP0" class="p-avatar">🦁</div>
-                      <div class="p-meta"><span id="nameP0" class="p-name">اللاعب 1</span><span id="cashP0" class="p-cash">1500$</span></div>
+              <div class="p-card active" id="pCard0" onclick="openPropsModal(0)">
+                  <div class="p-avatar" style="border-color:var(--p0);" id="avP0">👑</div>
+                  <div class="p-details">
+                      <div class="p-name" style="color:var(--p0);" id="nameP0">الملك (أنت)</div>
+                      <div class="p-cash" id="cashP0">1500$</div>
+                      <div class="p-stats"><span id="propsP0">عقارات 0</span> <span id="mortP0" style="color:#EF4444;"></span></div>
                   </div>
-                  <div style="font-size:0.65rem; color:var(--dim); text-align:end;">
-                      <div id="propsP0">عقارات: 0</div>
-                      <div id="mortP0" style="color:#EF4444; font-size:0.58rem;"></div>
-                  </div>
+                  <div class="p-badge" id="turnBadge0">دورك</div>
               </div>
-              <div id="pCard1" class="p-card" onclick="openMortgageModal()">
-                  <div id="turnBadge1" class="turn-badge" style="display:none;">دور الخصم</div>
-                  <div class="p-info">
-                      <div id="avP1" class="p-avatar">🦅</div>
-                      <div class="p-meta"><span id="nameP1" class="p-name">الصقر (الذكاء)</span><span id="cashP1" class="p-cash">1500$</span></div>
+              <div class="p-card" id="pCard1" onclick="openPropsModal(1)">
+                  <div class="p-avatar" style="border-color:var(--p1);" id="avP1">🦅</div>
+                  <div class="p-details">
+                      <div class="p-name" style="color:var(--p1);" id="nameP1">الصقر (الذكاء)</div>
+                      <div class="p-cash" id="cashP1">1500$</div>
+                      <div class="p-stats"><span id="propsP1">عقارات 0</span> <span id="mortP1" style="color:#EF4444;"></span></div>
                   </div>
-                  <div style="font-size:0.65rem; color:var(--dim); text-align:end;">
-                      <div id="propsP1">عقارات: 0</div>
-                      <div id="mortP1" style="color:#EF4444; font-size:0.58rem;"></div>
-                  </div>
+                  <div class="p-badge" id="turnBadge1" style="display:none;background:var(--p1);">دور الخصم</div>
               </div>
           </div>
-
-          <div id="board" class="board-wrapper">
+          
+          <div class="board-wrapper" id="board">
               <div class="board-center">
-                  <div class="center-watermark">MONOPOLY</div>
-                  <div id="turnAnnouncer" class="turn-announcer">دور: 🦁 اللاعب 1</div>
+                  <div class="center-brand">MONOPOLY ARABIA</div>
+                  <div class="center-turn-announcer" id="turnAnnouncer">الدور: الملك 👑</div>
+          
                   <div class="dice-area">
-                      <div class="dice-container">
-                          <div id="die1" class="cube-die">
-                              <div class="cube-face face-1"><div class="pip" style="grid-area:2/2;"></div></div>
-                              <div class="cube-face face-2"><div class="pip" style="grid-area:1/1;"></div><div class="pip" style="grid-area:3/3;"></div></div>
-                              <div class="cube-face face-3"><div class="pip" style="grid-area:1/1;"></div><div class="pip" style="grid-area:2/2;"></div><div class="pip" style="grid-area:3/3;"></div></div>
-                              <div class="cube-face face-4"><div class="pip" style="grid-area:1/1;"></div><div class="pip" style="grid-area:1/3;"></div><div class="pip" style="grid-area:3/1;"></div><div class="pip" style="grid-area:3/3;"></div></div>
-                              <div class="cube-face face-5"><div class="pip" style="grid-area:1/1;"></div><div class="pip" style="grid-area:1/3;"></div><div class="pip" style="grid-area:2/2;"></div><div class="pip" style="grid-area:3/1;"></div><div class="pip" style="grid-area:3/3;"></div></div>
-                              <div class="cube-face face-6"><div class="pip" style="grid-area:1/1;"></div><div class="pip" style="grid-area:2/1;"></div><div class="pip" style="grid-area:3/1;"></div><div class="pip" style="grid-area:1/3;"></div><div class="pip" style="grid-area:2/3;"></div><div class="pip" style="grid-area:3/3;"></div></div>
-                          </div>
-                          <div id="die2" class="cube-die">
-                              <div class="cube-face face-1"><div class="pip" style="grid-area:2/2;"></div></div>
-                              <div class="cube-face face-2"><div class="pip" style="grid-area:1/1;"></div><div class="pip" style="grid-area:3/3;"></div></div>
-                              <div class="cube-face face-3"><div class="pip" style="grid-area:1/1;"></div><div class="pip" style="grid-area:2/2;"></div><div class="pip" style="grid-area:3/3;"></div></div>
-                              <div class="cube-face face-4"><div class="pip" style="grid-area:1/1;"></div><div class="pip" style="grid-area:1/3;"></div><div class="pip" style="grid-area:3/1;"></div><div class="pip" style="grid-area:3/3;"></div></div>
-                              <div class="cube-face face-5"><div class="pip" style="grid-area:1/1;"></div><div class="pip" style="grid-area:1/3;"></div><div class="pip" style="grid-area:2/2;"></div><div class="pip" style="grid-area:3/1;"></div><div class="pip" style="grid-area:3/3;"></div></div>
-                              <div class="cube-face face-6"><div class="pip" style="grid-area:1/1;"></div><div class="pip" style="grid-area:2/1;"></div><div class="pip" style="grid-area:3/1;"></div><div class="pip" style="grid-area:1/3;"></div><div class="pip" style="grid-area:2/3;"></div><div class="pip" style="grid-area:3/3;"></div></div>
-                          </div>
+                      <div class="cube-die" id="die0">
+                          <div class="cube-face face-1"><div class="dot" style="grid-area:2/2;"></div></div>
+                          <div class="cube-face face-2"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                          <div class="cube-face face-3"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:2/2;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                          <div class="cube-face face-4"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                          <div class="cube-face face-5"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:2/2;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                          <div class="cube-face face-6"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:2/1;"></div><div class="dot" style="grid-area:2/3;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
                       </div>
-                      <div id="diceSumBadge" class="dice-sum-badge">المجموع: 2</div>
+                      <div class="cube-die" id="die1">
+                          <div class="cube-face face-1"><div class="dot" style="grid-area:2/2;"></div></div>
+                          <div class="cube-face face-2"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                          <div class="cube-face face-3"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:2/2;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                          <div class="cube-face face-4"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                          <div class="cube-face face-5"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:2/2;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                          <div class="cube-face face-6"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:2/1;"></div><div class="dot" style="grid-area:2/3;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                      </div>
                   </div>
-                  <button id="btnRoll" class="btn-roll" onclick="handleRollClick()"><span>🎲</span><span id="txtBtnRoll">ارمِ النرد</span></button>
-                  <div id="eventLog" class="event-log"><div class="log-entry">🏁 مرحباً بك في لعبة مونوبولي العرب! حظاً موفقاً.</div></div>
+          
+                  <button class="center-btn-roll" id="btnRoll" onclick="rollDice()">
+                      <span>🎲</span>
+                      <span id="txtBtnRoll">ارمي النرد</span>
+                  </button>
+          
+                  <div class="log-area" id="gameLog">مرحباً بكم في مونوبولي العرب الملكية!</div>
               </div>
           </div>
-
-          <!-- Deed Modal -->
-          <div id="deedModal" class="modal-overlay">
+          
+          <!-- Modals -->
+          <div class="modal-overlay" id="deedModal">
               <div class="modal-card">
-                  <div id="deedHeader" class="modal-hdr">عقار</div>
-                  <div class="modal-body">
-                      <div class="modal-row"><span>ثمن الشراء:</span><span id="deedPrice" style="color:var(--gold);font-weight:bold;">100$</span></div>
-                      <div class="modal-row"><span>الإيجار الأساسي:</span><span id="deedRent">10$</span></div>
-                      <div class="modal-row"><span>مع المجموعة كاملة:</span><span id="deedDoubleRent">20$</span></div>
+                  <div class="modal-header">
+                      <div class="modal-title" id="deedTitle">عقار للبيع</div>
+                      <div style="font-size:1.2rem; cursor:pointer;" onclick="closeDeedModal()">✕</div>
                   </div>
-                  <div class="modal-actions">
-                      <button class="btn-m btn-green" onclick="confirmBuyProperty()">✅ شراء العقار</button>
-                      <button class="btn-m btn-gold" onclick="startPropertyAuction()">🔨 مزايدة</button>
+                  <div class="modal-body" id="deedBody"></div>
+                  <div class="modal-footer" id="deedFooter">
+                      <button class="btn btn-gold" id="btnBuyProp" onclick="confirmBuyProp()">شراء</button>
+                      <button class="btn btn-blue" id="btnAuctionProp" onclick="startAuction()">مزاد علني</button>
+                      <button class="btn btn-gray" onclick="closeDeedModal()">تجاهل</button>
                   </div>
               </div>
           </div>
-
-          <!-- Auction Modal -->
-          <div id="auctionModal" class="modal-overlay">
+          
+          <div class="modal-overlay" id="auctionModal">
               <div class="modal-card">
-                  <div class="modal-hdr" style="background:#D97706;">🔨 مزاد علني</div>
+                  <div class="modal-header">
+                      <div class="modal-title">🔨 مزاد علني مباشر</div>
+                  </div>
                   <div class="modal-body">
-                      <div id="aucPropName" style="font-weight:bold;color:var(--gold-lt);">عقار</div>
-                      <div class="modal-row"><span>أعلى مزايدة:</span><span id="aucCurrentBid" style="color:#10B981;font-weight:bold;">10$</span></div>
-                      <div class="modal-row"><span>المزايد الحالي:</span><span id="aucHighestBidder">-</span></div>
-                      <div id="aucTurnPrompt" style="color:var(--gold);font-weight:bold;margin-top:4px;">دور: ...</div>
+                      <div id="aucPropDetails" style="text-align:center; font-weight:bold; margin-bottom:10px;"></div>
+                      <div style="text-align:center; margin:10px 0;">
+                          <div style="font-size:0.8rem; color:var(--dim);">أعلى مزايدة حالية:</div>
+                          <div style="font-size:1.6rem; font-weight:900; color:var(--gold);" id="aucCurrentBid">10$</div>
+                          <div style="font-size:0.8rem;" id="aucHighestBidder">-</div>
+                      </div>
+                      <div id="aucTurnPrompt" style="text-align:center; font-weight:bold; color:var(--text); margin-top:10px;"></div>
                   </div>
-                  <div id="aucActions" class="modal-actions" style="flex-wrap:wrap;">
-                      <button class="btn-m btn-blue" onclick="placeAuctionBid(10)">+10$</button>
-                      <button class="btn-m btn-blue" onclick="placeAuctionBid(25)">+25$</button>
-                      <button class="btn-m btn-blue" onclick="placeAuctionBid(50)">+50$</button>
-                      <button class="btn-m btn-red" onclick="foldAuctionBid()">❌ انسحاب</button>
-                  </div>
-              </div>
-          </div>
-
-          <!-- Card Modal -->
-          <div id="cardModal" class="modal-overlay">
-              <div class="modal-card" style="border-color:#38BDF8;">
-                  <div id="cardType" class="modal-hdr" style="background:#0284C7;">❓ فرصة</div>
-                  <div id="cardMessage" class="modal-body" style="font-weight:bold;padding:10px 0;">رسالة...</div>
-                  <button class="btn-m btn-blue" style="width:100%;" onclick="closeCardModal()">حسناً 👍</button>
-              </div>
-          </div>
-
-          <!-- Jail Modal -->
-          <div id="jailModal" class="modal-overlay">
-              <div class="modal-card" style="border-color:#EF4444;">
-                  <div class="modal-hdr" style="background:#B91C1C;">🚔 أنت في السجن!</div>
-                  <div class="modal-body">
-                      <p>اختر طريقة الخروج من السجن:</p>
-                      <div class="modal-row"><span>المحاولات المتبقية:</span><span id="jailRemainingTurns" style="font-weight:bold;color:var(--gold);">3</span></div>
-                  </div>
-                  <div class="modal-actions" style="flex-direction:column;gap:6px;">
-                      <button class="btn-m btn-green" onclick="jailPayBail()">💸 دفع غرامة 50$ والخروج فوراً</button>
-                      <button class="btn-m btn-gold" onclick="jailTryDoubles()">🎲 محاولة رمي نرد متطابق</button>
+                  <div class="modal-footer" id="aucControls">
+                      <button class="btn btn-gold" onclick="placeAuctionBid(10)">+10$</button>
+                      <button class="btn btn-gold" onclick="placeAuctionBid(50)">+50$</button>
+                      <button class="btn btn-red" onclick="foldAuctionBid()">انسحاب</button>
                   </div>
               </div>
           </div>
-
-          <!-- Fast Travel Modal -->
-          <div id="fastTravelModal" class="modal-overlay">
+          
+          <div class="modal-overlay" id="jailModal">
               <div class="modal-card">
-                  <div class="modal-hdr" style="background:#D97706;">🚂 شبكة القطارات السريعة</div>
-                  <div class="modal-body">
-                      <p style="font-size:0.8rem;">تمتلك كافة القطارات! يمكنك السفر السريع قبل رمي النرد:</p>
-                      <div id="fastTravelOptions" style="display:flex;flex-direction:column;gap:5px;width:100%;"></div>
+                  <div class="modal-header">
+                      <div class="modal-title">🚔 أنت في السجن!</div>
                   </div>
-                  <div class="modal-actions"><button class="btn-m btn-gray" onclick="fastTravelSkip()">🎲 رمي النرد دون سفر</button></div>
+                  <div class="modal-body">
+                      <p id="jailMsg">أنت مقيد في السجن. كيف ترغب بالخروج؟</p>
+                  </div>
+                  <div class="modal-footer">
+                      <button class="btn btn-gold" onclick="payJailFine()">دفع كفالة (50$)</button>
+                      <button class="btn btn-blue" onclick="rollForJail()">رمي النرد للمطابقة</button>
+                  </div>
               </div>
           </div>
-
-          <!-- Trade Offer Modal -->
-          <div id="tradeModal" class="modal-overlay">
-              <div class="modal-card" style="border-color:#38BDF8;">
-                  <div class="modal-hdr" style="background:#0284C7;">🤝 مفاوضة وشراء عقار</div>
-                  <div class="modal-body">
-                      <div id="tradePropName" style="font-weight:bold;color:var(--gold-lt);">عقار</div>
-                      <div class="modal-row"><span>المالك الحالي:</span><span id="tradeOwner">-</span></div>
-                      <div class="modal-row"><span>السعر الأصلي:</span><span id="tradeOrigPrice">-</span></div>
-                      <div class="modal-row"><span>العرض المقدم:</span><span id="tradeOfferAmount" style="color:#10B981;font-weight:bold;">150$</span></div>
-                      <div style="display:flex;gap:4px;justify-content:center;margin-top:4px;">
-                          <button class="btn-pill" onclick="adjustTradeOffer(-25)">-25$</button>
-                          <button class="btn-pill" onclick="adjustTradeOffer(+25)">+25$</button>
-                          <button class="btn-pill" onclick="adjustTradeOffer(+100)">+100$</button>
+          
+          <div class="modal-overlay" id="tradeModal">
+              <div class="modal-card">
+                  <div class="modal-header">
+                      <div class="modal-title">🤝 مقايضة وتجارة العقارات</div>
+                      <div style="font-size:1.2rem; cursor:pointer;" onclick="closeTradeModal()">✕</div>
+                  </div>
+                  <div class="modal-body" id="tradeBody">
+                      <div class="settings-section">
+                          <div class="settings-label">اختر عقار الخصم للشراء:</div>
+                          <select id="tradeTargetProp" style="width:100%; padding:6px; background:#0F172A; color:#FFF; border-radius:6px; border:1px solid #4B5563;"></select>
+                      </div>
+                      <div class="settings-section">
+                          <div class="settings-label">المبلغ المعروض ($):</div>
+                          <input type="number" id="tradeOfferCash" value="100" min="10" step="10" style="width:100%; padding:6px; background:#0F172A; color:#FFF; border-radius:6px; border:1px solid #4B5563;">
                       </div>
                   </div>
-                  <div class="modal-actions">
-                      <button class="btn-m btn-green" onclick="submitTradeOffer()">📨 إرسال العرض</button>
-                      <button class="btn-m btn-gray" onclick="closeTradeModal()">إلغاء</button>
+                  <div class="modal-footer">
+                      <button class="btn btn-gold" onclick="submitTradeOffer()">إرسال العرض</button>
+                      <button class="btn btn-gray" onclick="closeTradeModal()">إلغاء</button>
                   </div>
               </div>
           </div>
-
-          <!-- Incoming Trade Modal -->
-          <div id="incomingTradeModal" class="modal-overlay">
-              <div class="modal-card" style="border-color:var(--gold);">
-                  <div class="modal-hdr" style="background:#D97706;">📬 عرض شراء لعقارك!</div>
-                  <div class="modal-body"><p id="incomingTradeText" style="line-height:1.4;">عرض...</p></div>
-                  <div class="modal-actions">
-                      <button class="btn-m btn-green" onclick="acceptIncomingTrade()">✅ موافقة وبيع</button>
-                      <button class="btn-m btn-red" onclick="rejectIncomingTrade()">❌ رفض العرض</button>
+          
+          <div class="modal-overlay" id="incomingTradeModal">
+              <div class="modal-card">
+                  <div class="modal-header">
+                      <div class="modal-title">📨 عرض مقايضة وارد!</div>
+                  </div>
+                  <div class="modal-body" id="incomingTradeText"></div>
+                  <div class="modal-footer">
+                      <button class="btn btn-gold" onclick="acceptTrade()">موافقة</button>
+                      <button class="btn btn-red" onclick="rejectTrade()">رفض</button>
                   </div>
               </div>
           </div>
-
-          <!-- Mortgage Modal -->
-          <div id="mortgageModal" class="modal-overlay">
-              <div class="modal-card" style="border-color:#EF4444;max-width:340px;">
-                  <div class="modal-hdr" style="background:#B91C1C;">🏦 رهن وفك رهن العقارات</div>
+          
+          <div class="modal-overlay" id="propsModal">
+              <div class="modal-card">
+                  <div class="modal-header">
+                      <div class="modal-title" id="propsModalTitle">عقارات اللاعب</div>
+                      <div style="font-size:1.2rem; cursor:pointer;" onclick="closePropsModal()">✕</div>
+                  </div>
+                  <div class="modal-body" id="propsModalBody"></div>
+              </div>
+          </div>
+          
+          <div class="modal-overlay" id="settingsModal">
+              <div class="modal-card">
+                  <div class="modal-header">
+                      <div class="modal-title">⚙️ الإعدادات وخيارات اللعب</div>
+                      <div style="font-size:1.2rem; cursor:pointer;" onclick="closeSettingsModal()">✕</div>
+                  </div>
                   <div class="modal-body">
-                      <p style="font-size:0.75rem;color:#CBD5E1;">رهن العقار يمنحك 50% من قيمته (لا يجمع إيجاراً أثناء رهنه).</p>
-                      <div id="mortgageItemsList" style="width:100%;max-height:180px;overflow-y:auto;"></div>
-                  </div>
-                  <div class="modal-actions"><button class="btn-m btn-gray" onclick="closeMortgageModal()">إغلاق ❌</button></div>
-              </div>
-          </div>
-
-          <!-- Winner Modal -->
-          <div id="winnerModal" class="modal-overlay">
-              <div class="modal-card" style="border-color:var(--gold);background:linear-gradient(135deg,#1E1B4B,#0F172A);">
-                  <div style="font-size:2.8rem;">🏆</div>
-                  <h2 id="winnerText" style="color:var(--gold);margin:8px 0;">مبروك الفوز!</h2>
-                  <p id="winnerSubtext" style="color:#CBD5E1;font-size:0.8rem;margin-bottom:14px;">أفلس الخصم بعد رهن كل ما يملك ونفاذ سيولته!</p>
-                  <button class="btn-m btn-gold" style="width:100%;" onclick="restartGame()">🔄 لعبة جديدة</button>
-              </div>
-          </div>
-
-          <!-- Settings Modal -->
-          <div id="settingsModal" class="modal-overlay">
-              <div class="modal-card" style="max-width:340px;">
-                  <div class="modal-hdr" style="background:#2D3748;">⚙️ <span id="txtStTitle">إعدادات اللعبة</span></div>
-                  <div class="modal-body">
-                      <div class="settings-grp"><div class="settings-t">🎲 <span id="txtDiceSpd">سرعة تقليب النرد:</span></div><div class="pills"><button id="btnDSpd1" class="btn-pill" onclick="setDiceSpeed('v_slow')">بطيء جداً</button><button id="btnDSpd2" class="btn-pill" onclick="setDiceSpeed('slow')">بطيء</button><button id="btnDSpd3" class="btn-pill active" onclick="setDiceSpeed('balanced')">متوازن</button><button id="btnDSpd4" class="btn-pill" onclick="setDiceSpeed('fast')">سريع</button><button id="btnDSpd5" class="btn-pill" onclick="setDiceSpeed('v_fast')">فائق السرعة</button></div></div><div class="settings-grp"><div class="settings-t">🏃 <span id="txtMoveSpd">سرعة حركة التنقل:</span></div><div class="pills"><button id="btnMSpd1" class="btn-pill" onclick="setMoveSpeed('v_slow')">بطيء جداً</button><button id="btnMSpd2" class="btn-pill" onclick="setMoveSpeed('slow')">بطيء</button><button id="btnMSpd3" class="btn-pill active" onclick="setMoveSpeed('balanced')">متوازن</button><button id="btnMSpd4" class="btn-pill" onclick="setMoveSpeed('fast')">سريع</button><button id="btnMSpd5" class="btn-pill" onclick="setMoveSpeed('v_fast')">فائق السرعة</button></div></div>
-                      <div class="settings-grp">
-                          <div style="display:flex;justify-content:space-between;align-items:center;">
-                              <span class="settings-t" style="margin:0;">🔊 المؤثرات الصوتية:</span>
-                              <button id="btnSoundToggle" class="btn-pill active" onclick="toggleSound()">مفعل 🔊</button>
+                      <div class="settings-section">
+                          <div class="settings-label">🌐 اللغة (Language):</div>
+                          <div class="row-opts">
+                              <button class="btn-pill active" id="btnLangAr" onclick="setLanguage('ar')">العربية</button>
+                              <button class="btn-pill" id="btnLangEn" onclick="setLanguage('en')">English</button>
                           </div>
                       </div>
-                      <div class="settings-grp">
-                          <div class="settings-t">🎭 رمز اللاعب 1:</div>
-                          <div id="avatarPickerP0" class="avatar-grid"></div>
-                          <div class="settings-t" style="margin-top:5px;">🎭 رمز اللاعب 2 / الكمبيوتر:</div>
-                          <div id="avatarPickerP1" class="avatar-grid"></div>
-                      </div>
-                      <div class="settings-grp">
-                          <div class="settings-t">🎨 شكل العقار المشترى:</div>
-                          <div class="pills">
-                              <button id="btnStGlow" class="btn-pill active" onclick="setPropertyStyle('glow')">توهج</button>
-                              <button id="btnStBadge" class="btn-pill" onclick="setPropertyStyle('badge')">شارة المالك</button>
-                              <button id="btnStTint" class="btn-pill" onclick="setPropertyStyle('tint')">تلوين كامل</button>
-                              <button id="btnStBorder" class="btn-pill" onclick="setPropertyStyle('border')">إطار سميك</button>
+                      <div class="settings-section">
+                          <div class="settings-label">🎨 تمييز العقارات المملوكة:</div>
+                          <div class="row-opts">
+                              <button class="btn-pill active" id="btnPropStyleGlow" onclick="setPropStyle('glow')">توهج (Glow)</button>
+                              <button class="btn-pill" id="btnPropStyleTint" onclick="setPropStyle('tint')">تظليل (Tint)</button>
+                              <button class="btn-pill" id="btnPropStyleBorder" onclick="setPropStyle('border')">إطار ملون</button>
+                              <button class="btn-pill" id="btnPropStyleBadge" onclick="setPropStyle('badge')">شارة الرمز</button>
                           </div>
                       </div>
-                      <div class="settings-grp">
-                          <div style="display:flex;justify-content:space-between;align-items:center;">
-                              <span class="settings-t" style="margin:0;">🌐 اللغة:</span>
-                              <div class="pills">
-                                  <button id="btnLangAr" class="btn-pill active" onclick="setLanguage('ar')">العربية</button>
-                                  <button id="btnLangEn" class="btn-pill" onclick="setLanguage('en')">English</button>
-                              </div>
+                      <div class="settings-section">
+                          <div class="settings-label">🎲 سرعة دحرجة النرد:</div>
+                          <div class="row-opts">
+                              <button class="btn-pill" id="btnDiceSpeed_v_slow" onclick="setDiceSpeed('v_slow')">بطيء جداً</button>
+                              <button class="btn-pill" id="btnDiceSpeed_slow" onclick="setDiceSpeed('slow')">بطيء</button>
+                              <button class="btn-pill active" id="btnDiceSpeed_normal" onclick="setDiceSpeed('normal')">متوازن</button>
+                              <button class="btn-pill" id="btnDiceSpeed_fast" onclick="setDiceSpeed('fast')">سريع</button>
+                              <button class="btn-pill" id="btnDiceSpeed_v_fast" onclick="setDiceSpeed('v_fast')">فائق السرعة</button>
                           </div>
                       </div>
-                      <button class="btn-m btn-gold" style="width:100%;margin-top:4px;" onclick="openAboutModal()">ℹ️ من نحن (عن التطبيق)</button>
+                      <div class="settings-section">
+                          <div class="settings-label">🏃 سرعة مشي الرمز:</div>
+                          <div class="row-opts">
+                              <button class="btn-pill" id="btnMoveSpeed_v_slow" onclick="setMoveSpeed('v_slow')">بطيء جداً</button>
+                              <button class="btn-pill" id="btnMoveSpeed_slow" onclick="setMoveSpeed('slow')">بطيء</button>
+                              <button class="btn-pill active" id="btnMoveSpeed_normal" onclick="setMoveSpeed('normal')">متوازن</button>
+                              <button class="btn-pill" id="btnMoveSpeed_fast" onclick="setMoveSpeed('fast')">سريع</button>
+                              <button class="btn-pill" id="btnMoveSpeed_v_fast" onclick="setMoveSpeed('v_fast')">فائق السرعة</button>
+                          </div>
+                      </div>
+                      <div class="settings-section">
+                          <div class="settings-label">🔊 المؤثرات الصوتية:</div>
+                          <div class="row-opts">
+                              <button class="btn-pill active" id="btnSoundOn" onclick="setSound(true)">مفعل 🔊</button>
+                              <button class="btn-pill" id="btnSoundOff" onclick="setSound(false)">كتم 🔇</button>
+                          </div>
+                      </div>
+                      <div class="settings-section">
+                          <div class="settings-label">👥 نمط اللعب:</div>
+                          <div class="row-opts">
+                              <button class="btn-pill active" id="txtMode" onclick="toggleMode()">لاعب ضد الصقر (الذكاء)</button>
+                          </div>
+                      </div>
+                      <button class="btn btn-red" style="width:100%; margin-top:8px;" onclick="restartGame()">🔄 إعادة بدء اللعبة من جديد</button>
                   </div>
-                  <div class="modal-actions"><button class="btn-m btn-gray" onclick="closeSettingsModal()">إغلاق</button></div>
               </div>
           </div>
-
-          <!-- About Us Modal -->
-          <div id="aboutModal" class="modal-overlay">
-              <div class="modal-card" style="border-color:var(--gold);">
-                  <div class="modal-hdr" style="background:#D97706;">ℹ️ من نحن</div>
-                  <div class="modal-body" style="padding:16px 0;">
-                      <div style="font-size:1.5rem;margin-bottom:6px;">👑 🎲</div>
-                      <div style="font-size:1.15rem;font-weight:bold;color:var(--gold-lt);">تصميم وبرمجة عمار الهلالي</div>
-                      <div style="font-size:0.75rem;color:#94A3B8;margin-top:6px;">Monopoly Arabia • بنك الحظ الملكي</div>
+          
+          <div class="modal-overlay" id="aboutModal">
+              <div class="modal-card">
+                  <div class="modal-header">
+                      <div class="modal-title">ℹ️ حول اللعبة</div>
+                      <div style="font-size:1.2rem; cursor:pointer;" onclick="closeAboutModal()">✕</div>
                   </div>
-                  <div class="modal-actions"><button class="btn-m btn-gold" onclick="closeAboutModal()">إغلاق ❌</button></div>
+                  <div class="modal-body" style="text-align:center;">
+                      <div style="font-size:2.4rem; margin-bottom:8px;">🎲👑</div>
+                      <div style="font-size:1.15rem; font-weight:900; color:var(--gold); margin-bottom:4px;">مونوبولي العرب • بنك الحظ الملكي</div>
+                      <div style="font-size:0.8rem; color:var(--dim); margin-bottom:14px;">الإصدار 1.0.0 (Arabic Monopoly Edition)</div>
+                      <div style="background:rgba(245,158,11,0.1); border:1px solid var(--gold); border-radius:10px; padding:10px; font-weight:bold; color:var(--gold-lt);">
+                          تصميم وبرمجة عمار الهلالي
+                      </div>
+                      <p style="font-size:0.75rem; color:var(--dim); margin-top:12px;">تجربة عربية استراتيجية متكاملة للمنافسة وشراء العقارات وبنك الحظ بنظام تحكيم آلي وسرعات تحكم مرنة.</p>
+                  </div>
               </div>
           </div>
-
+          
           <script>
+          const RAW_TILES = [
+          [0,"انطلق","GO","go","",0,0,"#10B981","🏁"],[1,"شارع المعز","Al-Muizz St","property","brown",60,6,"#8B4513",""],[2,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],[3,"خان الخليلي","Khan El-Khalili","property","brown",60,6,"#8B4513",""],[4,"ضريبة الدخل","Income Tax","tax","",200,0,"#EF4444","💰"],[5,"قطار الحجاز","Hejaz Rail","railroad","",200,25,"#64748B","🚂"],[6,"شارع الحمراء","Hamra St","property","lightblue",100,10,"#38BDF8",""],[7,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],[8,"الروشة","Raouche","property","lightblue",100,10,"#38BDF8",""],[9,"وسط بيروت","Downtown","property","lightblue",120,12,"#38BDF8",""],[10,"السجن / زيارة","Jail","jail","",0,0,"#6B7280","🚔"],[11,"باب توما","Bab Touma","property","pink",140,14,"#EC4899",""],[12,"شركة الكهرباء","Electric Co","utility","",150,0,"#EAB308","💡"],[13,"الصالحية","Salhiyeh","property","pink",140,14,"#EC4899",""],[14,"سوق الحميدية","Hamidiyah","property","pink",160,16,"#EC4899",""],[15,"قطار الحرمين","Haramain Rail","railroad","",200,25,"#64748B","🚂"],[16,"شارع الرشيد","Al-Rasheed St","property","orange",180,18,"#F97316",""],[17,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],[18,"المنصور","Mansour","property","orange",180,18,"#F97316",""],[19,"الكرادة","Karrada","property","orange",200,20,"#F97316",""],[20,"مواقف مجانية","Free Parking","parking","",0,0,"#10B981","🅿️"],[21,"شارع النيل","Nile Street","property","red",220,22,"#EF4444",""],[22,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],[23,"المقرن","Al-Mogran","property","red",220,22,"#EF4444",""],[24,"حي الرياض","Riyadh Dist","property","red",240,24,"#EF4444",""],[25,"قطار المشرق","Mashreq Rail","railroad","",200,25,"#64748B","🚂"],[26,"شارع العليا","Olaya St","property","yellow",260,26,"#EAB308",""],[27,"طريق الملك فهد","King Fahd Rd","property","yellow",260,26,"#EAB308",""],[28,"شركة المياه","Water Works","utility","",150,0,"#06B6D4","💧"],[29,"حي النخيل","Al-Nakheel","property","yellow",280,28,"#EAB308",""],[30,"إلى السجن!","Go to Jail","gotojail","",0,0,"#DC2626","🚨"],[31,"الكورنيش","Corniche","property","green",300,30,"#22C55E",""],[32,"اللؤلؤة","The Pearl","property","green",300,30,"#22C55E",""],[33,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],[34,"لوسيل","Lusail","property","green",320,32,"#22C55E",""],[35,"قطار الخليج","Gulf Rail","railroad","",200,25,"#64748B","🚂"],[36,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],[37,"شارع الشيخ زايد","Sheikh Zayed","property","darkblue",350,35,"#1E40AF",""],[38,"ضريبة الرفاهية","Luxury Tax","tax","",100,0,"#EF4444","💎"],[39,"برج خليفة","Burj Khalifa","property","darkblue",400,50,"#1E40AF",""]
+          ];
+          
+          const BOARD_TILES = RAW_TILES.map(r => ({ id:r[0], nameAr:r[1], nameEn:r[2], type:r[3], group:r[4], price:r[5], rent:r[6], color:r[7], icon:r[8], owner:undefined, mortgaged:false }));
+          
           const I18N = {
-              ar: { app:"مونوبولي العرب", ai:"🤖 ضد الكمبيوتر", pvp:"👥 لاعبان محلياً", roll:"ارمِ النرد", tot:"المجموع:", p:"عقارات:", m:"مرهون:", turn:"دورك الآن", opp:"دور الخصم", dbl:"✨ متطابقان! رمية إضافية.", passGo:"💰 مر بخانة انطلق وجمع 200$!", trainGo:"🚆 أنهى جولة بالسفر السريع وحصل على 200$!", trainNoGo:"🚆 سافر متجاوزاً خط البداية عبر القطار (بدون 200$)." },
-              en: { app:"Monopoly Arabia", ai:"🤖 vs Computer", pvp:"👥 2 Players Local", roll:"Roll Dice", tot:"Total:", p:"Props:", m:"Mortgaged:", turn:"Your Turn", opp:"Opponent's Turn", dbl:"✨ Doubles! Roll again.", passGo:"💰 Passed GO, collected $200!", trainGo:"🚆 Fast traveled before GO & collected $200!", trainNoGo:"🚆 Fast traveled past GO (no $200 bonus)." }
+              ar: { app:"مونوبولي العرب", turn:"دورك", opp:"دور الخصم", roll:"ارمي النرد", buy:"شراء", auction:"مزاد علني", trade:"مقايضة", myProps:"عقاراتي", passGo:"مررت بنقطة الانطلاق وحصلت على 200$!", jailed:"أنت في السجن!", finePaid:"دفعت 50$ كفالة وخرجت من السجن.", doublesJail:"مبروك! نرد متطابق وخرجت من السجن!", rolled:"حصلت على", rentPaid:"دفعت إيجاراً قدره", to:"إلى", deedFor:"عقار متاح للشراء", p:"عقارات", m:"مرهون", ai:"لاعب ضد الصقر (الذكاء)", pvp:"لاعب ضد لاعب (محلي)" },
+              en: { app:"Monopoly Arabia", turn:"Your Turn", opp:"Opponent's Turn", roll:"Roll Dice", buy:"Buy", auction:"Auction", trade:"Trade", myProps:"My Properties", passGo:"Passed GO! Collected 200$!", jailed:"In Jail!", finePaid:"Paid 50$ fine and exited jail.", doublesJail:"Doubles rolled! Exited jail freely!", rolled:"Rolled", rentPaid:"Paid rent of", to:"to", deedFor:"Property available for purchase", p:"Props", m:"Mortgaged", ai:"Player vs Falcon (AI)", pvp:"2 Players (Pass & Play)" }
           };
-
+          
           const AudioFX = {
-              ctx: null, enabled: true,
-              init() { if (!this.ctx) { const AC = window.AudioContext || window.webkitAudioContext; if (AC) this.ctx = new AC(); } },
-              play(t) {
-                  if (!this.enabled) return; this.init(); if (!this.ctx) return;
-                  const now = this.ctx.currentTime, osc = this.ctx.createOscillator(), g = this.ctx.createGain();
+              ctx: null,
+              enabled: true,
+              init() { if (!this.ctx) { const AudioContext = window.AudioContext || window.webkitAudioContext; if (AudioContext) this.ctx = new AudioContext(); } },
+              play(type) {
+                  if (!this.enabled) return;
+                  this.init();
+                  if (!this.ctx) return;
+                  if (this.ctx.state === 'suspended') this.ctx.resume();
+                  const t = this.ctx.currentTime;
+                  const osc = this.ctx.createOscillator();
+                  const g = this.ctx.createGain();
                   osc.connect(g); g.connect(this.ctx.destination);
-                  if (t === 'roll') { osc.type = 'triangle'; osc.frequency.setValueAtTime(160, now); osc.frequency.exponentialRampToValueAtTime(45, now+0.15); g.gain.setValueAtTime(0.25, now); g.gain.linearRampToValueAtTime(0.01, now+0.15); osc.start(now); osc.stop(now+0.15); }
-                  else if (t === 'step') { osc.type = 'sine'; osc.frequency.setValueAtTime(420, now); g.gain.setValueAtTime(0.12, now); g.gain.linearRampToValueAtTime(0.01, now+0.05); osc.start(now); osc.stop(now+0.05); }
-                  else if (t === 'cash') { osc.type = 'sine'; osc.frequency.setValueAtTime(587, now); osc.frequency.setValueAtTime(880, now+0.07); g.gain.setValueAtTime(0.2, now); g.gain.linearRampToValueAtTime(0.01, now+0.22); osc.start(now); osc.stop(now+0.22); }
-                  else if (t === 'jail') { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(130, now); osc.frequency.linearRampToValueAtTime(65, now+0.28); g.gain.setValueAtTime(0.25, now); g.gain.linearRampToValueAtTime(0.01, now+0.28); osc.start(now); osc.stop(now+0.28); }
-                  else if (t === 'win') { osc.type = 'triangle'; osc.frequency.setValueAtTime(440, now); osc.frequency.setValueAtTime(659, now+0.2); g.gain.setValueAtTime(0.28, now); g.gain.linearRampToValueAtTime(0.01, now+0.5); osc.start(now); osc.stop(now+0.5); }
+                  if (type === 'dice') {
+                      osc.type = 'triangle';
+                      osc.frequency.setValueAtTime(140, t);
+                      osc.frequency.exponentialRampToValueAtTime(40, t + 0.15);
+                      g.gain.setValueAtTime(0.25, t);
+                      g.gain.linearRampToValueAtTime(0.01, t + 0.15);
+                      osc.start(t); osc.stop(t + 0.15);
+                  } else if (type === 'step') {
+                      osc.type = 'sine';
+                      osc.frequency.setValueAtTime(480, t);
+                      g.gain.setValueAtTime(0.12, t);
+                      g.gain.linearRampToValueAtTime(0.01, t + 0.06);
+                      osc.start(t); osc.stop(t + 0.06);
+                  } else if (type === 'cash') {
+                      osc.type = 'sine';
+                      osc.frequency.setValueAtTime(587.33, t);
+                      osc.frequency.setValueAtTime(880, t + 0.08);
+                      g.gain.setValueAtTime(0.2, t);
+                      g.gain.linearRampToValueAtTime(0.01, t + 0.25);
+                      osc.start(t); osc.stop(t + 0.25);
+                  } else if (type === 'jail') {
+                      osc.type = 'sawtooth';
+                      osc.frequency.setValueAtTime(180, t);
+                      osc.frequency.linearRampToValueAtTime(80, t + 0.35);
+                      g.gain.setValueAtTime(0.25, t);
+                      g.gain.linearRampToValueAtTime(0.01, t + 0.35);
+                      osc.start(t); osc.stop(t + 0.35);
+                  }
               }
           };
-
-          const RAW_TILES = [
-              [0,"انطلق","GO","go","",0,0,"#10B981","🏁"],[1,"شارع المعز","Al-Muizz St","property","brown",60,6,"#8B4513",""],[2,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],[3,"خان الخليلي","Khan El-Khalili","property","brown",60,6,"#8B4513",""],[4,"ضريبة الدخل","Income Tax","tax","",200,0,"#EF4444","💰"],[5,"قطار الحجاز","Hejaz Rail","railroad","",200,25,"#64748B","🚂"],[6,"شارع الحمراء","Hamra St","property","lightblue",100,10,"#38BDF8",""],[7,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],[8,"الروشة","Raouche","property","lightblue",100,10,"#38BDF8",""],[9,"وسط بيروت","Downtown","property","lightblue",120,12,"#38BDF8",""],[10,"السجن / زيارة","Jail","jail","",0,0,"#6B7280","🚔"],[11,"باب توما","Bab Touma","property","pink",140,14,"#EC4899",""],[12,"شركة الكهرباء","Electric Co","utility","",150,0,"#EAB308","💡"],[13,"الصالحية","Salhiyeh","property","pink",140,14,"#EC4899",""],[14,"سوق الحميدية","Hamidiyah","property","pink",160,16,"#EC4899",""],[15,"قطار الحرمين","Haramain Rail","railroad","",200,25,"#64748B","🚂"],[16,"شارع الرشيد","Al-Rasheed St","property","orange",180,18,"#F97316",""],[17,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],[18,"المنصور","Mansour","property","orange",180,18,"#F97316",""],[19,"الكرادة","Karrada","property","orange",200,20,"#F97316",""],[20,"مواقف مجانية","Free Parking","parking","",0,0,"#10B981","🅿️"],[21,"شارع النيل","Nile Street","property","red",220,22,"#EF4444",""],[22,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],[23,"المقرن","Al-Mogran","property","red",220,22,"#EF4444",""],[24,"حي الرياض","Riyadh Dist","property","red",240,24,"#EF4444",""],[25,"قطار المشرق","Mashreq Rail","railroad","",200,25,"#64748B","🚂"],[26,"شارع العليا","Olaya St","property","yellow",260,26,"#EAB308",""],[27,"طريق الملك فهد","King Fahd Rd","property","yellow",260,26,"#EAB308",""],[28,"شركة المياه","Water Works","utility","",150,0,"#06B6D4","💧"],[29,"حي النخيل","Al-Nakheel","property","yellow",280,28,"#EAB308",""],[30,"إلى السجن!","Go to Jail","gotojail","",0,0,"#DC2626","🚨"],[31,"الكورنيش","Corniche","property","green",300,30,"#22C55E",""],[32,"اللؤلؤة","The Pearl","property","green",300,30,"#22C55E",""],[33,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],[34,"لوسيل","Lusail","property","green",320,32,"#22C55E",""],[35,"قطار الخليج","Gulf Rail","railroad","",200,25,"#64748B","🚂"],[36,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],[37,"شارع الشيخ زايد","Sheikh Zayed","property","darkblue",350,35,"#1E40AF",""],[38,"ضريبة الرفاهية","Luxury Tax","tax","",100,0,"#EF4444","💎"],[39,"برج خليفة","Burj Khalifa","property","darkblue",400,50,"#1E40AF",""]
-          ];
-
-          const BOARD_TILES = RAW_TILES.map(r => ({ id:r[0], nameAr:r[1], nameEn:r[2], type:r[3], group:r[4], price:r[5], rent:r[6], color:r[7], icon:r[8], owner:undefined, mortgaged:false }));
-
-          const CHANCE_CARDS = [
-              { textAr: "فزت بجائزة يانصيب كبرى! استلم 150$", textEn: "Won Lottery! Collect $150", amount: 150 },
-              { textAr: "غرامة تجاوز السرعة المقررة. ادفع 50$", textEn: "Speeding fine. Pay $50", amount: -50 },
-              { textAr: "أرباح أسهم تجارية ممتازة! استلم 100$", textEn: "Stock dividends! Collect $100", amount: 100 },
-              { textAr: "رسوم تجديد رخصة القيادة. ادفع 50$", textEn: "License fee. Pay $50", amount: -50 },
-              { textAr: "تقدم مباشرة إلى خانة انطلق واجمع 200$!", textEn: "Advance to GO, collect $200!", action: "go" },
-              { textAr: "ارتكبت مخالفة جسيمة! اذهب إلى السجن فوراً!", textEn: "Go directly to Jail!", action: "jail" }
-          ];
-
-          const CHEST_CARDS = [
-              { textAr: "استرداد ضريبي غير متوقع! استلم 100$", textEn: "Tax refund! Collect $100", amount: 100 },
-              { textAr: "تكاليف علاج بالمستشفى. ادفع 100$", textEn: "Hospital bills. Pay $100", amount: -100 },
-              { textAr: "هدية عيد ميلاد من الأصدقاء! استلم 50$", textEn: "Birthday gift! Collect $50", amount: 50 },
-              { textAr: "أقساط تأمين مستحقة. ادفع 50$", textEn: "Insurance fee. Pay $50", amount: -50 },
-              { textAr: "مبروك! فزت بالمركز الثاني في مسابقة تجارية، استلم 100$", textEn: "Contest prize! Collect $100", amount: 100 }
-          ];
-
-          const AVATARS = ["🦁","🦅","👑","🏎️","🐪","🚀","⛵","💎"];
-
+          
           const Game = {
-              lang:'ar', mode:'ai', turn:0, isBusy:false, doublesInRow:0, diceSpeed:'balanced', moveSpeed:'balanced', propStyle:'glow',
-              pendingTile:null, pendingCard:null, tradeData:null, auction:null,
+              lang: 'ar',
+              propStyle: 'glow',
+              diceSpeed: 'normal',
+              moveSpeed: 'normal',
+              mode: 'ai',
+              turn: 0,
+              doublesInRow: 0,
+              isRolling: false,
+              pendingTile: null,
+              auction: null,
+              tradeData: null,
               players: [
-                  { id:0, nameAr:"اللاعب 1", nameEn:"Player 1", avatar:"🦁", money:1500, pos:0, inJail:false, jailTurns:0, props:[] },
-                  { id:1, nameAr:"الصقر (الذكاء)", nameEn:"Falcon (AI)", avatar:"🦅", money:1500, pos:0, inJail:false, jailTurns:0, props:[] }
+                  { id:0, nameAr:"الملك (أنت)", nameEn:"King (You)", avatar:"👑", color:"#EF4444", money:1500, pos:0, inJail:false, jailTurns:0, props:[] },
+                  { id:1, nameAr:"الصقر (الذكاء)", nameEn:"Falcon (AI)", avatar:"🦅", color:"#38BDF8", money:1500, pos:0, inJail:false, jailTurns:0, props:[] }
               ]
           };
-
+          
           function getGridCoords(i) {
               if (i === 0) return { r: 11, c: 11 };
               if (i >= 1 && i <= 9) return { r: 11, c: 11 - i };
@@ -648,24 +658,24 @@ jobs:
               if (i >= 31 && i <= 39) return { r: 1 + (i - 30), c: 11 };
               return { r: 11, c: 11 };
           }
-
+          
           function renderBoard() {
               const boardEl = document.getElementById("board");
               BOARD_TILES.forEach((tile, index) => {
                   const coords = getGridCoords(index);
                   const tileDiv = document.createElement("div");
                   tileDiv.id = "tile-" + index;
-
+          
                   let side = "side-bottom";
                   if (index >= 11 && index <= 19) side = "side-left";
                   else if (index >= 20 && index <= 30) side = "side-top";
                   else if (index >= 31 && index <= 39) side = "side-right";
                   tileDiv.className = "tile " + side + ([0, 10, 20, 30].includes(index) ? " corner-tile corner-" + index : "");
-
+          
                   tileDiv.style.gridRow = coords.r;
                   tileDiv.style.gridColumn = coords.c;
                   tileDiv.onclick = () => onTileClicked(index);
-
+          
                   let h = "";
                   if (tile.type === "property") {
                       h += `<div class="tile-bar" style="background:${tile.color}"></div><div class="tile-cnt"><div class="tile-name" id="tName-${index}">${Game.lang==='ar'?tile.nameAr:tile.nameEn}</div><div class="tile-price">${tile.price}$</div></div>`;
@@ -680,20 +690,41 @@ jobs:
               });
               updatePawns();
           }
-
-          function updatePawns() {
-              document.querySelectorAll(".tile-pawns").forEach(el => el.innerHTML = "");
+          
+          let pawnEl0 = null, pawnEl1 = null;
+          function getPawnEl(id) {
+              if (id === 0) {
+                  if (!pawnEl0) { pawnEl0 = document.createElement("div"); pawnEl0.id = "pawn-p0"; pawnEl0.className = "pawn pawn-p0"; }
+                  pawnEl0.innerText = Game.players[0].avatar;
+                  return pawnEl0;
+              } else {
+                  if (!pawnEl1) { pawnEl1 = document.createElement("div"); pawnEl1.id = "pawn-p1"; pawnEl1.className = "pawn pawn-p1"; }
+                  pawnEl1.innerText = Game.players[1].avatar;
+                  return pawnEl1;
+              }
+          }
+          
+          function updatePawns(movingId = null) {
+              if (movingId !== null) {
+                  const p = Game.players[movingId];
+                  const el = getPawnEl(movingId);
+                  const target = document.getElementById("pawns-" + p.pos);
+                  if (target && el.parentElement !== target) {
+                      target.appendChild(el);
+                      el.classList.add("moving-step");
+                      setTimeout(() => el.classList.remove("moving-step"), 110);
+                  }
+                  return;
+              }
               Game.players.forEach(p => {
-                  const c = document.getElementById("pawns-" + p.pos);
-                  if (c) {
-                      const el = document.createElement("div");
-                      el.className = `pawn pawn-p${p.id}`;
-                      el.innerText = p.avatar;
-                      c.appendChild(el);
+                  const el = getPawnEl(p.id);
+                  const target = document.getElementById("pawns-" + p.pos);
+                  if (target && el.parentElement !== target) {
+                      target.appendChild(el);
                   }
               });
           }
-
+          
           function updateUI() {
               const p0 = Game.players[0], p1 = Game.players[1];
               document.getElementById("cashP0").innerText = p0.money + "$";
@@ -704,25 +735,24 @@ jobs:
               document.getElementById("propsP1").innerText = `${I18N[Game.lang].p} ${p1.props.length}`;
               document.getElementById("mortP0").innerText = m0 > 0 ? `(${I18N[Game.lang].m} ${m0})` : "";
               document.getElementById("mortP1").innerText = m1 > 0 ? `(${I18N[Game.lang].m} ${m1})` : "";
-
+          
               document.getElementById("pCard0").className = "p-card" + (Game.turn === 0 ? " active" : "");
               document.getElementById("pCard1").className = "p-card" + (Game.turn === 1 ? " active" : "");
               document.getElementById("turnBadge0").style.display = Game.turn === 0 ? "block" : "none";
               document.getElementById("turnBadge1").style.display = Game.turn === 1 ? "block" : "none";
               document.getElementById("turnBadge0").innerText = I18N[Game.lang].turn;
               document.getElementById("turnBadge1").innerText = I18N[Game.lang].opp;
-
+          
               const cur = Game.players[Game.turn];
               document.getElementById("turnAnnouncer").innerText = `${I18N[Game.lang].turn}: ${cur.avatar} ${Game.lang==='ar'?cur.nameAr:cur.nameEn}`;
               document.getElementById("avP0").innerText = p0.avatar;
               document.getElementById("avP1").innerText = p1.avatar;
               document.getElementById("nameP0").innerText = Game.lang==='ar'?p0.nameAr:p0.nameEn;
               document.getElementById("nameP1").innerText = Game.lang==='ar'?p1.nameAr:p1.nameEn;
-
+          
               updateBoardVisual();
-              updatePawns();
           }
-
+          
           function updateBoardVisual() {
               BOARD_TILES.forEach(t => {
                   const el = document.getElementById("tile-" + t.id);
@@ -730,7 +760,7 @@ jobs:
                   el.classList.remove("owned-glow","owned-tint","owned-border");
                   const b = el.querySelector(".tile-owner-badge"); if (b) b.remove();
                   const mb = el.querySelector(".tile-mortgaged-badge"); if (mb) mb.remove();
-
+          
                   if (t.owner !== undefined) {
                       const owner = Game.players[t.owner];
                       el.style.color = t.owner === 0 ? "var(--p0)" : "var(--p1)";
@@ -746,255 +776,272 @@ jobs:
                   } else { el.style.color = ""; }
               });
           }
-
+          
           function logEvent(msg) {
-              const el = document.getElementById("eventLog");
-              const e = document.createElement("div"); e.className = "log-entry"; e.innerText = msg;
-              el.prepend(e);
+              const el = document.getElementById("gameLog");
+              el.innerText = msg;
           }
-
-          const ROT = { 1:{x:0,y:0}, 2:{x:0,y:90}, 3:{x:-90,y:0}, 4:{x:0,y:-90}, 5:{x:90,y:0}, 6:{x:0,y:180} };
-
-          function setCube(c, n) { c.style.transform = `rotateX(${ROT[n].x}deg) rotateY(${ROT[n].y}deg)`; }
-
-          function startPlayerTurn() {
-              if (Game.isBusy) return;
+          
+          function rollDice() {
+              if (Game.isRolling) return;
               const cur = Game.players[Game.turn];
-              if (Game.mode === 'ai' && Game.turn === 1) {
-                  document.getElementById("btnRoll").disabled = true;
-                  setTimeout(handleAITurn, 800);
-                  return;
-              }
-              document.getElementById("btnRoll").disabled = false;
-              if (cur.inJail) { openJailModal(cur); return; }
-              if (checkAllRailroads(cur.id)) { openFastTravelModal(cur); }
-          }
-
-          function handleRollClick() {
-              if (Game.isBusy) return;
-              if (Game.mode === 'ai' && Game.turn === 1) return;
-              executeRoll();
-          }
-
-          function executeRoll() {
-              Game.isBusy = true;
+              if (cur.inJail) { openJailModal(); return; }
+          
+              Game.isRolling = true;
               document.getElementById("btnRoll").disabled = true;
-              const cur = Game.players[Game.turn];
-              AudioFX.play('roll');
-              const c1 = document.getElementById("die1"), c2 = document.getElementById("die2");
-              c1.classList.add("rolling"); c2.classList.add("rolling");
-              const dur = Game.diceSpeed === "v_slow" ? 1400 : (Game.diceSpeed === "slow" ? 900 : (Game.diceSpeed === "fast" ? 280 : (Game.diceSpeed === "v_fast" ? 100 : 500)));
-
+          
+              const d0 = document.getElementById("die0");
+              const d1 = document.getElementById("die1");
+              d0.classList.add("rolling");
+              d1.classList.add("rolling");
+              AudioFX.play('dice');
+          
+              const dur = Game.diceSpeed === "v_slow" ? 1400 : (Game.diceSpeed === "slow" ? 900 : (Game.diceSpeed === "fast" ? 250 : (Game.diceSpeed === "v_fast" ? 100 : 500)));
               setTimeout(() => {
-                  c1.classList.remove("rolling"); c2.classList.remove("rolling");
-                  const d1 = Math.floor(Math.random() * 6) + 1, d2 = Math.floor(Math.random() * 6) + 1;
-                  setCube(c1, d1); setCube(c2, d2);
-                  const sum = d1 + d2, isDbl = (d1 === d2);
-                  const b = document.getElementById("diceSumBadge");
-                  b.innerText = `${I18N[Game.lang].tot} ${sum}`;
-                  b.style.transform = "scale(1.2)"; setTimeout(() => b.style.transform = "scale(1)", 180);
-
-                  logEvent(`🎲 ${Game.lang==='ar'?cur.nameAr:cur.nameEn} (${d1} + ${d2} = ${sum})${isDbl?" [متطابقان!]":""}`);
-
-                  if (cur.inJail) {
-                      if (isDbl) {
-                          cur.inJail = false; cur.jailTurns = 0; logEvent("🔓 متطابقان! خرج من السجن.");
-                          moveSteps(cur, sum, false);
-                      } else {
-                          cur.jailTurns--;
-                          if (cur.jailTurns <= 0) {
-                              cur.money -= 50; cur.inJail = false; logEvent("💸 دفع 50$ كفالة وخرج من السجن.");
-                              moveSteps(cur, sum, false);
-                          } else {
-                              logEvent("🔒 لم تتطابق الأرقام. تبقى في السجن."); finishTurn(false);
-                          }
-                      }
-                      return;
-                  }
-
+                  d0.classList.remove("rolling");
+                  d1.classList.remove("rolling");
+          
+                  const val0 = Math.floor(Math.random() * 6) + 1;
+                  const val1 = Math.floor(Math.random() * 6) + 1;
+                  setDieFace(d0, val0);
+                  setDieFace(d1, val1);
+          
+                  const sum = val0 + val1;
+                  const isDbl = (val0 === val1);
+                  logEvent(`${cur.avatar} ${I18N[Game.lang].rolled} ${sum} (${val0}+${val1})${isDbl ? " 🔥 متطابق!" : ""}`);
+          
                   if (isDbl) {
                       Game.doublesInRow++;
-                      if (Game.doublesInRow === 3) {
+                      if (Game.doublesInRow >= 3) {
+                          Game.doublesInRow = 0;
                           logEvent("🚔 3 رميات متطابقة! أُرسل إلى السجن.");
                           sendToJail(cur); finishTurn(false); return;
                       }
                   } else { Game.doublesInRow = 0; }
-
+          
                   moveSteps(cur, sum, isDbl);
               }, dur);
           }
-
+          
+          function setDieFace(dieEl, val) {
+              const rot = {
+                  1: "rotateX(0deg) rotateY(0deg)",
+                  6: "rotateY(180deg)",
+                  2: "rotateY(90deg)",
+                  5: "rotateY(-90deg)",
+                  3: "rotateX(-90deg)",
+                  4: "rotateX(90deg)"
+              };
+              dieEl.style.transform = rot[val];
+          }
+          
           function moveSteps(player, steps, isDbl) {
               let rem = steps;
               const iv = Game.moveSpeed === "v_slow" ? 350 : (Game.moveSpeed === "slow" ? 200 : (Game.moveSpeed === "fast" ? 60 : (Game.moveSpeed === "v_fast" ? 20 : 120)));
               const t = setInterval(() => {
                   player.pos = (player.pos + 1) % 40;
                   AudioFX.play('step');
-                  updatePawns();
+                  updatePawns(player.id);
                   if (player.pos === 0) {
-                      player.money += 200; AudioFX.play('cash'); logEvent(I18N[Game.lang].passGo); updateUI();
+                      player.money += 200;
+                      AudioFX.play('cash');
+                      logEvent(I18N[Game.lang].passGo);
+                      document.getElementById("cashP0").innerText = Game.players[0].money + "$";
+                      document.getElementById("cashP1").innerText = Game.players[1].money + "$";
                   }
                   rem--;
                   if (rem <= 0) {
                       clearInterval(t);
-                      setTimeout(() => handleLanding(player, isDbl), 180);
+                      setTimeout(() => handleLanding(player, isDbl), 160);
                   }
               }, iv);
           }
-
+          
           function handleLanding(player, isDbl) {
               const tile = BOARD_TILES[player.pos];
               updateUI();
-
-              if (tile.type === "property" || tile.type === "railroad" || tile.type === "utility") {
+          
+              if (tile.type === "gotojail") {
+                  sendToJail(player); finishTurn(false); return;
+              }
+          
+              if (tile.type === "tax") {
+                  player.money = Math.max(0, player.money - tile.price);
+                  AudioFX.play('cash');
+                  logEvent(`💸 ${player.avatar} دفع ${tile.price}$ (${Game.lang==='ar'?tile.nameAr:tile.nameEn}).`);
+                  updateUI(); finishTurn(isDbl); return;
+              }
+          
+              if (tile.type === "chance" || tile.type === "chest") {
+                  handleCard(player, tile.type, isDbl); return;
+              }
+          
+              if (["property", "railroad", "utility"].includes(tile.type)) {
                   if (tile.owner === undefined) {
-                      if (player.id === 1 && Game.mode === 'ai') {
-                          if (player.money >= tile.price + 100 || (checkMonopolyPot(1, tile.group) && player.money >= tile.price)) {
-                              buyProp(player, tile, tile.price); finishTurn(isDbl);
-                          } else {
-                              Game.pendingTile = { tile, isDbl }; startPropertyAuction();
-                          }
+                      if (player.id === 0) {
+                          promptBuyProperty(tile, isDbl);
                       } else {
-                          openDeedModal(tile, isDbl);
+                          handleAIBuyDecision(player, tile, isDbl);
                       }
                       return;
                   } else if (tile.owner !== player.id) {
-                      const owner = Game.players[tile.owner];
                       if (!tile.mortgaged) {
-                          let r = tile.rent || 10;
-                          if (tile.type === "property" && checkMonopoly(tile.owner, tile.group)) r *= 2;
-                          else if (tile.type === "railroad") { const c = countRailroads(tile.owner); r = 25 * Math.pow(2, c - 1); }
-                          player.money -= r; owner.money += r; AudioFX.play('cash');
-                          logEvent(`💸 دفع ${Game.lang==='ar'?player.nameAr:player.nameEn} ${r}$ إيجاراً إلى ${Game.lang==='ar'?owner.nameAr:owner.nameEn} في (${Game.lang==='ar'?tile.nameAr:tile.nameEn}).`);
-                          checkDeficit(player);
+                          const rent = calculateRent(tile);
+                          player.money -= rent;
+                          Game.players[tile.owner].money += rent;
+                          AudioFX.play('cash');
+                          logEvent(`🏷️ دفع ${player.avatar} ${rent}$ إيجار إلى ${Game.players[tile.owner].avatar} (${Game.lang==='ar'?tile.nameAr:tile.nameEn}).`);
+                          updateUI();
                       } else {
-                          logEvent(`🏠 عقار (${Game.lang==='ar'?tile.nameAr:tile.nameEn}) مَرْهُون.`);
+                          logEvent(`العقار (${Game.lang==='ar'?tile.nameAr:tile.nameEn}) مَرْهُون، معفى من الإيجار.`);
                       }
                       finishTurn(isDbl); return;
                   } else {
-                      logEvent(`🏠 ${Game.lang==='ar'?player.nameAr:player.nameEn} في ملكيته الخاصة.`);
-                      finishTurn(isDbl); return;
+                      if (tile.type === "railroad") {
+                          promptRailroadFastTravel(player, tile, isDbl); return;
+                      }
                   }
               }
-
-              if (tile.type === "tax") {
-                  player.money -= tile.price; AudioFX.play('jail');
-                  logEvent(`🚨 دفع ${player.price}$ (${Game.lang==='ar'?tile.nameAr:tile.nameEn}).`);
-                  checkDeficit(player); finishTurn(isDbl); return;
-              }
-              if (tile.type === "gotojail") {
-                  logEvent("🚨 إلى السجن فوراً!"); sendToJail(player); finishTurn(false); return;
-              }
-              if (tile.type === "chance" || tile.type === "chest") {
-                  const d = tile.type === "chance" ? CHANCE_CARDS : CHEST_CARDS;
-                  const c = d[Math.floor(Math.random() * d.length)];
-                  if (player.id === 1 && Game.mode === 'ai') { applyCard(player, c); finishTurn(isDbl); }
-                  else { openCardModal(tile.type === "chance" ? "❓ فرصة" : "📦 صندوق الجماعة", c, isDbl); }
-                  return;
+          
+              finishTurn(isDbl);
+          }
+          
+          function promptRailroadFastTravel(player, currentTile, isDbl) {
+              const otherRails = BOARD_TILES.filter(t => t.type === "railroad" && t.id !== currentTile.id && t.owner === player.id);
+              if (otherRails.length === 0 || player.money < 200) { finishTurn(isDbl); return; }
+          
+              if (player.id === 0) {
+                  const dest = otherRails[0];
+                  if (confirm(`🚂 هل ترغب بالسفر السريع إلى (${Game.lang==='ar'?dest.nameAr:dest.nameEn}) مقابل 200$؟`)) {
+                      player.money -= 200;
+                      player.pos = dest.id;
+                      AudioFX.play('step');
+                      updatePawns(player.id);
+                      updateUI();
+                      logEvent(`🚂 سافر الملك سريعاً إلى ${Game.lang==='ar'?dest.nameAr:dest.nameEn} مقابل 200$.`);
+                  }
               }
               finishTurn(isDbl);
           }
-
-          function openJailModal(player) {
-              document.getElementById("jailRemainingTurns").innerText = player.jailTurns;
-              document.getElementById("jailModal").classList.add("show");
+          
+          function calculateRent(tile) {
+              if (tile.type === "railroad") {
+                  const cnt = BOARD_TILES.filter(t => t.type === "railroad" && t.owner === tile.owner).length;
+                  return 25 * Math.pow(2, cnt - 1);
+              }
+              if (tile.type === "utility") {
+                  const cnt = BOARD_TILES.filter(t => t.type === "utility" && t.owner === tile.owner).length;
+                  return cnt === 2 ? 50 : 20;
+              }
+              const groupTiles = BOARD_TILES.filter(t => t.group === tile.group);
+              const hasMonopoly = groupTiles.every(t => t.owner === tile.owner);
+              return hasMonopoly ? tile.rent * 2 : tile.rent;
           }
-          function jailPayBail() {
-              document.getElementById("jailModal").classList.remove("show");
-              const cur = Game.players[Game.turn];
-              cur.money -= 50; cur.inJail = false; cur.jailTurns = 0;
-              logEvent("💸 دفع 50$ كفالة وخرج من السجن."); updateUI(); executeRoll();
-          }
-          function jailTryDoubles() {
-              document.getElementById("jailModal").classList.remove("show"); executeRoll();
-          }
-          function sendToJail(p) {
-              p.pos = 10; p.inJail = true; p.jailTurns = 3; AudioFX.play('jail'); updatePawns(); updateUI();
-          }
-
-          function checkAllRailroads(pid) { return [5,15,25,35].every(id => BOARD_TILES[id].owner === pid); }
-          function countRailroads(pid) { return [5,15,25,35].filter(id => BOARD_TILES[id].owner === pid).length; }
-
-          function openFastTravelModal(player) {
-              const orig = player.pos, targets = [5,15,25,35].filter(id => id !== orig);
-              const box = document.getElementById("fastTravelOptions"); box.innerHTML = "";
-              targets.forEach(tId => {
-                  const btn = document.createElement("button"); btn.className = "btn-m btn-blue";
-                  btn.innerText = `🚆 ${Game.lang==='ar'?BOARD_TILES[tId].nameAr:BOARD_TILES[tId].nameEn}`;
-                  btn.onclick = () => {
-                      document.getElementById("fastTravelModal").classList.remove("show");
-                      player.pos = tId; AudioFX.play('step'); updatePawns();
-                      if (tId > orig) { player.money += 200; AudioFX.play('cash'); logEvent(I18N[Game.lang].trainGo); }
-                      else { logEvent(I18N[Game.lang].trainNoGo); }
-                      updateUI(); setTimeout(executeRoll, 350);
-                  };
-                  box.appendChild(btn);
-              });
-              document.getElementById("fastTravelModal").classList.add("show");
-          }
-          function fastTravelSkip() {
-              document.getElementById("fastTravelModal").classList.remove("show"); executeRoll();
-          }
-
-          function openDeedModal(t, isDbl) {
-              Game.pendingTile = { tile:t, isDbl };
-              document.getElementById("deedHeader").innerText = Game.lang==='ar'?t.nameAr:t.nameEn;
-              document.getElementById("deedHeader").style.background = t.color||"#475569";
-              document.getElementById("deedPrice").innerText = t.price + "$";
-              document.getElementById("deedRent").innerText = (t.rent||10) + "$";
-              document.getElementById("deedDoubleRent").innerText = ((t.rent||10)*2) + "$";
+          
+          function promptBuyProperty(tile, isDbl) {
+              Game.pendingTile = { tile, isDbl };
+              document.getElementById("deedTitle").innerText = `${tile.icon||""} ${Game.lang==='ar'?tile.nameAr:tile.nameEn}`;
+              document.getElementById("deedBody").innerHTML = `
+                  <div style="text-align:center; margin-bottom:8px;">
+                      <span style="display:inline-block; width:14px; height:14px; background:${tile.color}; border-radius:50%; vertical-align:middle;"></span>
+                      <strong style="font-size:1.1rem; color:var(--gold); margin:0 6px;">${tile.price}$</strong>
+                  </div>
+                  <div style="font-size:0.8rem; color:var(--dim); text-align:center;">إيجار العقار الأساسي: <strong>${tile.rent}$</strong></div>
+                  <div style="font-size:0.75rem; color:var(--dim); text-align:center; margin-top:4px;">(عند اكتمال المجموعة يتضاعف الإيجار تلقائياً)</div>
+              `;
+              const canAfford = Game.players[0].money >= tile.price;
+              document.getElementById("btnBuyProp").disabled = !canAfford;
               document.getElementById("deedModal").classList.add("show");
           }
-          function confirmBuyProperty() {
+          
+          function closeDeedModal() {
+              document.getElementById("deedModal").classList.remove("show");
+              if (Game.pendingTile) {
+                  const isDbl = Game.pendingTile.isDbl;
+                  Game.pendingTile = null;
+                  finishTurn(isDbl);
+              }
+          }
+          
+          function confirmBuyProp() {
               if (!Game.pendingTile) return;
-              const cur = Game.players[Game.turn], t = Game.pendingTile.tile;
+              const cur = Game.players[0];
+              const t = Game.pendingTile.tile;
               if (cur.money >= t.price) {
                   buyProp(cur, t, t.price);
                   const isDbl = Game.pendingTile.isDbl;
                   document.getElementById("deedModal").classList.remove("show");
                   finishTurn(isDbl);
-              } else alert(Game.lang==='ar'?"السيولة غير كافية!":"Insufficient funds!");
+              }
           }
-          function startPropertyAuction() {
-              document.getElementById("deedModal").classList.remove("show");
-              const t = Game.pendingTile ? Game.pendingTile.tile : BOARD_TILES[Game.players[Game.turn].pos];
-              const isDbl = Game.pendingTile ? Game.pendingTile.isDbl : false;
+          
+          function startAuction() {
+              if (!Game.pendingTile) return;
+              const t = Game.pendingTile.tile;
+              const isDbl = Game.pendingTile.isDbl;
               Game.pendingTile = null;
+              document.getElementById("deedModal").classList.remove("show");
+          
               Game.auction = { tile:t, isDbl, currentBid:10, highestBidder:null, bidTurn:Game.turn, active:[0,1] };
-              logEvent(`🔨 بدأ مزاد علني على (${Game.lang==='ar'?t.nameAr:t.nameEn})`);
-              openAuctionModal();
+              document.getElementById("auctionModal").classList.add("show");
+              updateAuctionUI();
+              if (Game.turn === 1) handleAIAuction();
           }
-          function openAuctionModal() {
+          
+          function updateAuctionUI() {
               const a = Game.auction;
-              document.getElementById("aucPropName").innerText = Game.lang==='ar'?a.tile.nameAr:a.tile.nameEn;
+              if (!a) return;
+              document.getElementById("aucPropDetails").innerText = Game.lang==='ar'?a.tile.nameAr:a.tile.nameEn;
               document.getElementById("aucCurrentBid").innerText = a.currentBid + "$";
               document.getElementById("aucHighestBidder").innerText = a.highestBidder !== null ? Game.players[a.highestBidder].avatar : "-";
               const cur = Game.players[a.bidTurn];
               document.getElementById("aucTurnPrompt").innerText = `دور: ${cur.avatar} ${Game.lang==='ar'?cur.nameAr:cur.nameEn}`;
-              document.getElementById("auctionModal").classList.add("show");
-              if (a.bidTurn === 1 && Game.mode === 'ai') {
-                  document.getElementById("aucActions").style.pointerEvents = "none";
-                  setTimeout(handleAIAuction, 850);
-              } else { document.getElementById("aucActions").style.pointerEvents = "auto"; }
+              document.getElementById("aucControls").style.display = (a.bidTurn === 0) ? "flex" : "none";
           }
+          
           function placeAuctionBid(inc) {
               const a = Game.auction; if (!a) return;
-              const p = Game.players[a.bidTurn];
-              if (p.money < a.currentBid + inc) { alert("أموالك لا تكفي!"); return; }
-              a.currentBid += inc; a.highestBidder = p.id; AudioFX.play('cash');
-              logEvent(`🔨 ${p.avatar} زاد إلى ${a.currentBid}$`);
-              a.bidTurn = 1 - a.bidTurn; openAuctionModal();
+              const bidder = a.bidTurn;
+              const p = Game.players[bidder];
+              const nextBid = a.currentBid + inc;
+              if (p.money >= nextBid) {
+                  a.currentBid = nextBid;
+                  a.highestBidder = bidder;
+                  logEvent(`🔨 زاد ${p.avatar} المزاد إلى ${a.currentBid}$!`);
+                  nextAuctionTurn();
+              }
           }
+          
           function foldAuctionBid() {
               const a = Game.auction; if (!a) return;
-              const p = Game.players[a.bidTurn];
-              logEvent(`❌ ${p.avatar} انسحب من المزاد.`);
-              a.active = a.active.filter(id => id !== p.id);
-              const winId = a.active[0], winner = Game.players[winId];
+              logEvent(`❌ انسحب ${Game.players[a.bidTurn].avatar} من المزاد.`);
+              a.active = a.active.filter(id => id !== a.bidTurn);
+              if (a.active.length === 1 && a.highestBidder !== null) {
+                  concludeAuction();
+              } else if (a.active.length === 0) {
+                  document.getElementById("auctionModal").classList.remove("show");
+                  const isDbl = a.isDbl; Game.auction = null; finishTurn(isDbl);
+              } else {
+                  nextAuctionTurn();
+              }
+          }
+          
+          function nextAuctionTurn() {
+              const a = Game.auction; if (!a) return;
+              a.bidTurn = (a.bidTurn === 0) ? 1 : 0;
+              updateAuctionUI();
+              if (a.bidTurn === 1 && a.active.includes(1)) setTimeout(handleAIAuction, 600);
+          }
+          
+          function concludeAuction() {
+              const a = Game.auction; if (!a) return;
               document.getElementById("auctionModal").classList.remove("show");
-              if (winner.money >= a.currentBid) buyProp(winner, a.tile, a.currentBid);
+              const winner = Game.players[a.highestBidder];
+              logEvent(`🏆 فاز ${winner.avatar} بمزاد (${Game.lang==='ar'?a.tile.nameAr:a.tile.nameEn}) بمبلغ ${a.currentBid}$!`);
+              buyProp(winner, a.tile, a.currentBid);
               const isDbl = a.isDbl; Game.auction = null; finishTurn(isDbl);
           }
+          
           function handleAIAuction() {
               const a = Game.auction; if (!a) return;
               const ai = Game.players[1];
@@ -1003,61 +1050,177 @@ jobs:
               if (a.currentBid + 15 <= val && ai.money >= a.currentBid + 40) placeAuctionBid(15);
               else foldAuctionBid();
           }
-
-          function buyProp(p, t, cost) {
-              p.money -= cost; t.owner = p.id; t.mortgaged = false;
-              if (!p.props.includes(t.id)) p.props.push(t.id);
-              AudioFX.play('cash'); logEvent(`🎉 اشترى ${p.avatar} (${Game.lang==='ar'?t.nameAr:t.nameEn}) بـ ${cost}$!`);
-              updateUI();
-          }
-          function checkMonopoly(pid, g) { return g ? BOARD_TILES.filter(t => t.group === g).every(t => t.owner === pid && !t.mortgaged) : false; }
-          function checkMonopolyPot(pid, g) {
-              if (!g) return false;
-              const grp = BOARD_TILES.filter(t => t.group === g);
-              return grp.filter(t => t.owner === pid).length >= grp.length - 1;
-          }
-
-          function onTileClicked(id) {
-              const t = BOARD_TILES[id]; if (!t || t.owner === undefined) return;
-              if (t.owner === Game.turn) openMortgageModal();
-              else openTradeModal(t);
-          }
-          function openTradeModal(t) {
-              const owner = Game.players[t.owner];
-              Game.tradeData = { tile:t, buyerId:Game.turn, sellerId:t.owner, offer:Math.round(t.price * 1.2) };
-              document.getElementById("tradePropName").innerText = Game.lang==='ar'?t.nameAr:t.nameEn;
-              document.getElementById("tradeOwner").innerText = `${owner.avatar} ${Game.lang==='ar'?owner.nameAr:owner.nameEn}`;
-              document.getElementById("tradeOrigPrice").innerText = t.price + "$";
-              document.getElementById("tradeOfferAmount").innerText = Game.tradeData.offer + "$";
-              document.getElementById("tradeModal").classList.add("show");
-          }
-          function adjustTradeOffer(d) {
-              if (!Game.tradeData) return;
-              Game.tradeData.offer = Math.max(10, Game.tradeData.offer + d);
-              document.getElementById("tradeOfferAmount").innerText = Game.tradeData.offer + "$";
-          }
-          function submitTradeOffer() {
-              const td = Game.tradeData; document.getElementById("tradeModal").classList.remove("show"); if (!td) return;
-              const b = Game.players[td.buyerId];
-              if (b.money < td.offer) { alert("ليس لديك سيولة كافية!"); return; }
-              if (td.sellerId === 1 && Game.mode === 'ai') {
-                  let ok = false;
-                  if (!checkMonopoly(1, td.tile.group) && td.offer >= td.tile.price * 1.5) ok = true;
-                  if (ok) { execTrade(td); logEvent(`🤝 وافق الصقر على بيع (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}) مقابل ${td.offer}$!`); }
-                  else { logEvent(`🚫 رفض الصقر بيع (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}).`); }
+          
+          function handleAIBuyDecision(player, tile, isDbl) {
+              const hasCash = player.money >= tile.price + 100;
+              const pot = checkMonopolyPot(1, tile.group);
+              if (hasCash || pot) {
+                  buyProp(player, tile, tile.price);
+                  finishTurn(isDbl);
               } else {
-                  document.getElementById("incomingTradeText").innerText = `يعرض ${b.avatar} شراء (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}) بمبلغ ${td.offer}$!`;
-                  document.getElementById("incomingTradeModal").classList.add("show");
+                  Game.pendingTile = { tile, isDbl };
+                  startAuction();
               }
           }
-          function acceptIncomingTrade() {
-              document.getElementById("incomingTradeModal").classList.remove("show");
-              if (Game.tradeData) { execTrade(Game.tradeData); logEvent("🤝 تم إتمام بيع العقار!"); Game.tradeData = null; }
+          
+          function checkMonopolyPot(playerId, group) {
+              if (!group) return false;
+              const groupTiles = BOARD_TILES.filter(t => t.group === group);
+              const owned = groupTiles.filter(t => t.owner === playerId).length;
+              return owned > 0;
           }
-          function rejectIncomingTrade() {
-              document.getElementById("incomingTradeModal").classList.remove("show");
-              logEvent("🚫 تم رفض عرض شراء العقار."); Game.tradeData = null;
+          
+          function buyProp(player, tile, price) {
+              player.money -= price;
+              tile.owner = player.id;
+              player.props.push(tile.id);
+              AudioFX.play('cash');
+              logEvent(`🎉 اشترى ${player.avatar} (${Game.lang==='ar'?tile.nameAr:tile.nameEn}) مقابل ${price}$.`);
+              updateUI();
           }
+          
+          function handleCard(player, type, isDbl) {
+              const cards = [
+                  { textAr:"ربحت في مسابقة الحظ الملكية! استلم 100$", textEn:"Won royal lottery! Collect 100$", action:"cash", val:100 },
+                  { textAr:"غرامة مخالفة سرعة! ادفع 50$", textEn:"Speeding fine! Pay 50$", action:"cash", val:-50 },
+                  { textAr:"تقدم مباشرة إلى خانة انطلق واربح 200$", textEn:"Advance to GO, collect 200$", action:"go" },
+                  { textAr:"أُرسلت مباشرة إلى السجن!", textEn:"Go directly to jail!", action:"jail" }
+              ];
+              const c = cards[Math.floor(Math.random() * cards.length)];
+              logEvent(`📜 ${c.textAr}`);
+              if (c.action === "cash") {
+                  player.money = Math.max(0, player.money + c.val);
+                  AudioFX.play('cash'); updateUI(); finishTurn(isDbl);
+              } else if (c.action === "go") {
+                  player.pos = 0; player.money += 200;
+                  AudioFX.play('cash'); updatePawns(player.id); updateUI(); finishTurn(isDbl);
+              } else if (c.action === "jail") {
+                  sendToJail(player); finishTurn(false);
+              }
+          }
+          
+          function sendToJail(p) {
+              p.pos = 10; p.inJail = true; p.jailTurns = 3;
+              AudioFX.play('jail'); updatePawns(p.id); updateUI();
+              logEvent(`🚔 دَخَل ${p.avatar} السجن!`);
+          }
+          
+          function openJailModal() {
+              document.getElementById("jailModal").classList.add("show");
+          }
+          
+          function payJailFine() {
+              const cur = Game.players[Game.turn];
+              if (cur.money >= 50) {
+                  cur.money -= 50; cur.inJail = false; cur.jailTurns = 0;
+                  document.getElementById("jailModal").classList.remove("show");
+                  AudioFX.play('cash'); updateUI(); logEvent(I18N[Game.lang].finePaid);
+              }
+          }
+          
+          function rollForJail() {
+              document.getElementById("jailModal").classList.remove("show");
+              const v0 = Math.floor(Math.random() * 6) + 1;
+              const v1 = Math.floor(Math.random() * 6) + 1;
+              setDieFace(document.getElementById("die0"), v0);
+              setDieFace(document.getElementById("die1"), v1);
+              const cur = Game.players[Game.turn];
+              if (v0 === v1) {
+                  cur.inJail = false; cur.jailTurns = 0;
+                  logEvent(I18N[Game.lang].doublesJail);
+                  updateUI(); moveSteps(cur, v0 + v1, false);
+              } else {
+                  cur.jailTurns--;
+                  if (cur.jailTurns <= 0) {
+                      cur.money = Math.max(0, cur.money - 50);
+                      cur.inJail = false; cur.jailTurns = 0;
+                      logEvent("انتهت مدة السجن وتم دفع 50$ كفالة إجبارية.");
+                      updateUI(); moveSteps(cur, v0 + v1, false);
+                  } else {
+                      logEvent(`لم يتطابق النرد (${v0}+${v1})! بقي في السجن.`);
+                      finishTurn(false);
+                  }
+              }
+          }
+          
+          function finishTurn(isDbl) {
+              Game.isRolling = false;
+              if (isDbl && !Game.players[Game.turn].inJail) {
+                  logEvent(`🔥 رمية متطابقة! يحصل ${Game.players[Game.turn].avatar} على رمية إضافية.`);
+                  startPlayerTurn(); return;
+              }
+              Game.doublesInRow = 0;
+              Game.turn = (Game.turn === 0) ? 1 : 0;
+              updateUI();
+              startPlayerTurn();
+          }
+          
+          function startPlayerTurn() {
+              updateUI();
+              const cur = Game.players[Game.turn];
+              if (Game.turn === 0) {
+                  document.getElementById("btnRoll").disabled = false;
+              } else {
+                  document.getElementById("btnRoll").disabled = true;
+                  if (Game.mode === 'ai') {
+                      setTimeout(() => {
+                          if (cur.inJail) {
+                              if (cur.money >= 300) payJailFine();
+                              else rollForJail();
+                          } else { rollDice(); }
+                      }, 750);
+                  } else {
+                      document.getElementById("btnRoll").disabled = false;
+                  }
+              }
+          }
+          
+          function openTradeModal() {
+              const sel = document.getElementById("tradeTargetProp");
+              sel.innerHTML = "";
+              const oppProps = BOARD_TILES.filter(t => t.owner === 1 && !t.mortgaged);
+              if (oppProps.length === 0) {
+                  sel.innerHTML = "<option>لا يملك الخصم عقارات متاحة</option>";
+              } else {
+                  oppProps.forEach(t => {
+                      const opt = document.createElement("option");
+                      opt.value = t.id;
+                      opt.innerText = `${t.icon||""} ${Game.lang==='ar'?t.nameAr:t.nameEn} (${t.price}$)`;
+                      sel.appendChild(opt);
+                  });
+              }
+              document.getElementById("tradeModal").classList.add("show");
+          }
+          
+          function submitTradeOffer() {
+              const propId = parseInt(document.getElementById("tradeTargetProp").value);
+              const offerCash = parseInt(document.getElementById("tradeOfferCash").value);
+              if (isNaN(propId) || isNaN(offerCash) || offerCash <= 0) return;
+              if (Game.players[0].money < offerCash) { alert("رصيدك لا يكفي للمبلغ المعروض!"); return; }
+              const targetTile = BOARD_TILES[propId];
+              closeTradeModal();
+          
+              const td = { buyerId:0, sellerId:1, tile:targetTile, offer:offerCash };
+              Game.tradeData = td;
+              evaluateAITrade(td);
+          }
+          
+          function evaluateAITrade(td) {
+              const ai = Game.players[1];
+              let ok = false;
+              if (td.offer >= td.tile.price * 1.35) ok = true;
+              if (checkMonopolyPot(1, td.tile.group) && td.offer >= td.tile.price * 1.5) ok = true;
+              if (ok) { execTrade(td); logEvent(`🤝 وافق الصقر على بيع (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}) مقابل ${td.offer}$.`); }
+              else { logEvent(`❌ رفض الصقر عرض المقايضة لعقار (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}).`); }
+          }
+          
+          function promptIncomingTrade(td) {
+              const b = Game.players[td.buyerId];
+              document.getElementById("incomingTradeText").innerText = `يعرض ${b.avatar} شراء (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}) بمبلغ ${td.offer}$! هل توافق؟`;
+              document.getElementById("incomingTradeModal").classList.add("show");
+          }
+          function acceptTrade() { if (Game.tradeData) { execTrade(Game.tradeData); document.getElementById("incomingTradeModal").classList.remove("show"); } }
+          function rejectTrade() { Game.tradeData = null; document.getElementById("incomingTradeModal").classList.remove("show"); }
           function execTrade(td) {
               const b = Game.players[td.buyerId], s = Game.players[td.sellerId], t = td.tile;
               b.money -= td.offer; s.money += td.offer;
@@ -1065,155 +1228,66 @@ jobs:
               AudioFX.play('cash'); updateUI();
           }
           function closeTradeModal() { document.getElementById("tradeModal").classList.remove("show"); Game.tradeData = null; }
-
-          function openMortgageModal() {
-              const p = Game.players[Game.turn], list = document.getElementById("mortgageItemsList"); list.innerHTML = "";
-              if (p.props.length === 0) list.innerHTML = `<div style="color:#94A3B8;padding:6px;">لا تمتلك عقارات.</div>`;
-              else {
-                  p.props.forEach(id => {
-                      const t = BOARD_TILES[id], v = Math.round(t.price * 0.5);
-                      const d = document.createElement("div"); d.className = "mort-item";
-                      d.innerHTML = `<div><div style="font-weight:bold;">${Game.lang==='ar'?t.nameAr:t.nameEn}</div><div style="color:var(--gold-lt);font-size:0.68rem;">${t.mortgaged?"مَرْهُون":`قيمة الرهن: ${v}$`}</div></div><div>${t.mortgaged?`<button class="btn-pill" style="background:#10B981;color:#FFF;" onclick="unmortProp(${t.id})">فك (${v}$)</button>`:`<button class="btn-pill" style="background:#EF4444;color:#FFF;" onclick="mortProp(${t.id})">رهن (+${v}$)</button>`}</div>`;
-                      list.appendChild(d);
+          
+          function openPropsModal(pId) {
+              const p = Game.players[pId];
+              document.getElementById("propsModalTitle").innerText = `${p.avatar} ${Game.lang==='ar'?p.nameAr:p.nameEn} (${p.money}$)`;
+              const b = document.getElementById("propsModalBody");
+              b.innerHTML = "";
+              if (p.props.length === 0) {
+                  b.innerHTML = `<div style="text-align:center; color:var(--dim); padding:16px;">لا توجد أي عقارات مملوكة حالياً.</div>`;
+              } else {
+                  p.props.forEach(propId => {
+                      const t = BOARD_TILES[propId];
+                      const d = document.createElement("div");
+                      d.style = "background:#0F172A; border-radius:8px; padding:8px 12px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; border:1px solid #334155;";
+                      const mortVal = Math.floor(t.price * 0.5);
+                      const unmortVal = Math.floor(mortVal * 1.1);
+                      d.innerHTML = `
+                          <div>
+                              <strong style="color:${t.color||'var(--gold)'};">${t.icon||""} ${Game.lang==='ar'?t.nameAr:t.nameEn}</strong>
+                              <div style="font-size:0.75rem; color:var(--dim);">القيمة: ${t.price}$ | الرهن: ${mortVal}$</div>
+                          </div>
+                          <div>
+                              ${pId === 0 ? (
+                                  t.mortgaged ?
+                                  `<button class="btn btn-gold" style="font-size:0.72rem; padding:4px 8px;" onclick="unmortgageProp(${t.id})">فك الرهن (${unmortVal}$)</button>` :
+                                  `<button class="btn btn-red" style="font-size:0.72rem; padding:4px 8px;" onclick="mortgageProp(${t.id})">رهن (+${mortVal}$)</button>`
+                              ) : (t.mortgaged ? `<span style="color:#EF4444; font-size:0.75rem;">مَرْهُون</span>` : '')}
+                          </div>
+                      `;
+                      b.appendChild(d);
                   });
               }
-              document.getElementById("mortgageModal").classList.add("show");
+              document.getElementById("propsModal").classList.add("show");
           }
-          function mortProp(id) {
-              const t = BOARD_TILES[id]; if (!t || t.mortgaged) return;
-              const p = Game.players[t.owner], v = Math.round(t.price * 0.5);
-              t.mortgaged = true; p.money += v; AudioFX.play('cash');
-              logEvent(`🏦 رهن ${p.avatar} (${Game.lang==='ar'?t.nameAr:t.nameEn}) وحصل على ${v}$.`);
-              updateUI(); openMortgageModal();
-          }
-          function unmortProp(id) {
-              const t = BOARD_TILES[id]; if (!t || !t.mortgaged) return;
-              const p = Game.players[t.owner], v = Math.round(t.price * 0.5);
-              if (p.money >= v) {
-                  t.mortgaged = false; p.money -= v; AudioFX.play('cash');
-                  logEvent(`🔓 فك ${p.avatar} رهن (${Game.lang==='ar'?t.nameAr:t.nameEn}).`);
-                  updateUI(); openMortgageModal();
-              } else alert("السيولة غير كافية لفك الرهن!");
-          }
-          function closeMortgageModal() { document.getElementById("mortgageModal").classList.remove("show"); checkDeficit(Game.players[Game.turn]); }
-
-          function checkDeficit(p) {
-              if (p.money < 0) {
-                  const unmort = p.props.filter(id => !BOARD_TILES[id].mortgaged);
-                  if (unmort.length > 0) {
-                      if (p.id === 0 || Game.mode !== 'ai') { logEvent("⚠️ عجز مالي! يجب رهن عقارات."); openMortgageModal(); }
-                      else {
-                          for (const id of unmort) { mortProp(id); if (p.money >= 0) break; }
-                          if (p.money < 0) checkBankrupt(p);
-                      }
-                  } else checkBankrupt(p);
+          function closePropsModal() { document.getElementById("propsModal").classList.remove("show"); }
+          
+          function mortgageProp(id) {
+              const t = BOARD_TILES[id], p = Game.players[0];
+              if (t.owner === 0 && !t.mortgaged) {
+                  t.mortgaged = true; p.money += Math.floor(t.price * 0.5);
+                  AudioFX.play('cash'); updateUI(); openPropsModal(0);
+                  logEvent(`🏦 رهن الملك (${Game.lang==='ar'?t.nameAr:t.nameEn}) واستلم ${Math.floor(t.price * 0.5)}$.`);
               }
           }
-          function checkBankrupt(p) {
-              if (p.money < 0 && p.props.every(id => BOARD_TILES[id].mortgaged)) {
-                  const win = Game.players[1 - p.id]; AudioFX.play('win');
-                  document.getElementById("winnerText").innerText = `🏆 فاز ${win.avatar} ${Game.lang==='ar'?win.nameAr:win.nameEn}!`;
-                  document.getElementById("winnerSubtext").innerText = `أفلس ${Game.lang==='ar'?p.nameAr:p.nameEn} تماماً بعد رهن جميع عقاراته.`;
-                  document.getElementById("winnerModal").classList.add("show");
+          function unmortgageProp(id) {
+              const t = BOARD_TILES[id], p = Game.players[0];
+              const cost = Math.floor(t.price * 0.5 * 1.1);
+              if (t.owner === 0 && t.mortgaged && p.money >= cost) {
+                  t.mortgaged = false; p.money -= cost;
+                  AudioFX.play('cash'); updateUI(); openPropsModal(0);
+                  logEvent(`🔓 فك الملك رهن (${Game.lang==='ar'?t.nameAr:t.nameEn}) مقابل ${cost}$.`);
               }
           }
-
-          function finishTurn(canRoll) {
-              updateUI(); Game.isBusy = false;
-              if (canRoll) {
-                  logEvent(I18N[Game.lang].dbl);
-                  if (Game.mode === 'ai' && Game.turn === 1) setTimeout(executeRoll, 850);
-                  else document.getElementById("btnRoll").disabled = false;
-              } else {
-                  setTimeout(() => {
-                      Game.doublesInRow = 0; Game.turn = 1 - Game.turn; updateUI(); startPlayerTurn();
-                  }, 900);
-              }
+          
+          function onTileClicked(index) {
+              const t = BOARD_TILES[index];
+              if (!["property","railroad","utility"].includes(t.type)) return;
+              const ownerTxt = t.owner !== undefined ? `${Game.players[t.owner].avatar} ${Game.lang==='ar'?Game.players[t.owner].nameAr:Game.players[t.owner].nameEn}` : "متاح للبيع";
+              alert(`📍 ${t.icon||""} ${Game.lang==='ar'?t.nameAr:t.nameEn}\nالسعر: ${t.price}$\nالإيجار: ${t.rent}$\nالمالك: ${ownerTxt}\nالحالة: ${t.mortgaged?'مَرْهُون':'نشط'}`);
           }
-
-          function handleAITurn() {
-              const ai = Game.players[1];
-              if (ai.inJail) {
-                  if (ai.money >= 250) { ai.money -= 50; ai.inJail = false; ai.jailTurns = 0; logEvent("💸 دفع الصقر 50$ كفالة وخرج."); updateUI(); executeRoll(); }
-                  else executeRoll();
-                  return;
-              }
-              // Proactive trade
-              if (Math.random() < 0.35 && ai.money >= 350) {
-                  const p0Props = Game.players[0].props;
-                  for (const id of p0Props) {
-                      const t = BOARD_TILES[id];
-                      if (t.group && BOARD_TILES.filter(x => x.group === t.group && x.owner === 1).length >= 1) {
-                          const off = Math.round(t.price * 1.4);
-                          Game.tradeData = { tile:t, buyerId:1, sellerId:0, offer:off };
-                          document.getElementById("incomingTradeText").innerText = `🤖 يعرض عليك الصقر شراء عقارك (${Game.lang==='ar'?t.nameAr:t.nameEn}) بمبلغ سخي ${off}$!`;
-                          document.getElementById("incomingTradeModal").classList.add("show");
-                          return;
-                      }
-                  }
-              }
-              executeRoll();
-          }
-
-          function openCardModal(t, c, isDbl) {
-              document.getElementById("cardType").innerText = t;
-              document.getElementById("cardMessage").innerText = Game.lang==='ar'?c.textAr:c.textEn;
-              document.getElementById("cardModal").classList.add("show");
-              Game.pendingCard = { card:c, isDbl };
-          }
-          function closeCardModal() {
-              document.getElementById("cardModal").classList.remove("show");
-              if (Game.pendingCard) {
-                  const cur = Game.players[Game.turn];
-                  applyCard(cur, Game.pendingCard.card);
-                  const isDbl = Game.pendingCard.isDbl; Game.pendingCard = null; finishTurn(isDbl);
-              }
-          }
-          function applyCard(p, c) {
-              if (c.amount) {
-                  p.money += c.amount; AudioFX.play(c.amount > 0 ? 'cash' : 'jail');
-                  logEvent(`📜 تأثير البطاقة: ${c.amount > 0 ? "+" : ""}${c.amount}$`); checkDeficit(p);
-              } else if (c.action === "go") { p.pos = 0; p.money += 200; AudioFX.play('cash'); updatePawns(); }
-              else if (c.action === "jail") sendToJail(p);
-              updateUI();
-          }
-
-          function openSettingsModal() { renderAvatarPickers(); document.getElementById("settingsModal").classList.add("show"); }
-          function closeSettingsModal() { document.getElementById("settingsModal").classList.remove("show"); }
-          function setDiceSpeed(s) {
-              Game.diceSpeed = s;
-              ['v_slow','slow','balanced','fast','v_fast'].forEach((k,i)=>{const b=document.getElementById('btnDSpd'+(i+1));if(b)b.className='btn-pill'+(s===k?' active':'');});
-          }
-          function setMoveSpeed(s) {
-              Game.moveSpeed = s;
-              ['v_slow','slow','balanced','fast','v_fast'].forEach((k,i)=>{const b=document.getElementById('btnMSpd'+(i+1));if(b)b.className='btn-pill'+(s===k?' active':'');});
-          }
-          function toggleSound() {
-              AudioFX.enabled = !AudioFX.enabled;
-              const b = document.getElementById("btnSoundToggle");
-              b.className = "btn-pill" + (AudioFX.enabled?" active":"");
-              b.innerText = AudioFX.enabled ? "مفعل 🔊" : "مكتوم 🔇";
-          }
-          function renderAvatarPickers() {
-              const g0 = document.getElementById("avatarPickerP0"), g1 = document.getElementById("avatarPickerP1");
-              g0.innerHTML = ""; g1.innerHTML = "";
-              AVATARS.forEach(av => {
-                  const d0 = document.createElement("div"); d0.className = "avatar-opt" + (Game.players[0].avatar===av?" active":"");
-                  d0.innerText = av; d0.onclick = () => { Game.players[0].avatar = av; renderAvatarPickers(); updateUI(); };
-                  g0.appendChild(d0);
-                  const d1 = document.createElement("div"); d1.className = "avatar-opt" + (Game.players[1].avatar===av?" active":"");
-                  d1.innerText = av; d1.onclick = () => { Game.players[1].avatar = av; renderAvatarPickers(); updateUI(); };
-                  g1.appendChild(d1);
-              });
-          }
-          function setPropertyStyle(s) {
-              Game.propStyle = s;
-              document.getElementById("btnStGlow").className = "btn-pill" + (s==='glow'?" active":"");
-              document.getElementById("btnStBadge").className = "btn-pill" + (s==='badge'?" active":"");
-              document.getElementById("btnStTint").className = "btn-pill" + (s==='tint'?" active":"");
-              document.getElementById("btnStBorder").className = "btn-pill" + (s==='border'?" active":"");
-              updateBoardVisual();
-          }
+          
           function setLanguage(l) {
               Game.lang = l;
               document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
@@ -1228,6 +1302,39 @@ jobs:
               });
               updateUI();
           }
+          
+          function setPropStyle(s) {
+              Game.propStyle = s;
+              ["glow","tint","border","badge"].forEach(id => {
+                  document.getElementById("btnPropStyle" + id.charAt(0).toUpperCase() + id.slice(1)).className = "btn-pill" + (s === id ? " active" : "");
+              });
+              updateBoardVisual();
+          }
+          
+          function setDiceSpeed(sp) {
+              Game.diceSpeed = sp;
+              ["v_slow","slow","normal","fast","v_fast"].forEach(id => {
+                  const el = document.getElementById("btnDiceSpeed_" + id);
+                  if (el) el.className = "btn-pill" + (sp === id ? " active" : "");
+              });
+          }
+          
+          function setMoveSpeed(sp) {
+              Game.moveSpeed = sp;
+              ["v_slow","slow","normal","fast","v_fast"].forEach(id => {
+                  const el = document.getElementById("btnMoveSpeed_" + id);
+                  if (el) el.className = "btn-pill" + (sp === id ? " active" : "");
+              });
+          }
+          
+          function setSound(en) {
+              AudioFX.enabled = en;
+              document.getElementById("btnSoundOn").className = "btn-pill" + (en ? " active" : "");
+              document.getElementById("btnSoundOff").className = "btn-pill" + (!en ? " active" : "");
+          }
+          
+          function openSettingsModal() { document.getElementById("settingsModal").classList.add("show"); }
+          function closeSettingsModal() { document.getElementById("settingsModal").classList.remove("show"); }
           function openAboutModal() { document.getElementById("aboutModal").classList.add("show"); }
           function closeAboutModal() { document.getElementById("aboutModal").classList.remove("show"); }
           function toggleMode() {
@@ -1238,53 +1345,50 @@ jobs:
               logEvent(`🎮 نمط اللعب: ${document.getElementById("txtMode").innerText}`); updateUI();
           }
           function restartGame() { location.reload(); }
-
+          
           window.addEventListener("DOMContentLoaded", () => {
               renderBoard(); updateUI(); startPlayerTurn();
           });
           </script>
           </body>
           </html>
-          """
+          '''
 
           for path, content in files.items():
-              os.makedirs(os.path.dirname(path) if os.path.dirname(path) else ".", exist_ok=True)
+              d = os.path.dirname(path)
+              if d:
+                  os.makedirs(d, exist_ok=True)
               with open(path, "w", encoding="utf-8") as f:
-                  f.write(content.strip() + "\n")
+                  f.write(content)
 
-          print("All Monopoly Arabia files generated successfully!")
+          print("✅ All project files created successfully!")
           PYEOF
 
-      - name: ⚙️ تجهيز وإعداد Gradle Wrapper
+      - name: 🔨 إعطاء صلاحيات التشغيل لـ Gradle Wrapper
         run: |
           gradle wrapper --gradle-version 8.5
-          chmod +x gradlew
+          chmod +x ./gradlew
 
-      - name: 🔨 بناء ملف APK الرسمي
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
-
-      - name: 📦 استخراج ملف APK
+      - name: 🚀 بناء حزمة APK (Debug)
         run: |
-          mkdir -p apk_output
-          APK_FILE=$(find app/build/outputs/apk/debug -name "*.apk" | head -n 1)
-          echo "تم العثور على التطبيق: $APK_FILE"
-          cp "$APK_FILE" "apk_output/Monopoly_Arabia.apk"
+          ./gradlew assembleDebug --stacktrace
 
-      - name: 🚀 رفع ملف الـ APK للتحميل المباشر (Artifact)
+      - name: 📤 رفع ملف APK كعنصر قابل للتحميل (Artifact)
         uses: actions/upload-artifact@v4
         with:
-          name: Monopoly_Arabia_APK
-          path: apk_output/Monopoly_Arabia.apk
+          name: MonopolyArabia-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
-      - name: 🌟 إنشاء Release رسمي في جيت هوب
-        if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+      - name: 🌟 إنشاء إصدار تلقائي على GitHub (Release)
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "v1.0"
-          name: "🎲 مونوبولي العرب - الإصدار الملكي 1.0"
-          body: "تم بناء لعبة مونوبولي العرب (بنك الحظ الملكي) بنجاح بصيغة APK جاهز للتحميل والتثبيت المباشر."
-          files: apk_output/Monopoly_Arabia.apk
+          files: app/build/outputs/apk/debug/app-debug.apk
+          tag_name: v1.0.0
+          name: "مونوبولي العرب - الإصدار 1.0.0"
+          body: "🎲 النسخة الرسمية لتطبيق لعبة مونوبولي العرب بنك الحظ الملكي (APK جاهز للتثبيت المباشر على الأندرويد). برمجة وتصميم عمار الهلالي."
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
