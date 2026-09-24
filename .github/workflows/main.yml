@@ -189,7 +189,7 @@ jobs:
           </FrameLayout>
           """
 
-          # 11. MainActivity.java (معالجة زر الرجوع ومنع الانهيار)
+          # 11. MainActivity.java
           files["app/src/main/java/com/monopoly/arabia/MainActivity.java"] = """package com.monopoly.arabia;
 
           import android.annotation.SuppressLint;
@@ -230,7 +230,6 @@ jobs:
 
                   webView.addJavascriptInterface(new WebAppInterface(), "Android");
 
-                  // حماية التطبيق من الإغلاق في حال حدوث ضغط على ذاكرة العرض
                   webView.setWebViewClient(new WebViewClient() {
                       @Override
                       public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
@@ -244,7 +243,7 @@ jobs:
                   webView.setWebChromeClient(new WebChromeClient());
                   webView.loadUrl("file:///android_asset/index.html");
 
-                  // اعتراض زر الرجوع لمنع الخروج المفاجئ من اللعبة
+                  // اعتراض زر الرجوع لمنع الخروج المفاجئ وإظهار نافذة الحفظ والخروج
                   getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
                       @Override
                       public void handleOnBackPressed() {
@@ -265,7 +264,7 @@ jobs:
           }
           """
 
-          # 12. app/src/main/assets/index.html (تعديل الرموز + دليل الخانات الخدمية + استقرار اللعب)
+          # 12. app/src/main/assets/index.html
           files["app/src/main/assets/index.html"] = r'''<!DOCTYPE html>
           <html lang="ar" dir="rtl">
           <head>
@@ -302,23 +301,17 @@ jobs:
           .corner-tile .tile-icon{font-size:1.35rem;}
           .corner-tile .tile-name{font-size:0.55rem;color:var(--gold);}
 
-          /* ضبط تموضع الرموز بجانب الخانات باتجاه وسط الشاشة */
           .pawn{width:clamp(20px,5vw,24px);height:clamp(20px,5vw,24px);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:clamp(0.75rem,3vw,0.92rem);box-shadow:0 2px 7px rgba(0,0,0,0.9);border:2px solid #fff;background:#000;flex-shrink:0;pointer-events:none;transition:transform 0.12s ease-out!important;}
           .pawn.moving-step{transform:scale(1.25);box-shadow:0 0 10px var(--gold);}
           .pawn-p0{background:radial-gradient(circle,#EF4444,#991B1B);}
           .pawn-p1{background:radial-gradient(circle,#38BDF8,#075985);}
           .tile-pawns{position:absolute;display:flex!important;align-items:center;justify-content:center;gap:2px;z-index:50;pointer-events:none;}
 
-          /* الخانات السفلية: الحافة العلوية باتجاه الوسط */
           .side-bottom .tile-pawns{top:-12px;bottom:auto;left:50%;transform:translateX(-50%);flex-direction:row;width:max-content;}
-          /* الخانات العلوية: الحافة السفلية باتجاه الوسط */
           .side-top .tile-pawns{bottom:-12px;top:auto;left:50%;transform:translateX(-50%);flex-direction:row;width:max-content;}
-          /* الخانات اليسرى: الحافة اليمنى باتجاه الوسط */
           .side-left .tile-pawns{right:-12px;left:auto;top:50%;transform:translateY(-50%);flex-direction:column;height:max-content;width:auto;}
-          /* الخانات اليمنى: الحافة اليسرى باتجاه الوسط */
           .side-right .tile-pawns{left:-12px;right:auto;top:50%;transform:translateY(-50%);flex-direction:column;height:max-content;width:auto;}
 
-          /* الزوايا: موجهة نحو المركز */
           .corner-0 .tile-pawns{top:-6px;left:-6px;bottom:auto;right:auto;flex-direction:row;}
           .corner-10 .tile-pawns{top:-6px;right:-6px;bottom:auto;left:auto;flex-direction:row;}
           .corner-20 .tile-pawns{bottom:-6px;right:-6px;top:auto;left:auto;flex-direction:row;}
@@ -369,7 +362,6 @@ jobs:
           .settings-section{margin-bottom:12px;}
           .settings-label{font-size:0.78rem;font-weight:bold;color:var(--dim);margin-bottom:4px;}
 
-          /* تنسيقات نافذة دليل الخانات الخدمية */
           .info-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:0.72rem;font-weight:bold;background:rgba(245,158,11,0.2);color:var(--gold);border:1px solid rgba(245,158,11,0.3);margin-bottom:8px;}
           .info-rule-box{background:#0F172A;border:1px solid #334155;border-radius:8px;padding:10px;margin-top:8px;}
           .info-rule-item{font-size:0.80rem;color:#CBD5E1;margin-bottom:6px;display:flex;align-items:flex-start;gap:6px;line-height:1.4;}
@@ -388,6 +380,7 @@ jobs:
                   <button class="btn-hdr" onclick="openTradeModal()">🤝 <span id="txtBtnTrade">مقايضة</span></button>
                   <button class="btn-hdr" onclick="openSettingsModal()">⚙️</button>
                   <button class="btn-hdr" onclick="openAboutModal()">ℹ️</button>
+                  <button class="btn-hdr" onclick="openExitModal()" title="خروج">🚪</button>
               </div>
           </div>
 
@@ -445,6 +438,29 @@ jobs:
               </div>
           </div>
 
+          <!-- 0. نافذة البداية: لعبة جديدة أو إكمال اللعبة السابقة -->
+          <div class="modal-overlay" id="startModal">
+              <div class="modal-card">
+                  <div class="modal-header">
+                      <div class="modal-title">🎲 مرحباً بك في مونوبولي العرب</div>
+                  </div>
+                  <div class="modal-body" style="text-align:center; padding:20px 14px;">
+                      <div style="font-size:2.8rem; margin-bottom:10px;">👑🏰</div>
+                      <div style="font-size:1.15rem; font-weight:900; color:var(--gold); margin-bottom:6px;">بنك الحظ الملكي</div>
+                      <p style="font-size:0.85rem; color:var(--dim); margin-bottom:18px;">اختر كيف تود بدء رحلتك في عالم التجارة والعقارات:</p>
+                      <div style="display:flex; flex-direction:column; gap:10px;">
+                          <button class="btn btn-gold" style="padding:12px; font-size:0.95rem; font-weight:900;" onclick="startNewGameFromModal()">
+                              ✨ بدء لعبة جديدة
+                          </button>
+                          <button class="btn btn-blue" id="btnContinueGame" style="padding:12px; font-size:0.95rem; font-weight:900;" onclick="continueSavedGameFromModal()">
+                              📂 إكمال اللعبة السابقة
+                          </button>
+                      </div>
+                      <div id="savedGameStatus" style="font-size:0.75rem; color:var(--dim); margin-top:14px;"></div>
+                  </div>
+              </div>
+          </div>
+
           <!-- 1. نافذة دليل وتعليمات الخانات الخدمية -->
           <div class="modal-overlay" id="tileInfoModal">
               <div class="modal-card">
@@ -475,20 +491,34 @@ jobs:
               </div>
           </div>
 
-          <!-- 3. نافذة المزاد العلني -->
+          <!-- 3. نافذة المزاد العلني مع السعر الأساسي ومؤقت الـ 5 ثواني -->
           <div class="modal-overlay" id="auctionModal">
               <div class="modal-card">
                   <div class="modal-header">
                       <div class="modal-title">🔨 مزاد علني مباشر</div>
                   </div>
                   <div class="modal-body">
-                      <div id="aucPropDetails" style="text-align:center; font-weight:bold; margin-bottom:10px;"></div>
-                      <div style="text-align:center; margin:10px 0;">
+                      <!-- سعر العقار الأساسي في أعلى النافذة -->
+                      <div style="text-align:center; margin-bottom:8px; background:rgba(255,255,255,0.06); padding:8px 12px; border-radius:10px; border:1px solid rgba(245,158,11,0.35);">
+                          <div id="aucPropDetails" style="font-size:1.05rem; font-weight:900; color:var(--text); margin-bottom:4px;"></div>
+                          <div style="font-size:0.85rem; color:var(--gold-lt); font-weight:bold;">
+                              🏷️ السعر الأساسي للعقار: <span id="aucBasePriceVal" style="color:var(--gold); font-size:1.15rem; font-weight:900;">0$</span>
+                          </div>
+                      </div>
+
+                      <!-- مؤقت المهلة 5 ثواني -->
+                      <div style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4); border-radius:8px; padding:6px; text-align:center; margin-bottom:10px;">
+                          <div style="font-size:0.82rem; font-weight:bold; color:#FCA5A5;">
+                              ⏱️ المهلة المتبقية للمزايدة: <span id="aucTimerNum" style="color:#EF4444; font-size:1.25rem; font-weight:900;">5</span> ثوانٍ
+                          </div>
+                      </div>
+
+                      <div style="text-align:center; margin:8px 0;">
                           <div style="font-size:0.8rem; color:var(--dim);">أعلى مزايدة حالية:</div>
                           <div style="font-size:1.6rem; font-weight:900; color:var(--gold);" id="aucCurrentBid">10$</div>
-                          <div style="font-size:0.8rem;" id="aucHighestBidder">-</div>
+                          <div style="font-size:0.82rem;" id="aucHighestBidder">-</div>
                       </div>
-                      <div id="aucTurnPrompt" style="text-align:center; font-weight:bold; color:var(--text); margin-top:10px;"></div>
+                      <div id="aucTurnPrompt" style="text-align:center; font-weight:bold; color:var(--text); margin-top:8px;"></div>
                   </div>
                   <div class="modal-footer" id="aucControls">
                       <button class="btn btn-gold" onclick="placeAuctionBid(10)">+10$</button>
@@ -650,7 +680,7 @@ jobs:
               </div>
           </div>
 
-          <!-- 10. نافذة تأكيد الخروج لمنع الإغلاق المفاجئ -->
+          <!-- 10. نافذة تأكيد الخروج مع خيار حفظ اللعبة -->
           <div class="modal-overlay" id="exitModal">
               <div class="modal-card">
                   <div class="modal-header">
@@ -658,13 +688,16 @@ jobs:
                       <div style="font-size:1.2rem; cursor:pointer;" onclick="closeExitModal()">✕</div>
                   </div>
                   <div class="modal-body" style="text-align:center; padding:18px 14px;">
-                      <div style="font-size:2.2rem; margin-bottom:8px;">⚠️</div>
-                      <div style="font-size:1rem; font-weight:bold; margin-bottom:6px;">هل ترغب فعلاً في الخروج من اللعبة؟</div>
-                      <div style="font-size:0.8rem; color:var(--dim);">سيتم إنهاء الجولة الحالية وإغلاق التطبيق.</div>
+                      <div style="font-size:2.2rem; margin-bottom:8px;">💾</div>
+                      <div style="font-size:1.05rem; font-weight:bold; margin-bottom:8px;">هل ترغب في حفظ اللعبة لإكمالها لاحقاً؟</div>
+                      <div style="font-size:0.8rem; color:var(--dim);">إذا اخترت حفظ اللعبة، يمكنك متابعتها في أي وقت لاحق من حيث توقفت تماماً.</div>
                   </div>
-                  <div class="modal-footer" style="justify-content:center; gap:12px;">
-                      <button class="btn btn-gray" onclick="closeExitModal()">متابعة اللعب</button>
-                      <button class="btn btn-red" onclick="confirmExitGame()">نعم، خروج</button>
+                  <div class="modal-footer" style="display:flex; flex-direction:column; gap:8px;">
+                      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%;">
+                          <button class="btn btn-gold" style="width:100%;" onclick="confirmExitWithSave()">💾 حفظ وخروج</button>
+                          <button class="btn btn-red" style="width:100%;" onclick="confirmExitWithoutSave()">❌ خروج بدون حفظ</button>
+                      </div>
+                      <button class="btn btn-gray" style="width:100%;" onclick="closeExitModal()">↩️ متابعة اللعب</button>
                   </div>
               </div>
           </div>
@@ -687,18 +720,69 @@ jobs:
           </div>
 
           <script>
+          // الإيجارات الأساسية تعادل 20% من قيمة العقار بدلاً من 10%
           const RAW_TILES = [
-          [0,"انطلق","GO","go","",0,0,"#10B981","🏁"],[1,"شارع المعز","Al-Muizz St","property","brown",60,6,"#8B4513",""],[2,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],[3,"خان الخليلي","Khan El-Khalili","property","brown",60,6,"#8B4513",""],[4,"ضريبة الدخل","Income Tax","tax","",200,0,"#EF4444","💰"],[5,"قطار الحجاز","Hejaz Rail","railroad","",200,25,"#64748B","🚂"],[6,"شارع الحمراء","Hamra St","property","lightblue",100,10,"#38BDF8",""],[7,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],[8,"الروشة","Raouche","property","lightblue",100,10,"#38BDF8",""],[9,"وسط بيروت","Downtown","property","lightblue",120,12,"#38BDF8",""],[10,"السجن / زيارة","Jail","jail","",0,0,"#6B7280","🚔"],[11,"باب توما","Bab Touma","property","pink",140,14,"#EC4899",""],[12,"شركة الكهرباء","Electric Co","utility","",150,0,"#EAB308","💡"],[13,"الصالحية","Salhiyeh","property","pink",140,14,"#EC4899",""],[14,"سوق الحميدية","Hamidiyah","property","pink",160,16,"#EC4899",""],[15,"قطار الحرمين","Haramain Rail","railroad","",200,25,"#64748B","🚂"],[16,"شارع الرشيد","Al-Rasheed St","property","orange",180,18,"#F97316",""],[17,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],[18,"المنصور","Mansour","property","orange",180,18,"#F97316",""],[19,"الكرادة","Karrada","property","orange",200,20,"#F97316",""],[20,"مواقف مجانية","Free Parking","parking","",0,0,"#10B981","🅿️"],[21,"شارع النيل","Nile Street","property","red",220,22,"#EF4444",""],[22,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],[23,"المقرن","Al-Mogran","property","red",220,22,"#EF4444",""],[24,"حي الرياض","Riyadh Dist","property","red",240,24,"#EF4444",""],[25,"قطار المشرق","Mashreq Rail","railroad","",200,25,"#64748B","🚂"],[26,"شارع العليا","Olaya St","property","yellow",260,26,"#EAB308",""],[27,"طريق الملك فهد","King Fahd Rd","property","yellow",260,26,"#EAB308",""],[28,"شركة المياه","Water Works","utility","",150,0,"#06B6D4","💧"],[29,"حي النخيل","Al-Nakheel","property","yellow",280,28,"#EAB308",""],[30,"إلى السجن!","Go to Jail","gotojail","",0,0,"#DC2626","🚨"],[31,"الكورنيش","Corniche","property","green",300,30,"#22C55E",""],[32,"اللؤلؤة","The Pearl","property","green",300,30,"#22C55E",""],[33,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],[34,"لوسيل","Lusail","property","green",320,32,"#22C55E",""],[35,"قطار الخليج","Gulf Rail","railroad","",200,25,"#64748B","🚂"],[36,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],[37,"شارع الشيخ زايد","Sheikh Zayed","property","darkblue",350,35,"#1E40AF",""],[38,"ضريبة الرفاهية","Luxury Tax","tax","",100,0,"#EF4444","💎"],[39,"برج خليفة","Burj Khalifa","property","darkblue",400,50,"#1E40AF",""]
+          [0,"انطلق","GO","go","",0,0,"#10B981","🏁"],
+          [1,"شارع المعز","Al-Muizz St","property","brown",60,12,"#8B4513",""],
+          [2,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],
+          [3,"خان الخليلي","Khan El-Khalili","property","brown",60,12,"#8B4513",""],
+          [4,"ضريبة الدخل","Income Tax","tax","",200,0,"#EF4444","💰"],
+          [5,"قطار الحجاز","Hejaz Rail","railroad","",200,25,"#64748B","🚂"],
+          [6,"شارع الحمراء","Hamra St","property","lightblue",100,20,"#38BDF8",""],
+          [7,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],
+          [8,"الروشة","Raouche","property","lightblue",100,20,"#38BDF8",""],
+          [9,"وسط بيروت","Downtown","property","lightblue",120,24,"#38BDF8",""],
+          [10,"السجن / زيارة","Jail","jail","",0,0,"#6B7280","🚔"],
+          [11,"باب توما","Bab Touma","property","pink",140,28,"#EC4899",""],
+          [12,"شركة الكهرباء","Electric Co","utility","",150,0,"#EAB308","💡"],
+          [13,"الصالحية","Salhiyeh","property","pink",140,28,"#EC4899",""],
+          [14,"سوق الحميدية","Hamidiyah","property","pink",160,32,"#EC4899",""],
+          [15,"قطار الحرمين","Haramain Rail","railroad","",200,25,"#64748B","🚂"],
+          [16,"شارع الرشيد","Al-Rasheed St","property","orange",180,36,"#F97316",""],
+          [17,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],
+          [18,"المنصور","Mansour","property","orange",180,36,"#F97316",""],
+          [19,"الكرادة","Karrada","property","orange",200,40,"#F97316",""],
+          [20,"مواقف مجانية","Free Parking","parking","",0,0,"#10B981","🅿️"],
+          [21,"شارع النيل","Nile Street","property","red",220,44,"#EF4444",""],
+          [22,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],
+          [23,"المقرن","Al-Mogran","property","red",220,44,"#EF4444",""],
+          [24,"حي الرياض","Riyadh Dist","property","red",240,48,"#EF4444",""],
+          [25,"قطار المشرق","Mashreq Rail","railroad","",200,25,"#64748B","🚂"],
+          [26,"شارع العليا","Olaya St","property","yellow",260,52,"#EAB308",""],
+          [27,"طريق الملك فهد","King Fahd Rd","property","yellow",260,52,"#EAB308",""],
+          [28,"شركة المياه","Water Works","utility","",150,0,"#06B6D4","💧"],
+          [29,"حي النخيل","Al-Nakheel","property","yellow",280,56,"#EAB308",""],
+          [30,"إلى السجن!","Go to Jail","gotojail","",0,0,"#DC2626","🚨"],
+          [31,"الكورنيش","Corniche","property","green",300,60,"#22C55E",""],
+          [32,"اللؤلؤة","The Pearl","property","green",300,60,"#22C55E",""],
+          [33,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],
+          [34,"لوسيل","Lusail","property","green",320,64,"#22C55E",""],
+          [35,"قطار الخليج","Gulf Rail","railroad","",200,25,"#64748B","🚂"],
+          [36,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],
+          [37,"شارع الشيخ زايد","Sheikh Zayed","property","darkblue",350,70,"#1E40AF",""],
+          [38,"ضريبة الرفاهية","Luxury Tax","tax","",100,0,"#EF4444","💎"],
+          [39,"برج خليفة","Burj Khalifa","property","darkblue",400,80,"#1E40AF",""]
           ];
 
-          const BOARD_TILES = RAW_TILES.map(r => ({ id:r[0], nameAr:r[1], nameEn:r[2], type:r[3], group:r[4], price:r[5], rent:r[6], color:r[7], icon:r[8], owner:undefined, mortgaged:false }));
+          const BOARD_TILES = RAW_TILES.map(r => ({
+              id: r[0],
+              nameAr: r[1],
+              nameEn: r[2],
+              type: r[3],
+              group: r[4],
+              price: r[5],
+              rent: r[3] === "property" ? Math.round(r[5] * 0.20) : r[6],
+              color: r[7],
+              icon: r[8],
+              owner: undefined,
+              mortgaged: false
+          }));
 
           const I18N = {
               ar: { app:"مونوبولي العرب", turn:"دورك", opp:"دور الخصم", roll:"ارمي النرد", buy:"شراء", auction:"مزاد علني", trade:"مقايضة", myProps:"عقاراتي", passGo:"مررت بنقطة الانطلاق وحصلت على 200$!", jailed:"أنت في السجن!", finePaid:"دفعت 50$ كفالة وخرجت من السجن.", doublesJail:"مبروك! نرد متطابق وخرجت من السجن!", rolled:"حصلت على", rentPaid:"دفعت إيجاراً قدره", to:"إلى", deedFor:"عقار متاح للشراء", p:"عقارات", m:"مرهون", ai:"لاعب ضد الصقر (الذكاء)", pvp:"لاعب ضد لاعب (محلي)" },
               en: { app:"Monopoly Arabia", turn:"Your Turn", opp:"Opponent's Turn", roll:"Roll Dice", buy:"Buy", auction:"Auction", trade:"Trade", myProps:"My Properties", passGo:"Passed GO! Collected 200$!", jailed:"In Jail!", finePaid:"Paid 50$ fine and exited jail.", doublesJail:"Doubles rolled! Exited jail freely!", rolled:"Rolled", rentPaid:"Paid rent of", to:"to", deedFor:"Property available for purchase", p:"Props", m:"Mortgaged", ai:"Player vs Falcon (AI)", pvp:"2 Players (Pass & Play)" }
           };
 
-          // قاعدة بيانات غنية بتعليمات وقواعد الخانات الخدمية
           const SERVICE_INFO = {
               go: {
                   badgeAr: "🏁 خانة البداية الرسمية", badgeEn: "🏁 Official Starting Point",
@@ -851,7 +935,6 @@ jobs:
               }
           };
 
-          // نظام الصوت المحمي من تسريب الذاكرة والانهيار
           const AudioFX = {
               ctx: null,
               enabled: true,
@@ -877,7 +960,6 @@ jobs:
                       osc.connect(g);
                       g.connect(this.ctx.destination);
 
-                      // تنظيف وفصل القنوات الصوتية لمنع تسريب الذاكرة في WebView
                       osc.onended = () => {
                           try {
                               osc.disconnect();
@@ -921,6 +1003,8 @@ jobs:
               }
           };
 
+          const SAVE_KEY = "monopoly_arabia_save_v1";
+
           const Game = {
               lang: 'ar',
               propStyle: 'glow',
@@ -940,6 +1024,126 @@ jobs:
                   { id:1, nameAr:"الصقر (الذكاء)", nameEn:"Falcon (AI)", avatar:"🦅", color:"#38BDF8", money:1500, pos:0, inJail:false, jailTurns:0, props:[] }
               ]
           };
+
+          function hasSavedGame() {
+              try {
+                  const raw = localStorage.getItem(SAVE_KEY);
+                  if (!raw) return false;
+                  const data = JSON.parse(raw);
+                  return !!(data && data.players && data.players.length > 0 && !data.isGameOver);
+              } catch(e) {
+                  return false;
+              }
+          }
+
+          function saveCurrentGame() {
+              try {
+                  const saveData = {
+                      savedAt: Date.now(),
+                      isGameOver: Game.isGameOver,
+                      turn: Game.turn,
+                      doublesInRow: Game.doublesInRow,
+                      mode: Game.mode,
+                      diceSpeed: Game.diceSpeed,
+                      moveSpeed: Game.moveSpeed,
+                      propStyle: Game.propStyle,
+                      lang: Game.lang,
+                      players: JSON.parse(JSON.stringify(Game.players)),
+                      tiles: BOARD_TILES.map(t => ({ id: t.id, owner: t.owner, mortgaged: t.mortgaged }))
+                  };
+                  localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+                  return true;
+              } catch(e) {
+                  console.error("Save error:", e);
+                  return false;
+              }
+          }
+
+          function loadSavedGame() {
+              try {
+                  const raw = localStorage.getItem(SAVE_KEY);
+                  if (!raw) return false;
+                  const data = JSON.parse(raw);
+                  if (!data || !data.players) return false;
+
+                  Game.turn = data.turn ?? 0;
+                  Game.doublesInRow = data.doublesInRow ?? 0;
+                  if (data.mode) Game.mode = data.mode;
+                  if (data.diceSpeed) Game.diceSpeed = data.diceSpeed;
+                  if (data.moveSpeed) Game.moveSpeed = data.moveSpeed;
+                  if (data.propStyle) Game.propStyle = data.propStyle;
+                  if (data.lang) Game.lang = data.lang;
+
+                  Game.players = data.players;
+                  if (data.tiles) {
+                      data.tiles.forEach(st => {
+                          const t = BOARD_TILES.find(x => x.id === st.id);
+                          if (t) {
+                              t.owner = st.owner;
+                              t.mortgaged = st.mortgaged;
+                          }
+                      });
+                  }
+
+                  setLanguage(Game.lang);
+                  setPropStyle(Game.propStyle);
+                  setDiceSpeed(Game.diceSpeed);
+                  setMoveSpeed(Game.moveSpeed);
+                  updateBoardVisual();
+                  updatePawns();
+                  updateUI();
+                  return true;
+              } catch(e) {
+                  console.error("Load error:", e);
+                  return false;
+              }
+          }
+
+          function showStartModal() {
+              const btnCont = document.getElementById("btnContinueGame");
+              const statusTxt = document.getElementById("savedGameStatus");
+              const canContinue = hasSavedGame();
+
+              if (canContinue) {
+                  btnCont.disabled = false;
+                  btnCont.style.opacity = "1";
+                  btnCont.style.cursor = "pointer";
+                  btnCont.classList.remove("btn-gray");
+                  btnCont.classList.add("btn-blue");
+                  try {
+                      const d = JSON.parse(localStorage.getItem(SAVE_KEY));
+                      const dt = d.savedAt ? new Date(d.savedAt).toLocaleDateString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : "";
+                      statusTxt.innerText = dt ? `يوجد لعبة محفوظة بتاريخ: ${dt}` : "يوجد لعبة سابقة محفوظة جاهزة للإكمال.";
+                  } catch(e) {
+                      statusTxt.innerText = "يوجد لعبة سابقة محفوظة جاهزة للإكمال.";
+                  }
+              } else {
+                  btnCont.disabled = true;
+                  btnCont.style.opacity = "0.45";
+                  btnCont.style.cursor = "not-allowed";
+                  btnCont.classList.remove("btn-blue");
+                  btnCont.classList.add("btn-gray");
+                  statusTxt.innerText = "لا توجد لعبة سابقة محفوظة حتى الآن (أول تشغيل بعد التثبيت).";
+              }
+              document.getElementById("startModal").classList.add("show");
+          }
+
+          function startNewGameFromModal() {
+              document.getElementById("startModal").classList.remove("show");
+              startPlayerTurn();
+          }
+
+          function continueSavedGameFromModal() {
+              if (!hasSavedGame()) return;
+              const ok = loadSavedGame();
+              if (ok) {
+                  document.getElementById("startModal").classList.remove("show");
+                  logEvent("📂 تم استئناف اللعبة السابقة بنجاح من حيث توقفت!");
+                  startPlayerTurn();
+              } else {
+                  startNewGameFromModal();
+              }
+          }
 
           function getGridCoords(i) {
               if (i === 0) return { r: 11, c: 11 };
@@ -1230,6 +1434,7 @@ jobs:
 
           function triggerGameOver(winnerId) {
               Game.isGameOver = true;
+              localStorage.removeItem(SAVE_KEY);
               const winner = Game.players[winnerId];
               document.getElementById("goTrophy").innerText = winner.avatar;
               document.getElementById("goWinnerText").innerText = Game.lang === 'ar' ? `فاز ${winner.nameAr} باللعبة! 🏆` : `${winner.nameEn} Won the Game! 🏆`;
@@ -1277,6 +1482,7 @@ jobs:
               finishTurn(isDbl);
           }
 
+          // حساب الإيجار: 20% أساسي و 40% عند احتكار المجموعة
           function calculateRent(tile) {
               if (tile.type === "railroad") {
                   const cnt = BOARD_TILES.filter(t => t.type === "railroad" && t.owner === tile.owner).length;
@@ -1288,19 +1494,21 @@ jobs:
               }
               const groupTiles = BOARD_TILES.filter(t => t.group === tile.group);
               const hasMonopoly = groupTiles.every(t => t.owner === tile.owner);
-              return hasMonopoly ? tile.rent * 2 : tile.rent;
+              return hasMonopoly ? Math.round(tile.price * 0.40) : Math.round(tile.price * 0.20);
           }
 
           function promptBuyProperty(tile, isDbl) {
               Game.pendingTile = { tile, isDbl };
+              const baseRent = Math.round(tile.price * 0.20);
+              const monoRent = Math.round(tile.price * 0.40);
               document.getElementById("deedTitle").innerText = `${tile.icon||""} ${Game.lang==='ar'?tile.nameAr:tile.nameEn}`;
               document.getElementById("deedBody").innerHTML = `
                   <div style="text-align:center; margin-bottom:8px;">
                       <span style="display:inline-block; width:14px; height:14px; background:${tile.color}; border-radius:50%; vertical-align:middle;"></span>
-                      <strong style="font-size:1.1rem; color:var(--gold); margin:0 6px;">${tile.price}$</strong>
+                      <strong style="font-size:1.15rem; color:var(--gold); margin:0 6px;">${tile.price}$</strong>
                   </div>
-                  <div style="font-size:0.8rem; color:var(--dim); text-align:center;">إيجار العقار الأساسي: <strong>${tile.rent}$</strong></div>
-                  <div style="font-size:0.75rem; color:var(--dim); text-align:center; margin-top:4px;">(عند اكتمال المجموعة يتضاعف الإيجار تلقائياً)</div>
+                  <div style="font-size:0.82rem; color:var(--text); text-align:center;">إيجار العقار الأساسي (20%): <strong style="color:var(--gold);">${baseRent}$</strong></div>
+                  <div style="font-size:0.75rem; color:var(--dim); text-align:center; margin-top:4px;">(عند احتكار كامل المجموعة يرتفع الإيجار إلى 40%: <strong style="color:var(--gold);">${monoRent}$</strong>)</div>
               `;
               const canAfford = Game.players[0].money >= tile.price;
               document.getElementById("btnBuyProp").disabled = !canAfford;
@@ -1329,6 +1537,45 @@ jobs:
               }
           }
 
+          // نظام المزاد العلني مع مؤقت 5 ثوانٍ وإظهار السعر الأساسي
+          let aucTimerInterval = null;
+          let aucSecondsLeft = 5;
+
+          function startAuctionTimer() {
+              stopAuctionTimer();
+              aucSecondsLeft = 5;
+              const timerEl = document.getElementById("aucTimerNum");
+              if (timerEl) timerEl.innerText = aucSecondsLeft;
+
+              aucTimerInterval = setInterval(() => {
+                  aucSecondsLeft--;
+                  if (timerEl) timerEl.innerText = aucSecondsLeft;
+
+                  if (aucSecondsLeft <= 0) {
+                      stopAuctionTimer();
+                      handleAuctionTimeout();
+                  }
+              }, 1000);
+          }
+
+          function stopAuctionTimer() {
+              if (aucTimerInterval) {
+                  clearInterval(aucTimerInterval);
+                  aucTimerInterval = null;
+              }
+          }
+
+          function handleAuctionTimeout() {
+              const a = Game.auction;
+              if (!a) return;
+              logEvent(`⏱️ انتهت مهلة الـ 5 ثوانٍ للاعب ${Game.players[a.bidTurn].avatar}!`);
+              if (a.highestBidder !== null) {
+                  concludeAuction();
+              } else {
+                  foldAuctionBid();
+              }
+          }
+
           function startAuction() {
               if (!Game.pendingTile) return;
               const t = Game.pendingTile.tile;
@@ -1339,15 +1586,17 @@ jobs:
               Game.auction = { tile:t, isDbl, currentBid:10, highestBidder:null, bidTurn:Game.turn, active:[0,1] };
               document.getElementById("auctionModal").classList.add("show");
               updateAuctionUI();
-              if (Game.turn === 1) handleAIAuction();
+              startAuctionTimer();
+              if (Game.turn === 1) setTimeout(handleAIAuction, 1000);
           }
 
           function updateAuctionUI() {
               const a = Game.auction;
               if (!a) return;
-              document.getElementById("aucPropDetails").innerText = Game.lang==='ar'?a.tile.nameAr:a.tile.nameEn;
+              document.getElementById("aucPropDetails").innerText = `${a.tile.icon || "🏙️"} ${Game.lang==='ar'?a.tile.nameAr:a.tile.nameEn}`;
+              document.getElementById("aucBasePriceVal").innerText = a.tile.price + "$";
               document.getElementById("aucCurrentBid").innerText = a.currentBid + "$";
-              document.getElementById("aucHighestBidder").innerText = a.highestBidder !== null ? Game.players[a.highestBidder].avatar : "-";
+              document.getElementById("aucHighestBidder").innerText = a.highestBidder !== null ? `${Game.players[a.highestBidder].avatar} (${Game.players[a.highestBidder].money}$)` : (Game.lang==='ar'?"لا يوجد مزايد بعد":"No bids yet");
               const cur = Game.players[a.bidTurn];
               document.getElementById("aucTurnPrompt").innerText = `دور: ${cur.avatar} ${Game.lang==='ar'?cur.nameAr:cur.nameEn}`;
               document.getElementById("aucControls").style.display = (a.bidTurn === 0) ? "flex" : "none";
@@ -1355,6 +1604,7 @@ jobs:
 
           function placeAuctionBid(inc) {
               const a = Game.auction; if (!a) return;
+              stopAuctionTimer();
               const bidder = a.bidTurn;
               const p = Game.players[bidder];
               const nextBid = a.currentBid + inc;
@@ -1363,11 +1613,14 @@ jobs:
                   a.highestBidder = bidder;
                   logEvent(`🔨 زاد ${p.avatar} المزاد إلى ${a.currentBid}$!`);
                   nextAuctionTurn();
+              } else {
+                  startAuctionTimer();
               }
           }
 
           function foldAuctionBid() {
               const a = Game.auction; if (!a) return;
+              stopAuctionTimer();
               logEvent(`❌ انسحب ${Game.players[a.bidTurn].avatar} من المزاد.`);
               a.active = a.active.filter(id => id !== a.bidTurn);
               if (a.active.length === 1 && a.highestBidder !== null) {
@@ -1384,11 +1637,13 @@ jobs:
               const a = Game.auction; if (!a) return;
               a.bidTurn = (a.bidTurn === 0) ? 1 : 0;
               updateAuctionUI();
-              if (a.bidTurn === 1 && a.active.includes(1)) setTimeout(handleAIAuction, 600);
+              startAuctionTimer();
+              if (a.bidTurn === 1 && a.active.includes(1)) setTimeout(handleAIAuction, 1000);
           }
 
           function concludeAuction() {
               const a = Game.auction; if (!a) return;
+              stopAuctionTimer();
               document.getElementById("auctionModal").classList.remove("show");
               const winner = Game.players[a.highestBidder];
               logEvent(`🏆 فاز ${winner.avatar} بمزاد (${Game.lang==='ar'?a.tile.nameAr:a.tile.nameEn}) بمبلغ ${a.currentBid}$!`);
@@ -1397,7 +1652,7 @@ jobs:
           }
 
           function handleAIAuction() {
-              const a = Game.auction; if (!a) return;
+              const a = Game.auction; if (!a || a.bidTurn !== 1) return;
               const ai = Game.players[1];
               let val = a.tile.price * 0.9;
               if (checkMonopolyPot(1, a.tile.group)) val = a.tile.price * 1.35;
@@ -1464,7 +1719,6 @@ jobs:
               document.getElementById("jailModal").classList.add("show");
           }
 
-          // إصلاح تجمد السجن: استدعاء الرمي التلقائي بعد دفع الكفالة
           function payJailFine() {
               const cur = Game.players[Game.turn];
               if (cur.money >= 50) {
@@ -1552,7 +1806,6 @@ jobs:
               }
           }
 
-          // فتح دليل الخانات والتعليمات المفصلة للخانات الخدمية والعقارية
           function openTileInfoModal(index) {
               const t = BOARD_TILES[index];
               const isAr = (Game.lang === 'ar');
@@ -1565,6 +1818,8 @@ jobs:
                   const statusTxt = t.mortgaged ? (isAr?"مَرْهُون ⚠️":"MORTGAGED ⚠️") : (isAr?"نشط وفعال ✓":"Active ✓");
                   const mortVal = Math.floor(t.price * 0.5);
                   const unmortVal = Math.floor(mortVal * 1.1);
+                  const baseRent = Math.round(t.price * 0.20);
+                  const monoRent = Math.round(t.price * 0.40);
 
                   bodyEl.innerHTML = `
                       <div style="text-align:center; margin-bottom:10px;">
@@ -1572,8 +1827,8 @@ jobs:
                           <div style="font-size:1.15rem; font-weight:900; color:var(--gold);">${t.price}$</div>
                       </div>
                       <div class="info-rule-box">
-                          <div class="info-rule-item"><strong>${isAr?"الإيجار الأساسي:":"Base Rent:"}</strong> <span>${t.rent}$</span></div>
-                          <div class="info-rule-item"><strong>${isAr?"إيجار الاحتكار (المجموعة كاملة):":"Monopoly Rent:"}</strong> <span style="color:var(--gold);">${t.rent * 2}$</span></div>
+                          <div class="info-rule-item"><strong>${isAr?"الإيجار الأساسي (20%):":"Base Rent (20%):"}</strong> <span>${baseRent}$</span></div>
+                          <div class="info-rule-item"><strong>${isAr?"إيجار الاحتكار (40% للمجموعة):":"Monopoly Rent (40%):"}</strong> <span style="color:var(--gold); font-weight:bold;">${monoRent}$</span></div>
                           <div class="info-rule-item"><strong>${isAr?"قيمة الرهن:":"Mortgage Value:"}</strong> <span>${mortVal}$</span></div>
                           <div class="info-rule-item"><strong>${isAr?"تكلفة فك الرهن:":"Unmortgage Cost:"}</strong> <span>${unmortVal}$</span></div>
                           <div class="info-rule-item"><strong>${isAr?"المالك الحالي:":"Current Owner:"}</strong> <span>${ownerTxt}</span></div>
@@ -1625,7 +1880,6 @@ jobs:
               document.getElementById("tileInfoModal").classList.remove("show");
           }
 
-          // معالجة زر الرجوع بأمان لمنع الخروج المفاجئ
           window.handleAndroidBack = function() {
               const openModals = Array.from(document.querySelectorAll('.modal-overlay.show'));
               if (openModals.length > 0) {
@@ -1646,6 +1900,12 @@ jobs:
                       Game.fastTravelData = null;
                       finishTurn(isDbl);
                   }
+                  if (lastModal.id === "auctionModal" && Game.auction) {
+                      stopAuctionTimer();
+                      const isDbl = Game.auction.isDbl;
+                      Game.auction = null;
+                      finishTurn(isDbl);
+                  }
                   return;
               }
               openExitModal();
@@ -1656,6 +1916,13 @@ jobs:
           }
           function closeExitModal() {
               document.getElementById("exitModal").classList.remove("show");
+          }
+          function confirmExitWithSave() {
+              saveCurrentGame();
+              confirmExitGame();
+          }
+          function confirmExitWithoutSave() {
+              confirmExitGame();
           }
           function confirmExitGame() {
               if (window.Android && window.Android.exitApp) {
@@ -1830,10 +2097,15 @@ jobs:
               document.getElementById("txtMode").innerText = Game.mode === 'ai' ? I18N[Game.lang].ai : I18N[Game.lang].pvp;
               logEvent(`🎮 نمط اللعب: ${document.getElementById("txtMode").innerText}`); updateUI();
           }
-          function restartGame() { location.reload(); }
+          function restartGame() {
+              localStorage.removeItem(SAVE_KEY);
+              location.reload();
+          }
 
           window.addEventListener("DOMContentLoaded", () => {
-              renderBoard(); updateUI(); startPlayerTurn();
+              renderBoard();
+              updateUI();
+              showStartModal();
           });
           </script>
           </body>
