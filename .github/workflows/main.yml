@@ -731,10 +731,10 @@ jobs:
                   <button class="btn btn-gray" onclick="closeTradeModal()">خروج</button>
               </div>
           </div>
-      </div>
+          </div>
 
-      <!-- 6.1 نافذة موافقة الخصم على المقايضة في نمط لاعبين -->
-      <div class="modal-overlay" id="pvpTradeConfirmModal">
+          <!-- 6.1 نافذة موافقة الخصم على المقايضة في نمط لاعبين -->
+       <div class="modal-overlay" id="pvpTradeConfirmModal">
           <div class="modal-card">
               <div class="modal-header">
                   <div class="modal-title">🤝 عرض مقايضة وارد!</div>
