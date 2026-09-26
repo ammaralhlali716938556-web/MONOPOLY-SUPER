@@ -12,7 +12,6 @@ jobs:
   build:
     name: 🎲 بناء تطبيق MONOPOLY PRO (APK)
     runs-on: ubuntu-latest
-
     steps:
       - name: 📥 جلب الكود
         uses: actions/checkout@v4
