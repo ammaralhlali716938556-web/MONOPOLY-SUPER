@@ -304,7 +304,7 @@ jobs:
           }
           """
 
-          # 12. app/src/main/assets/index.html (تعديل كامل رقعة اللعب لتملأ الشاشة تماماً بدون خروج أي عنصر)
+          # 12. app/src/main/assets/index.html
           files["app/src/main/assets/index.html"] = r'''<!DOCTYPE html>
           <html lang="ar" dir="rtl">
           <head>
@@ -374,9 +374,10 @@ jobs:
           .p-cash{font-size:clamp(0.78rem,2.5vw,0.88rem);font-weight:900;color:var(--gold);line-height:1.1;}
           .p-stats{font-size:0.58rem;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
           .p-badge{position:absolute;top:-5px;left:4px;background:var(--gold);color:#000;font-size:0.55rem;font-weight:900;padding:1px 5px;border-radius:8px;}
+          [dir="ltr"] .p-badge{left:auto;right:4px;}
 
           .board-wrapper{direction:ltr!important;width:100%;flex:1;min-height:0;margin:0 auto;box-sizing:border-box;position:relative;background:var(--bg-board);border-radius:10px;border:2px solid var(--gold);box-shadow:0 4px 20px rgba(0,0,0,0.5);display:grid;grid-template-columns:minmax(0, 1.2fr) repeat(9, minmax(0, 1fr)) minmax(0, 1.2fr);grid-template-rows:minmax(0, 1.15fr) repeat(9, minmax(0, 1fr)) minmax(0, 1.15fr);gap:1px;padding:1px;overflow:visible;}
-          .tile{direction:rtl;background:var(--bg-tile);border-radius:3px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:1px 0;overflow:visible;border:1px solid var(--tile-border);cursor:pointer;min-width:0;min-height:0;box-sizing:border-box;}
+          .tile{background:var(--bg-tile);border-radius:3px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:1px 0;overflow:visible;border:1px solid var(--tile-border);cursor:pointer;min-width:0;min-height:0;box-sizing:border-box;}
           .tile:active{filter:brightness(1.15);}
           .tile-bar{width:100%;height:5px;border-radius:1px;flex-shrink:0;}
           .tile-cnt{width:100%;min-width:0;height:calc(100% - 6px);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:1px 0;box-sizing:border-box;overflow:hidden;}
@@ -397,7 +398,6 @@ jobs:
           .side-top .tile-pawns{bottom:-10px;top:auto;left:50%;transform:translateX(-50%);flex-direction:row;width:max-content;}
           .side-left .tile-pawns{right:-10px;left:auto;top:50%;transform:translateY(-50%);flex-direction:column;height:max-content;width:auto;}
           .side-right .tile-pawns{left:-10px;right:auto;top:50%;transform:translateY(-50%);flex-direction:column;height:max-content;width:auto;}
-
           .corner-tile .tile-pawns{inset:0;display:flex!important;align-items:center;justify-content:center;flex-direction:row;}
 
           .side-bottom .tile-bar{margin-top:auto;margin-bottom:0;}
@@ -409,7 +409,13 @@ jobs:
           [dir="ltr"] .tile-owner-badge{right:auto;left:1px;}
           .tile-mortgaged-badge{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%) rotate(-20deg);background:#DC2626;color:#FFF;font-size:0.45rem;font-weight:900;padding:1px 3px;border-radius:3px;border:1px solid #FFF;z-index:8;}
 
-          .board-center{direction:rtl;grid-column:2/span 9;grid-row:2/span 9;background:var(--center-bg);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:4px;position:relative;border:1px solid rgba(245,158,11,0.25);overflow:hidden;min-width:0;min-height:0;box-sizing:border-box;}
+          /* شارات المباني: ليموني للطوابق 1-4 وذهبي لبرج إيفل (الطابق 5) */
+          .tile-building{position:absolute;bottom:1px;right:1px;display:flex;align-items:center;justify-content:center;gap:1px;padding:1px 3px;border-radius:3px;font-size:0.48rem;font-weight:900;line-height:1;z-index:6;box-shadow:0 1px 3px rgba(0,0,0,0.5);}
+          [dir="ltr"] .tile-building{right:auto;left:1px;}
+          .tile-building.lime{background:#A3E635;color:#142603;border:1px solid #65A30D;}
+          .tile-building.gold{background:linear-gradient(135deg,#FDE047,#F59E0B);color:#451A03;border:1.5px solid #FFD700;box-shadow:0 0 7px #F59E0B;}
+
+          .board-center{grid-column:2/span 9;grid-row:2/span 9;background:var(--center-bg);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:4px;position:relative;border:1px solid rgba(245,158,11,0.25);overflow:hidden;min-width:0;min-height:0;box-sizing:border-box;}
           .center-brand{font-size:clamp(0.72rem,3vw,1.05rem);font-weight:900;color:var(--gold);letter-spacing:1px;text-align:center;text-shadow:0 0 10px rgba(245,158,11,0.3);}
           .center-turn-announcer{font-size:clamp(0.62rem,2.4vw,0.80rem);font-weight:bold;color:var(--text);background:rgba(128,128,128,0.12);padding:2px 8px;border-radius:20px;border:1px solid rgba(128,128,128,0.25);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:92%;}
           .dice-area{display:flex;align-items:center;justify-content:center;gap:12px;margin:auto 0;perspective:800px;}
@@ -442,6 +448,10 @@ jobs:
           .btn-blue{background:#2563EB;color:#fff;}
           .btn-red{background:#DC2626;color:#fff;}
           .btn-gray{background:#4B5563;color:#fff;}
+          .btn-lime{background:#84CC16;color:#000;}
+          .btn-lime:hover{background:#65A30D;}
+          .btn-lime:disabled{opacity:0.4;cursor:not-allowed;}
+          .btn:disabled{opacity:0.4;cursor:not-allowed;}
           .btn-pill{padding:4px 10px;border-radius:16px;border:1px solid var(--btn-pill-border);background:var(--btn-pill-bg);color:var(--text);cursor:pointer;font-size:0.72rem;}
           .btn-pill.active{background:var(--gold);color:#000;border-color:var(--gold);font-weight:bold;}
           .row-opts{display:flex;gap:5px;margin:5px 0 10px 0;flex-wrap:wrap;}
@@ -524,7 +534,7 @@ jobs:
               </div>
           </div>
 
-          <!-- 0. نافذة البداية: لعبة جديدة أو إكمال اللعبة السابقة -->
+          <!-- 0. نافذة البداية -->
           <div class="modal-overlay" id="startModal">
               <div class="modal-card">
                   <div class="modal-header">
@@ -608,7 +618,7 @@ jobs:
               </div>
           </div>
 
-          <!-- 1. نافذة دليل وتعليمات الخانات الخدمية -->
+          <!-- 1. نافذة دليل وتعليمات الخانات والعقارات مع إدارة المباني -->
           <div class="modal-overlay" id="tileInfoModal">
               <div class="modal-card">
                   <div class="modal-header">
@@ -638,7 +648,7 @@ jobs:
               </div>
           </div>
 
-          <!-- 3. نافذة المزاد العلني مع السعر الأساسي ومؤقت الـ 5 ثواني -->
+          <!-- 3. نافذة المزاد العلني -->
           <div class="modal-overlay" id="auctionModal">
               <div class="modal-card">
                   <div class="modal-header">
@@ -733,7 +743,7 @@ jobs:
               </div>
           </div>
 
-          <!-- 6.1 نافذة موافقة الخصم على المقايضة في نمط لاعبين -->
+          <!-- 6.1 نافذة موافقة الخصم على المقايضة -->
           <div class="modal-overlay" id="pvpTradeConfirmModal">
               <div class="modal-card">
                   <div class="modal-header">
@@ -761,7 +771,7 @@ jobs:
               </div>
           </div>
 
-          <!-- 8. نافذة الإعدادات -->
+          <!-- 8. نافذة الإعدادات مع القائمة المنسدلة للغات -->
           <div class="modal-overlay" id="settingsModal">
               <div class="modal-card">
                   <div class="modal-header">
@@ -776,13 +786,28 @@ jobs:
                               <button class="btn-pill" id="btnThemeLight" onclick="setTheme('light')">الفاتح ☀️</button>
                           </div>
                       </div>
+
+                      <!-- قائمة اللغات المنسدلة المطلوبة لجميع اللغات الـ 14 -->
                       <div class="settings-section">
-                          <div class="settings-label">🌐 اللغة (Language):</div>
-                          <div class="row-opts">
-                              <button class="btn-pill active" id="btnLangAr" onclick="setLanguage('ar')">العربية</button>
-                              <button class="btn-pill" id="btnLangEn" onclick="setLanguage('en')">English</button>
-                          </div>
+                          <div class="settings-label" id="lblLangSelect">🌐 اللغة (Language):</div>
+                          <select id="selGameLang" onchange="setLanguage(this.value)" style="width:100%; padding:8px 10px; background:var(--input-bg); color:var(--text); border:1.5px solid var(--gold); border-radius:8px; font-size:0.85rem; outline:none; cursor:pointer;">
+                              <option value="ar">العربية (Arabic - مدن عربية)</option>
+                              <option value="en">English (الإنجليزية - European Cities)</option>
+                              <option value="fr">Français (الفرنسية - Villes Européennes)</option>
+                              <option value="ru">Русский (الروسية - Европейские города)</option>
+                              <option value="es">Español (الإسبانية - Ciudades Europeas)</option>
+                              <option value="pt">Português (البرتغالية - Cidades Europeias)</option>
+                              <option value="de">Deutsch (الألمانية - Europäische Städte)</option>
+                              <option value="it">Italiano (الإيطالية - Città Europee)</option>
+                              <option value="tr">Türkçe (التركية - Avrupa Şehirleri)</option>
+                              <option value="zh">中文 (الصينية - 亚洲主要城市)</option>
+                              <option value="hi">हिन्दी (الهندية - एशियाई प्रमुख शहर)</option>
+                              <option value="ko">한국어 (الكورية - 아시아 주요 도시)</option>
+                              <option value="ja">日本語 (اليابانية - アジア主要都市)</option>
+                              <option value="fa">فارسی (الفارسية - شهرهای مهم آسیا)</option>
+                          </select>
                       </div>
+
                       <div class="settings-section">
                           <div class="settings-label">🎨 تمييز العقارات المملوكة:</div>
                           <div class="row-opts">
@@ -842,12 +867,12 @@ jobs:
                       <div style="background:rgba(245,158,11,0.1); border:1px solid var(--gold); border-radius:8px; padding:8px; font-weight:bold; color:var(--gold-lt);">
                           تصميم وبرمجة عمار الهلالي
                       </div>
-                      <p style="font-size:0.72rem; color:var(--dim); margin-top:10px;">تجربة عربية استراتيجية متكاملة للمنافسة وشراء العقارات وبنك الحظ بنظام تحكيم آلي وسرعات تحكم مرنة.</p>
+                      <p style="font-size:0.72rem; color:var(--dim); margin-top:10px;">تجربة استراتيجية عالمية متكاملة بـ 14 لغة مع نظام بناء الطوابق وبرج إيفل الذهبي وبنك الحظ الاحترافي.</p>
                   </div>
               </div>
           </div>
 
-          <!-- 10. نافذة تأكيد الخروج مع خيار حفظ اللعبة -->
+          <!-- 10. نافذة تأكيد الخروج -->
           <div class="modal-overlay" id="exitModal">
               <div class="modal-card">
                   <div class="modal-header">
@@ -869,7 +894,7 @@ jobs:
               </div>
           </div>
 
-          <!-- 11. نافذة إعلان الفائز والتتويج -->
+          <!-- 11. نافذة إعلان الفائز -->
           <div class="modal-overlay" id="gameOverModal">
               <div class="modal-card">
                   <div class="modal-header">
@@ -887,48 +912,70 @@ jobs:
           </div>
 
           <script>
-          // أسماء العقارات والمحطات تم اختصارها إلى اسم مفرد واحد لعدم أخذ مساحة من الخانة
+          const CITIES_ARAB = ["القاهرة", "الإسكندرية", "بيروت", "دمشق", "بغداد", "عمان", "القدس", "الكويت", "الرياض", "جدة", "مكة", "الدوحة", "المنامة", "مسقط", "دبي", "أبوظبي", "الخرطوم", "تونس", "الجزائر", "طرابلس", "الرباط", "الدار البيضاء"];
+          const CITIES_EURO = {"en": ["Athens", "Dublin", "Lisbon", "Madrid", "Barcelona", "Brussels", "Amsterdam", "Vienna", "Prague", "Warsaw", "Budapest", "Rome", "Milan", "Venice", "Berlin", "Munich", "Frankfurt", "London", "Manchester", "Edinburgh", "Paris", "Geneva"], "fr": ["Athènes", "Dublin", "Lisbonne", "Madrid", "Barcelone", "Bruxelles", "Amsterdam", "Vienne", "Prague", "Varsovie", "Budapest", "Rome", "Milan", "Venise", "Berlin", "Munich", "Francfort", "Londres", "Manchester", "Édimbourg", "Paris", "Genève"], "ru": ["Афины", "Дублин", "Лиссабон", "Мадрид", "Барселона", "Брюссель", "Амстердам", "Вена", "Прага", "Варшава", "Будапешт", "Рим", "Милан", "Венеция", "Берлин", "Мюнхен", "Франкфурт", "Лондон", "Манчестер", "Эдинбург", "Париж", "Женева"], "es": ["Atenas", "Dublín", "Lisboa", "Madrid", "Barcelona", "Bruselas", "Ámsterdam", "Viena", "Praga", "Varsovia", "Budapest", "Roma", "Milán", "Venecia", "Berlín", "Múnich", "Fráncfort", "Londres", "Mánchester", "Edimburgo", "París", "Ginebra"], "pt": ["Atenas", "Dublin", "Lisboa", "Madrid", "Barcelona", "Bruxelas", "Amsterdã", "Viena", "Praga", "Varsóvia", "Budapeste", "Roma", "Milão", "Veneza", "Berlim", "Munique", "Frankfurt", "Londres", "Manchester", "Edimburgo", "Paris", "Genebra"], "de": ["Athen", "Dublin", "Lissabon", "Madrid", "Barcelona", "Brüssel", "Amsterdam", "Wien", "Prag", "Warschau", "Budapest", "Rom", "Mailand", "Venedig", "Berlin", "München", "Frankfurt", "London", "Manchester", "Edinburgh", "Paris", "Genf"], "it": ["Atene", "Dublino", "Lisbona", "Madrid", "Barcellona", "Bruxelles", "Amsterdam", "Vienna", "Praga", "Varsavia", "Budapest", "Roma", "Milano", "Venezia", "Berlino", "Monaco", "Francoforte", "Londra", "Manchester", "Edimburgo", "Parigi", "Ginevra"], "tr": ["Atina", "Dublin", "Lizbon", "Madrid", "Barselona", "Brüksel", "Amsterdam", "Viyana", "Prag", "Varşova", "Budapeşte", "Roma", "Milano", "Venedik", "Berlin", "Münih", "Frankfurt", "Londra", "Manchester", "Edinburgh", "Paris", "Cenevre"]};
+          const CITIES_ASIA = {"zh": ["河内", "马尼拉", "雅加达", "吉隆坡", "曼谷", "塔什干", "阿拉木图", "德黑兰", "孟买", "新德里", "班加罗尔", "首尔", "釜山", "大阪", "京都", "广州", "上海", "新加坡", "香港", "台北", "北京", "东京"], "hi": ["हनोई", "मनीला", "जकार्ता", "कुआलालंपुर", "बैंकॉक", "ताशकंद", "अल्माटी", "तेहरान", "मुंबई", "नई दिल्ली", "बेंगलुरु", "सियोल", "बुसान", "ओसाका", "क्योटो", "गुआंगझू", "शंघाई", "सिंगापुर", "हांगकांग", "ताइपे", "बीजिंग", "टोक्यो"], "ko": ["하노이", "마닐라", "자카르타", "쿠알라룸푸르", "방콕", "타슈켄트", "알마티", "테헤란", "뭄바이", "뉴델리", "벵갈루루", "서울", "부산", "오사카", "교토", "광저우", "상하이", "싱가포르", "홍콩", "타이베이", "베이징", "도쿄"], "ja": ["ハノイ", "マニラ", "ジャカルタ", "クアラルンプール", "バンコク", "タシュケント", "アルマトイ", "テヘラン", "ムンバイ", "ニューデリー", "ベンガルール", "ソウル", "釜山", "大阪", "京都", "広州", "上海", "シンガポール", "香港", "台北", "北京", "東京"], "fa": ["هانوی", "مانیل", "جاکارتا", "کوالالامپور", "بانکوک", "تاشکند", "آلماتی", "طهران", "بمبئی", "دهلی نو", "بنگلور", "سئول", "بوسان", "اوزاکا", "کیوتو", "گوانگژو", "شانگهای", "سنگاپور", "هنگ کنگ", "تایپه", "پکن", "توکیو"]};
+          const SPECIAL_TILES = {"ar": {"0": "انطلق", "2": "صندوق الجماعة", "4": "ضريبة الدخل", "5": "قطار الحجاز", "7": "فرصة", "10": "السجن / زيارة", "12": "الكهرباء", "15": "قطار الحرمين", "17": "صندوق الجماعة", "20": "مواقف مجانية", "22": "فرصة", "25": "قطار المشرق", "28": "المياه", "30": "إلى السجن!", "33": "صندوق الجماعة", "35": "قطار الخليج", "36": "فرصة", "38": "ضريبة الرفاهية"}, "en": {"0": "GO", "2": "Community", "4": "Income Tax", "5": "Eurostar", "7": "Chance", "10": "Jail", "12": "Electric", "15": "Orient Exp.", "17": "Community", "20": "Parking", "22": "Chance", "25": "TGV", "28": "Water", "30": "Go to Jail", "33": "Community", "35": "Trans-Alpine", "36": "Chance", "38": "Luxury Tax"}, "fr": {"0": "DÉPART", "2": "Caisse", "4": "Impôt", "5": "Eurostar", "7": "Chance", "10": "Prison", "12": "Électricité", "15": "Orient Exp.", "17": "Caisse", "20": "Parc Gratuit", "22": "Chance", "25": "TGV", "28": "Eaux", "30": "En Prison!", "33": "Caisse", "35": "Trans-Alpin", "36": "Chance", "38": "Taxe Luxe"}, "ru": {"0": "ВПЕРЁД", "2": "Казна", "4": "Подоходный налог", "5": "Евростар", "7": "Шанс", "10": "Тюрьма", "12": "Электросеть", "15": "Восточный экспресс", "17": "Казна", "20": "Бесплатная стоянка", "22": "Шанс", "25": "TGV", "28": "Водопровод", "30": "В тюрьму!", "33": "Казна", "35": "Трансальпийский", "36": "Шанс", "38": "Налог на роскошь"}, "es": {"0": "SALIDA", "2": "Caja", "4": "Impuestos", "5": "Eurostar", "7": "Suerte", "10": "Cárcel", "12": "Electricidad", "15": "Orient Exp.", "17": "Caja", "20": "Parking", "22": "Suerte", "25": "TGV", "28": "Agua", "30": "¡A la Cárcel!", "33": "Caja", "35": "Transalpino", "36": "Suerte", "38": "Impuesto Lujo"}, "pt": {"0": "PARTIDA", "2": "Cofre", "4": "Imposto", "5": "Eurostar", "7": "Sorte", "10": "Prisão", "12": "Eletricidade", "15": "Orient Exp.", "17": "Cofre", "20": "Estacionamento", "22": "Sorte", "25": "TGV", "28": "Água", "30": "Vá p/ Prisão!", "33": "Cofre", "35": "Transalpino", "36": "Sorte", "38": "Taxa Luxo"}, "de": {"0": "LOS", "2": "Gemeinschaft", "4": "Einkommensteuer", "5": "Eurostar", "7": "Ereignis", "10": "Gefängnis", "12": "Elektrizität", "15": "Orient Exp.", "17": "Gemeinschaft", "20": "Frei Parken", "22": "Ereignis", "25": "TGV", "28": "Wasserwerk", "30": "Ins Gefängnis!", "33": "Gemeinschaft", "35": "Transalpin", "36": "Ereignis", "38": "Zusatzsteuer"}, "it": {"0": "VIA!", "2": "Imprevisti", "4": "Tassa Reddito", "5": "Eurostar", "7": "Probabilità", "10": "Prigione", "12": "Elettricità", "15": "Orient Exp.", "17": "Imprevisti", "20": "Parcheggio", "22": "Probabilità", "25": "TGV", "28": "Acqua", "30": "In Prigione!", "33": "Imprevisti", "35": "Transalpino", "36": "Probabilità", "38": "Tassa Lusso"}, "tr": {"0": "BAŞLANGIÇ", "2": "Kamu Fonu", "4": "Gelir Vergisi", "5": "Eurostar", "7": "Şans", "10": "Kodes", "12": "Elektrik", "15": "Doğu Ekspresi", "17": "Kamu Fonu", "20": "Ücretsiz Otopark", "22": "Şans", "25": "Hızlı Tren", "28": "Sular İdaresi", "30": "Kodese Gir!", "33": "Kamu Fonu", "35": "Toros Ekspresi", "36": "Şans", "38": "Lüks Vergisi"}, "zh": {"0": "出发", "2": "公益金", "4": "个人所得税", "5": "新干线", "7": "机会", "10": "监狱/探监", "12": "电力公司", "15": "亚欧快线", "17": "公益金", "20": "免费停车场", "22": "机会", "25": "磁悬浮", "28": "自来水厂", "30": "入狱！", "33": "公益金", "35": "丝路快车", "36": "机会", "38": "奢侈税"}, "hi": {"0": "प्रारंभ", "2": "सामुदायिक", "4": "आयकर", "5": "शिंकानसेन", "7": "किस्मत", "10": "जेल / मुलाकात", "12": "बिजली बोर्ड", "15": "एशियाई एक्सप्रेस", "17": "सामुदायिक", "20": "फ्री पार्किंग", "22": "किस्मत", "25": "मैगलेव", "28": "जल बोर्ड", "30": "सीधे जेल जाओ!", "33": "सामुदायिक", "35": "सिल्क रूट एक्सप्रेस", "36": "किस्मत", "38": "विलासिता कर"}, "ko": {"0": "출발", "2": "사회복지기금", "4": "소득세", "5": "신칸센", "7": "황금열쇠", "10": "감옥 / 면회", "12": "전력공사", "15": "범아시아 특급", "17": "사회복지기금", "20": "무료주차장", "22": "황금열쇠", "25": "자기부상열차", "28": "수도공사", "30": "감옥으로 가시오!", "33": "사회복지기금", "35": "실크로드 특급", "36": "황금열쇠", "38": "사치세"}, "ja": {"0": "GO", "2": "共同基金", "4": "所得税", "5": "新幹線", "7": "チャンス", "10": "刑務所", "12": "電力会社", "15": "アジア特急", "17": "共同基金", "20": "無料駐車場", "22": "チャンス", "25": "リニア", "28": "水道会社", "30": "刑務所へ行け!", "33": "共同基金", "35": "シルクロード急行", "36": "チャンス", "38": "物品税"}, "fa": {"0": "شروع", "2": "صندوق عمومی", "4": "مالیات بر درآمد", "5": "شینکانسن", "7": "شانس", "10": "زندان / ملاقات", "12": "اداره برق", "15": "قطار سراسری آسیا", "17": "صندوق عمومی", "20": "پارکینگ رایگان", "22": "شانس", "25": "قطار سریع‌السیر", "28": "اداره آب", "30": "برو به زندان!", "33": "صندوق عمومی", "35": "قطار جاده ابریشم", "36": "شانس", "38": "مالیات تجملات"}};
+          const I18N = {"ar": {"app": "MONOPOLY PRO", "turn": "دورك", "opp": "دور الخصم", "roll": "ارمي النرد", "buy": "شراء", "auction": "مزاد علني", "trade": "مقايضة", "myProps": "عقاراتي", "passGo": "مررت بنقطة الانطلاق وحصلت على 200$!", "jailed": "أنت في السجن!", "finePaid": "دفعت 50$ كفالة وخرجت من السجن.", "doublesJail": "مبروك! نرد متطابق وخرجت من السجن!", "rolled": "حصل على", "rentPaid": "دفع إيجاراً قدره", "to": "إلى", "p": "عقارات", "m": "مرهون", "ai": "ضد روبوت (الكمبيوتر)", "pvp": "لاعبين اثنين (محلي)", "buildFloor": "إنشاء طابق", "demolishFloor": "هدم طابق", "floor": "طابق", "floors": "طوابق", "eiffelTower": "برج إيفل الذهبي", "floorCost": "تكلفة الطابق", "refund": "استرداد", "evenBuildNotice": "يجب بناء الطابق في كافة عقارات اللون بالتساوي أولاً", "evenDemoNotice": "يجب هدم الطوابق بالتساوي أولاً", "maxFloors": "الحد الأقصى (برج إيفل)", "noFloors": "لا توجد مباني", "settings": "الإعدادات", "about": "حول اللعبة", "exit": "خروج", "newGame": "بدء لعبة جديدة", "continueGame": "إكمال اللعبة السابقة", "notEnoughCash": "الرصيد المالي غير كافٍ لبناء الطابق", "monopolyRequired": "يلزم امتلاك كافة عقارات اللون للبناء", "groupMortgaged": "لا يمكن البناء أثناء وجود عقار مَرْهُون في المجموعة"}, "en": {"app": "MONOPOLY PRO", "turn": "Your Turn", "opp": "Opponent's Turn", "roll": "Roll Dice", "buy": "Buy", "auction": "Auction", "trade": "Trade", "myProps": "My Props", "passGo": "Passed GO! Collected 200$!", "jailed": "In Jail!", "finePaid": "Paid 50$ fine and exited jail.", "doublesJail": "Doubles rolled! Exited jail freely!", "rolled": "Rolled", "rentPaid": "Paid rent of", "to": "to", "p": "Props", "m": "Mortgaged", "ai": "vs Robot (Computer)", "pvp": "2 Players (Pass & Play)", "buildFloor": "Build Floor", "demolishFloor": "Demolish Floor", "floor": "Floor", "floors": "Floors", "eiffelTower": "Golden Eiffel Tower", "floorCost": "Floor Cost", "refund": "Refund", "evenBuildNotice": "Must build evenly across all group properties first", "evenDemoNotice": "Must demolish evenly across all group properties first", "maxFloors": "Max Reached (Eiffel Tower)", "noFloors": "No buildings", "settings": "Settings", "about": "About", "exit": "Exit", "newGame": "New Game", "continueGame": "Continue Game", "notEnoughCash": "Insufficient cash to build floor", "monopolyRequired": "Must own all properties in color group to build", "groupMortgaged": "Cannot build while group property is mortgaged"}, "fr": {"app": "MONOPOLY PRO", "turn": "Votre tour", "opp": "Tour adversaire", "roll": "Lancer dés", "buy": "Acheter", "auction": "Enchères", "trade": "Échanger", "myProps": "Mes biens", "passGo": "Passé DÉPART! Reçu 200$!", "jailed": "En prison!", "finePaid": "Amende 50$ payée, sorti de prison.", "doublesJail": "Double obtenu! Sorti libre!", "rolled": "A obtenu", "rentPaid": "A payé un loyer de", "to": "à", "p": "Biens", "m": "Hypothéqué", "ai": "vs Ordinateur", "pvp": "2 Joueurs (Local)", "buildFloor": "Construire étage", "demolishFloor": "Démolir étage", "floor": "Étage", "floors": "Étages", "eiffelTower": "Tour Eiffel Dorée", "floorCost": "Coût de l'étage", "refund": "Remboursement", "evenBuildNotice": "Construisez uniformément sur tout le groupe", "evenDemoNotice": "Démolissez uniformément sur tout le groupe", "maxFloors": "Max atteint (Tour Eiffel)", "noFloors": "Aucun bâtiment", "settings": "Paramètres", "about": "À propos", "exit": "Quitter", "newGame": "Nouvelle partie", "continueGame": "Continuer partie", "notEnoughCash": "Fonds insuffisants", "monopolyRequired": "Monopole requis pour construire", "groupMortgaged": "Impossible de construire avec un bien hypothéqué"}, "ru": {"app": "MONOPOLY PRO", "turn": "Ваш ход", "opp": "Ход соперника", "roll": "Бросить кубики", "buy": "Купить", "auction": "Аукцион", "trade": "Обмен", "myProps": "Мои владения", "passGo": "Прошли ВПЕРЁД! Получено 200$!", "jailed": "Вы в тюрьме!", "finePaid": "Штраф 50$ уплачен, выход из тюрьмы.", "doublesJail": "Дубль! Вы свободны!", "rolled": "Выбросил", "rentPaid": "Заплатил аренду", "to": "игроку", "p": "Владения", "m": "Заложено", "ai": "Против робота", "pvp": "2 игрока (локально)", "buildFloor": "Построить этаж", "demolishFloor": "Снести этаж", "floor": "Этаж", "floors": "Этажи", "eiffelTower": "Золотая Эйфелева башня", "floorCost": "Стоимость этажа", "refund": "Возврат", "evenBuildNotice": "Стройте равномерно по всей группе", "evenDemoNotice": "Сносите равномерно по всей группе", "maxFloors": "Максимум (Эйфелева башня)", "noFloors": "Нет зданий", "settings": "Настройки", "about": "Об игре", "exit": "Выход", "newGame": "Новая игра", "continueGame": "Продолжить игру", "notEnoughCash": "Недостаточно средств", "monopolyRequired": "Требуется монополия для стройки", "groupMortgaged": "Нельзя строить при заложенных участках"}, "es": {"app": "MONOPOLY PRO", "turn": "Tu Turno", "opp": "Turno Rival", "roll": "Lanzar Dados", "buy": "Comprar", "auction": "Subasta", "trade": "Negociar", "myProps": "Mis Propiedades", "passGo": "¡Paso por SALIDA! Recibes 200$!", "jailed": "¡En la Cárcel!", "finePaid": "Fianza de 50$ pagada.", "doublesJail": "¡Dobles! ¡Sales gratis!", "rolled": "Sacó", "rentPaid": "Pagó alquiler de", "to": "a", "p": "Prop.", "m": "Hipotecado", "ai": "vs Robot (IA)", "pvp": "2 Jugadores (Local)", "buildFloor": "Construir Piso", "demolishFloor": "Demoler Piso", "floor": "Piso", "floors": "Pisos", "eiffelTower": "Torre Eiffel Dorada", "floorCost": "Coste de Piso", "refund": "Reembolso", "evenBuildNotice": "Construye de forma uniforme en el grupo", "evenDemoNotice": "Demuele de forma uniforme en el grupo", "maxFloors": "Máximo (Torre Eiffel)", "noFloors": "Sin edificios", "settings": "Ajustes", "about": "Acerca de", "exit": "Salir", "newGame": "Nueva Partida", "continueGame": "Continuar Partida", "notEnoughCash": "Fondos insuficientes", "monopolyRequired": "Monopolio requerido", "groupMortgaged": "No se puede construir con hipoteca"}, "pt": {"app": "MONOPOLY PRO", "turn": "Sua Vez", "opp": "Vez do Oponente", "roll": "Lançar Dados", "buy": "Comprar", "auction": "Leilão", "trade": "Trocar", "myProps": "Minhas Propriedades", "passGo": "Passou pela PARTIDA! Ganhou 200$!", "jailed": "Na Prisão!", "finePaid": "Fiança de 50$ paga.", "doublesJail": "Dados iguais! Livre!", "rolled": "Tirou", "rentPaid": "Pagou aluguel de", "to": "para", "p": "Prop.", "m": "Hipotecado", "ai": "vs Robô (IA)", "pvp": "2 Jogadores (Local)", "buildFloor": "Construir Andar", "demolishFloor": "Demolir Andar", "floor": "Andar", "floors": "Andares", "eiffelTower": "Torre Eiffel Dourada", "floorCost": "Custo do Andar", "refund": "Reembolso", "evenBuildNotice": "Construa uniformemente no grupo", "evenDemoNotice": "Demula uniformemente no grupo", "maxFloors": "Máximo (Torre Eiffel)", "noFloors": "Sem edifícios", "settings": "Configurações", "about": "Sobre", "exit": "Sair", "newGame": "Novo Jogo", "continueGame": "Continuar Jogo", "notEnoughCash": "Dinheiro insuficiente", "monopolyRequired": "Monopólio necessário", "groupMortgaged": "Não pode construir com imóvel hipotecado"}, "de": {"app": "MONOPOLY PRO", "turn": "Du bist dran", "opp": "Gegner am Zug", "roll": "Würfeln", "buy": "Kaufen", "auction": "Auktion", "trade": "Handeln", "myProps": "Mein Besitz", "passGo": "Über LOS gezogen! 200$ erhalten!", "jailed": "Im Gefängnis!", "finePaid": "50$ Kaution gezahlt.", "doublesJail": "Pasch gewürfelt! Frei!", "rolled": "Hat gewürfelt", "rentPaid": "Miete gezahlt von", "to": "an", "p": "Besitz", "m": "Belastet", "ai": "vs Computer", "pvp": "2 Spieler (Lokal)", "buildFloor": "Etage bauen", "demolishFloor": "Etage abreißen", "floor": "Etage", "floors": "Etagen", "eiffelTower": "Goldener Eiffelturm", "floorCost": "Kosten pro Etage", "refund": "Rückerstattung", "evenBuildNotice": "Gleichmäßig in der Gruppe bauen", "evenDemoNotice": "Gleichmäßig in der Gruppe abreißen", "maxFloors": "Maximum (Eiffelturm)", "noFloors": "Keine Gebäude", "settings": "Einstellungen", "about": "Über das Spiel", "exit": "Beenden", "newGame": "Neues Spiel", "continueGame": "Fortsetzen", "notEnoughCash": "Nicht genug Geld", "monopolyRequired": "Monopol erforderlich", "groupMortgaged": "Kein Bauen bei belastetem Besitz"}, "it": {"app": "MONOPOLY PRO", "turn": "Il tuo Turno", "opp": "Turno Avversario", "roll": "Lancia Dadi", "buy": "Acquista", "auction": "Asta", "trade": "Scambia", "myProps": "Le mie Proprietà", "passGo": "Passato dal VIA! Ritiri 200$!", "jailed": "In Prigione!", "finePaid": "Multa di 50$ pagata.", "doublesJail": "Doppio! Sei libero!", "rolled": "Ha tirato", "rentPaid": "Affitto pagato di", "to": "a", "p": "Propr.", "m": "Ipotecato", "ai": "vs Computer", "pvp": "2 Giocatori (Locale)", "buildFloor": "Costruisci Piano", "demolishFloor": "Demolisci Piano", "floor": "Piano", "floors": "Piani", "eiffelTower": "Torre Eiffel Dorata", "floorCost": "Costo Piano", "refund": "Rimborso", "evenBuildNotice": "Costruisci uniformemente nel gruppo", "evenDemoNotice": "Demolisci uniformemente nel gruppo", "maxFloors": "Massimo (Torre Eiffel)", "noFloors": "Nessun edificio", "settings": "Impostazioni", "about": "Informazioni", "exit": "Esci", "newGame": "Nuova Partita", "continueGame": "Continua Partita", "notEnoughCash": "Denaro insufficiente", "monopolyRequired": "Monopolio richiesto", "groupMortgaged": "Non si può costruire con ipoteche"}, "tr": {"app": "MONOPOLY PRO", "turn": "Sıra Sende", "opp": "Rakibin Sırası", "roll": "Zar At", "buy": "Satın Al", "auction": "Açık Artırma", "trade": "Takas", "myProps": "Mülklerim", "passGo": "BAŞLANGIÇTAN geçtin! 200$ aldın!", "jailed": "Kodes'tesin!", "finePaid": "50$ kefalet ödendi, serbestsin.", "doublesJail": "Çift zar! Kodesten çıktın!", "rolled": "Zar attı:", "rentPaid": "Kira ödendi:", "to": "Kime:", "p": "Mülk", "m": "İpotekli", "ai": "Bilgisayara Karşı", "pvp": "2 Oyuncu (Yerel)", "buildFloor": "Kat İnşa Et", "demolishFloor": "Kat Yık", "floor": "Kat", "floors": "Kat", "eiffelTower": "Altın Eyfel Kulesi", "floorCost": "Kat Maliyeti", "refund": "Geri Ödeme", "evenBuildNotice": "Gruptaki tüm mülklere eşit inşa edin", "evenDemoNotice": "Gruptaki mülkleri eşit yıkın", "maxFloors": "Maksimum (Eyfel Kulesi)", "noFloors": "Bina yok", "settings": "Ayarlar", "about": "Hakkında", "exit": "Çıkış", "newGame": "Yeni Oyun", "continueGame": "Oyuna Devam Et", "notEnoughCash": "Yetersiz bakiye", "monopolyRequired": "Tekel olmak şart", "groupMortgaged": "İpotekli mülk varken inşa edilemez"}, "zh": {"app": "MONOPOLY PRO", "turn": "你的回合", "opp": "对手回合", "roll": "掷骰子", "buy": "购买", "auction": "拍卖", "trade": "交易", "myProps": "我的房产", "passGo": "经过出发点！获得200$！", "jailed": "你进监狱了！", "finePaid": "支付50$罚金出狱。", "doublesJail": "掷出双数！免费出狱！", "rolled": "掷出了", "rentPaid": "支付租金", "to": "给", "p": "房产", "m": "已抵押", "ai": "人机对战", "pvp": "双人同屏对战", "buildFloor": "建造楼层", "demolishFloor": "拆除楼层", "floor": "层", "floors": "层", "eiffelTower": "金色埃菲尔铁塔", "floorCost": "建造费用", "refund": "拆除返还", "evenBuildNotice": "必须在同色系所有房产均匀加盖", "evenDemoNotice": "必须在同色系均匀拆除", "maxFloors": "达到最高上限（铁塔）", "noFloors": "暂无建筑", "settings": "设置", "about": "关于游戏", "exit": "退出", "newGame": "新游戏", "continueGame": "继续上一局", "notEnoughCash": "资金不足以建楼", "monopolyRequired": "需垄断同色系方可建楼", "groupMortgaged": "同色系有抵押房产时不可建楼"}, "hi": {"app": "MONOPOLY PRO", "turn": "आपकी बारी", "opp": "प्रतिद्वंद्वी की बारी", "roll": "पासा फेंकें", "buy": "खरीदें", "auction": "नीलामी", "trade": "अदला-बदली", "myProps": "मेरी संपत्ति", "passGo": "प्रारंभ पार किया! 200$ प्राप्त हुए!", "jailed": "आप जेल में हैं!", "finePaid": "50$ जमानत चुकाई, जेल से बाहर।", "doublesJail": "जोड़ी आई! जेल से मुक्त!", "rolled": "पासा आया", "rentPaid": "किराया चुकाया", "to": "को", "p": "संपत्ति", "m": "गिरवी", "ai": "कंप्यूटर के खिलाफ", "pvp": "2 खिलाड़ी (लोकल)", "buildFloor": "मंजिल बनाएं", "demolishFloor": "मंजिल गिराएं", "floor": "मंजिल", "floors": "मंजिलें", "eiffelTower": "गोल्डन एफिल टॉवर", "floorCost": "मंजिल लागत", "refund": "वापसी", "evenBuildNotice": "समूह की सभी संपत्तियों पर समान मंजिल बनाएं", "evenDemoNotice": "समूह में समान रूप से मंजिल गिराएं", "maxFloors": "अधिकतम सीमा (एफिल टॉवर)", "noFloors": "कोई इमारत नहीं", "settings": "सेटिंग्स", "about": "बारे में", "exit": "बाहر निकलें", "newGame": "नया खेल", "continueGame": "पिछला खेल जारी रखें", "notEnoughCash": "पैसे की कमी है", "monopolyRequired": "एकाधिकार आवश्यक है", "groupMortgaged": "गिरवी संपत्ति होने पर निर्माण संभव नहीं"}, "ko": {"app": "MONOPOLY PRO", "turn": "당신 차례", "opp": "상대 차례", "roll": "주사위 굴리기", "buy": "구매", "auction": "경매", "trade": "거래", "myProps": "내 부동산", "passGo": "출발점을 통과했습니다! 200$ 획득!", "jailed": "감옥에 갇혔습니다!", "finePaid": "보석금 50$ 지불 후 석방되었습니다.", "doublesJail": "더블 달성! 무료 석방!", "rolled": "주사위 결과", "rentPaid": "임대료 지불", "to": "에게", "p": "부동산", "m": "저당 잡힘", "ai": "인공지능 대전", "pvp": "2인 플레이", "buildFloor": "층 건설", "demolishFloor": "층 철거", "floor": "층", "floors": "층", "eiffelTower": "황금 에펠탑", "floorCost": "층 건설 비용", "refund": "철거 환급금", "evenBuildNotice": "그룹의 모든 부동산에 균등하게 건설해야 합니다", "evenDemoNotice": "균등하게 층을 철거해야 합니다", "maxFloors": "최대치 달성 (에펠탑)", "noFloors": "건물 없음", "settings": "설정", "about": "게임 정보", "exit": "나가기", "newGame": "새 게임", "continueGame": "이전 게임 이어하기", "notEnoughCash": "건설 자금 부족", "monopolyRequired": "독점 필요", "groupMortgaged": "저당 상태에서는 건설 불가"}, "ja": {"app": "MONOPOLY PRO", "turn": "あなたの番", "opp": "相手の番", "roll": "サイコロを振る", "buy": "購入", "auction": "競売", "trade": "取引", "myProps": "所有物件", "passGo": "GOを通過！200$獲得！", "jailed": "刑務所に入りました！", "finePaid": "罰金50$を支払い釈放されました。", "doublesJail": "ゾロ目！釈放されました！", "rolled": "出目:", "rentPaid": "賃料支払い:", "to": "へ", "p": "物件", "m": "抵当", "ai": "AI対戦", "pvp": "2人対戦", "buildFloor": "フロア建設", "demolishFloor": "フロア解体", "floor": "階", "floors": "階", "eiffelTower": "黄金のエッフェル塔", "floorCost": "建設費", "refund": "解体払戻金", "evenBuildNotice": "同じ色のすべての物件に均等に建設してください", "evenDemoNotice": "グループ全体で均等に解体してください", "maxFloors": "上限到達 (エッフェル塔)", "noFloors": "建物なし", "settings": "設定", "about": "ゲームについて", "exit": "終了", "newGame": "新しいゲーム", "continueGame": "前回のゲームを再開", "notEnoughCash": "建設資金が不足しています", "monopolyRequired": "独占が必要です", "groupMortgaged": "抵当物件がある場合は建設できません"}, "fa": {"app": "MONOPOLY PRO", "turn": "نوبت شما", "opp": "نوبت حریف", "roll": "پرتاب تاس", "buy": "خرید", "auction": "حراج", "trade": "معامله", "myProps": "املاک من", "passGo": "از خانه شروع گذشتید! 200$ دریافت شد!", "jailed": "شما در زندان هستید!", "finePaid": "50$ جریمه پرداخت شد و آزاد شدید.", "doublesJail": "جفت آوردید! آزاد شدید!", "rolled": "آورد:", "rentPaid": "پرداخت اجاره:", "to": "به", "p": "املاک", "m": "رهن", "ai": "در برابر کامپیوتر", "pvp": "دو نفره (محلی)", "buildFloor": "ساخت طبقه", "demolishFloor": "تخریب طبقه", "floor": "طبقه", "floors": "طبقات", "eiffelTower": "برج ایفل طلایی", "floorCost": "هزینه طبقه", "refund": "بازپرداخت", "evenBuildNotice": "باید در تمام املاک هم‌رنگ به طور مساوی بسازید", "evenDemoNotice": "باید تخریب به صورت مساوی انجام شود", "maxFloors": "حداکثر سقف (برج ایفل)", "noFloors": "بدون ساختمان", "settings": "تنظیمات", "about": "درباره بازی", "exit": "خروج", "newGame": "شروع بازی جدید", "continueGame": "ادامه بازی قبلی", "notEnoughCash": "موجودی ناکافی برای ساخت طبقه", "monopolyRequired": "انحصار کامل رنگ الزامی است", "groupMortgaged": "در صورت وجود ملک رهنی امکان ساخت نیست"}};
+
+          const PROP_INDICES = [1, 3, 6, 8, 9, 11, 13, 14, 16, 18, 19, 21, 23, 24, 26, 27, 29, 31, 32, 34, 37, 39];
+          const EURO_LANGS = ['en', 'fr', 'ru', 'es', 'pt', 'de', 'it', 'tr'];
+          const ASIA_LANGS = ['zh', 'hi', 'ko', 'ja', 'fa'];
+
+          function getTileName(id, lang) {
+              lang = lang || (typeof Game !== 'undefined' ? Game.lang : 'ar') || 'ar';
+              const propIdx = PROP_INDICES.indexOf(id);
+              if (propIdx !== -1) {
+                  if (lang === 'ar') return CITIES_ARAB[propIdx];
+                  if (EURO_LANGS.includes(lang)) return (CITIES_EURO[lang] || CITIES_EURO['en'])[propIdx];
+                  if (ASIA_LANGS.includes(lang)) return (CITIES_ASIA[lang] || CITIES_ASIA['zh'])[propIdx];
+              }
+              if (SPECIAL_TILES[lang] && SPECIAL_TILES[lang][id]) return SPECIAL_TILES[lang][id];
+              if (SPECIAL_TILES['en'] && SPECIAL_TILES['en'][id]) return SPECIAL_TILES['en'][id];
+              return "";
+          }
+
           const RAW_TILES = [
           [0,"انطلق","GO","go","",0,0,"#10B981","🏁"],
-          [1,"المعز","Al-Muizz","property","brown",60,12,"#8B4513",""],
+          [1,"القاهرة","Athens","property","brown",60,12,"#8B4513",""],
           [2,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],
-          [3,"الخليلي","Al-Khalili","property","brown",60,12,"#8B4513",""],
+          [3,"الإسكندرية","Dublin","property","brown",60,12,"#8B4513",""],
           [4,"ضريبة الدخل","Income Tax","tax","",200,0,"#EF4444","💰"],
-          [5,"الحجاز","Hejaz","railroad","",200,25,"#64748B","🚂"],
-          [6,"الحمراء","Hamra","property","lightblue",100,20,"#38BDF8",""],
+          [5,"قطار الحجاز","Eurostar","railroad","",200,25,"#64748B","🚂"],
+          [6,"بيروت","Lisbon","property","lightblue",100,20,"#38BDF8",""],
           [7,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],
-          [8,"الروشة","Raouche","property","lightblue",100,20,"#38BDF8",""],
-          [9,"بيروت","Beirut","property","lightblue",120,24,"#38BDF8",""],
+          [8,"دمشق","Madrid","property","lightblue",100,20,"#38BDF8",""],
+          [9,"بغداد","Barcelona","property","lightblue",120,24,"#38BDF8",""],
           [10,"السجن / زيارة","Jail","jail","",0,0,"#6B7280","🚔"],
-          [11,"توما","Touma","property","pink",140,28,"#EC4899",""],
+          [11,"عمان","Brussels","property","pink",140,28,"#EC4899",""],
           [12,"الكهرباء","Electric","utility","",150,0,"#EAB308","💡"],
-          [13,"الصالحية","Salhiyeh","property","pink",140,28,"#EC4899",""],
-          [14,"الحميدية","Hamidiyah","property","pink",160,32,"#EC4899",""],
-          [15,"الحرمين","Haramain","railroad","",200,25,"#64748B","🚂"],
-          [16,"الرشيد","Al-Rasheed","property","orange",180,36,"#F97316",""],
+          [13,"القدس","Amsterdam","property","pink",140,28,"#EC4899",""],
+          [14,"الكويت","Vienna","property","pink",160,32,"#EC4899",""],
+          [15,"قطار الحرمين","Orient Exp.","railroad","",200,25,"#64748B","🚂"],
+          [16,"الرياض","Prague","property","orange",180,36,"#F97316",""],
           [17,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],
-          [18,"المنصور","Mansour","property","orange",180,36,"#F97316",""],
-          [19,"الكرادة","Karrada","property","orange",200,40,"#F97316",""],
+          [18,"جدة","Warsaw","property","orange",180,36,"#F97316",""],
+          [19,"مكة","Budapest","property","orange",200,40,"#F97316",""],
           [20,"مواقف مجانية","Free Parking","parking","",0,0,"#10B981","🅿️"],
-          [21,"النيل","Nile","property","red",220,44,"#EF4444",""],
+          [21,"الدوحة","Rome","property","red",220,44,"#EF4444",""],
           [22,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],
-          [23,"المقرن","Al-Mogran","property","red",220,44,"#EF4444",""],
-          [24,"الرياض","Riyadh","property","red",240,48,"#EF4444",""],
-          [25,"المشرق","Mashreq","railroad","",200,25,"#64748B","🚂"],
-          [26,"العليا","Olaya","property","yellow",260,52,"#EAB308",""],
-          [27,"فهد","Fahd","property","yellow",260,52,"#EAB308",""],
+          [23,"المنامة","Milan","property","red",220,44,"#EF4444",""],
+          [24,"مسقط","Venice","property","red",240,48,"#EF4444",""],
+          [25,"قطار المشرق","TGV","railroad","",200,25,"#64748B","🚂"],
+          [26,"دبي","Berlin","property","yellow",260,52,"#EAB308",""],
+          [27,"أبوظبي","Munich","property","yellow",260,52,"#EAB308",""],
           [28,"المياه","Water","utility","",150,0,"#06B6D4","💧"],
-          [29,"النخيل","Al-Nakheel","property","yellow",280,56,"#EAB308",""],
+          [29,"الخرطوم","Frankfurt","property","yellow",280,56,"#EAB308",""],
           [30,"إلى السجن!","Go to Jail","gotojail","",0,0,"#DC2626","🚨"],
-          [31,"الكورنيش","Corniche","property","green",300,60,"#22C55E",""],
-          [32,"اللؤلؤة","The Pearl","property","green",300,60,"#22C55E",""],
+          [31,"تونس","London","property","green",300,60,"#22C55E",""],
+          [32,"الجزائر","Manchester","property","green",300,60,"#22C55E",""],
           [33,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],
-          [34,"لوسيل","Lusail","property","green",320,64,"#22C55E",""],
-          [35,"الخليج","Gulf","railroad","",200,25,"#64748B","🚂"],
+          [34,"طرابلس","Edinburgh","property","green",320,64,"#22C55E",""],
+          [35,"قطار الخليج","Trans-Alpine","railroad","",200,25,"#64748B","🚂"],
           [36,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],
-          [37,"زايد","Zayed","property","darkblue",350,70,"#1E40AF",""],
+          [37,"الرباط","Paris","property","darkblue",350,70,"#1E40AF",""],
           [38,"ضريبة الرفاهية","Luxury Tax","tax","",100,0,"#EF4444","💎"],
-          [39,"خليفة","Khalifa","property","darkblue",400,80,"#1E40AF",""]
+          [39,"الدار البيضاء","Geneva","property","darkblue",400,80,"#1E40AF",""]
           ];
 
           const BOARD_TILES = RAW_TILES.map(r => ({
@@ -942,13 +989,9 @@ jobs:
               color: r[7],
               icon: r[8],
               owner: undefined,
-              mortgaged: false
+              mortgaged: false,
+              floors: 0
           }));
-
-          const I18N = {
-              ar: { app:"MONOPOLY PRO", turn:"دورك", opp:"دور الخصم", roll:"ارمي النرد", buy:"شراء", auction:"مزاد علني", trade:"مقايضة", myProps:"عقاراتي", passGo:"مررت بنقطة الانطلاق وحصلت على 200$!", jailed:"أنت في السجن!", finePaid:"دفعت 50$ كفالة وخرجت من السجن.", doublesJail:"مبروك! نرد متطابق وخرجت من السجن!", rolled:"حصل على", rentPaid:"دفع إيجاراً قدره", to:"إلى", deedFor:"عقار متاح للشراء", p:"عقارات", m:"مرهون", ai:"ضد روبوت (الكمبيوتر)", pvp:"لاعبين اثنين (محلي)" },
-              en: { app:"MONOPOLY PRO", turn:"Your Turn", opp:"Opponent's Turn", roll:"Roll Dice", buy:"Buy", auction:"Auction", trade:"Trade", myProps:"My Props", passGo:"Passed GO! Collected 200$!", jailed:"In Jail!", finePaid:"Paid 50$ fine and exited jail.", doublesJail:"Doubles rolled! Exited jail freely!", rolled:"Rolled", rentPaid:"Paid rent of", to:"to", deedFor:"Property available for purchase", p:"Props", m:"Mortgaged", ai:"vs Robot (Computer)", pvp:"2 Players (Pass & Play)" }
-          };
 
           const SERVICE_INFO = {
               go: {
@@ -1071,7 +1114,7 @@ jobs:
                       "💵 سعر الشراء: 150$ من البنك عند الهبوط عليها وهي شاغرة.",
                       "⚡ تسعيرة الإيجار الخدمي:",
                       "  • امتلاك شركة واحدة: يدفع الخصم 20$ إيجار خدمة.",
-                      "  • امتلاك الشركتين معاً (الكهرباء والمياه): يتضاعف الإيجار تلقائياً إلى 50$!",
+                      "  • امتلاك الشركتين معاً: يتضاعف الإيجار تلقائياً إلى 50$!",
                       "🏦 قيمة الرهن: يمكنك رهنها للبنك واستلام 75$ نقداً، وفك رهنها مقابل 82$."
                   ],
                   rulesEn: [
@@ -1228,11 +1271,11 @@ jobs:
                       propStyle: Game.propStyle,
                       lang: Game.lang,
                       players: JSON.parse(JSON.stringify(Game.players)),
-                      tiles: BOARD_TILES.map(t => ({ id: t.id, owner: t.owner, mortgaged: t.mortgaged }))
+                      tiles: BOARD_TILES.map(t => ({ id: t.id, owner: t.owner, mortgaged: t.mortgaged, floors: t.floors || 0 }))
                   };
                   localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
                   return true;
-                  } catch(e) {
+              } catch(e) {
                   console.error("Save error:", e);
                   return false;
               }
@@ -1263,6 +1306,7 @@ jobs:
                           if (t) {
                               t.owner = st.owner;
                               t.mortgaged = st.mortgaged;
+                              t.floors = st.floors || 0;
                           }
                       });
                   }
@@ -1295,9 +1339,9 @@ jobs:
                   try {
                       const d = JSON.parse(localStorage.getItem(SAVE_KEY));
                       const dt = d.savedAt ? new Date(d.savedAt).toLocaleDateString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : "";
-                      statusTxt.innerText = dt ? `يوجد لعبة محفوظة بتاريخ: ${dt}` : "يوجد لعبة سابقة محفوظة جاهزة للإكمال.";
+                      statusTxt.innerText = dt ? `يوجد لعبة محفوظة بتاريخ: ${dt}` : (I18N[Game.lang].continueGame);
                   } catch(e) {
-                      statusTxt.innerText = "يوجد لعبة سابقة محفوظة جاهزة للإكمال.";
+                      statusTxt.innerText = I18N[Game.lang].continueGame;
                   }
                   document.getElementById("startModal").classList.add("show");
               } else {
@@ -1310,7 +1354,7 @@ jobs:
               const ok = loadSavedGame();
               if (ok) {
                   document.getElementById("startModal").classList.remove("show");
-                  logEvent("📂 تم استئناف اللعبة السابقة بنجاح من حيث توقفت!");
+                  logEvent("📂 " + (I18N[Game.lang].continueGame) + " ✓");
                   startPlayerTurn();
               } else {
                   openNewGameSetupModal(false);
@@ -1335,7 +1379,7 @@ jobs:
               selectAIDifficulty(newGameConfig.difficulty);
               selectStartingCash(newGameConfig.cash);
 
-              document.getElementById("inputPlayer1Name").value = Game.players[0].nameAr || (Game.lang==='ar' ? "الملك" : "King");
+              document.getElementById("inputPlayer1Name").value = Game.players[0].nameAr || (Game.lang==='ar' ? "الملك" : "Player 1");
               if (newGameConfig.mode === 'pvp') {
                   document.getElementById("inputPlayer2Name").value = (Game.players[1].nameAr !== "روبوت") ? Game.players[1].nameAr : (Game.lang==='ar' ? "اللاعب 2" : "Player 2");
               } else {
@@ -1454,6 +1498,7 @@ jobs:
               BOARD_TILES.forEach(t => {
                   t.owner = undefined;
                   t.mortgaged = false;
+                  t.floors = 0;
               });
 
               Game.turn = 0;
@@ -1510,12 +1555,13 @@ jobs:
                   tileDiv.onclick = () => openTileInfoModal(index);
 
                   let h = "";
+                  const displayName = getTileName(index, Game.lang);
                   if (tile.type === "property") {
-                      h += `<div class="tile-bar" style="background:${tile.color}"></div><div class="tile-cnt"><div class="tile-name" id="tName-${index}">${Game.lang==='ar'?tile.nameAr:tile.nameEn}</div><div class="tile-price">${tile.price}$</div></div>`;
+                      h += `<div class="tile-bar" style="background:${tile.color}"></div><div class="tile-cnt"><div class="tile-name" id="tName-${index}">${displayName}</div><div class="tile-price">${tile.price}$</div></div>`;
                   } else if (tile.type === "railroad" || tile.type === "utility") {
-                      h += `<div class="tile-cnt"><div class="tile-icon">${tile.icon}</div><div class="tile-name" id="tName-${index}">${Game.lang==='ar'?tile.nameAr:tile.nameEn}</div><div class="tile-price">${tile.price}$</div></div>`;
+                      h += `<div class="tile-cnt"><div class="tile-icon">${tile.icon}</div><div class="tile-name" id="tName-${index}">${displayName}</div><div class="tile-price">${tile.price}$</div></div>`;
                   } else {
-                      h += `<div class="tile-cnt"><div class="tile-icon">${tile.icon||"🏛️"}</div><div class="tile-name" id="tName-${index}">${Game.lang==='ar'?tile.nameAr:tile.nameEn}</div></div>`;
+                      h += `<div class="tile-cnt"><div class="tile-icon">${tile.icon||"🏛️"}</div><div class="tile-name" id="tName-${index}">${displayName}</div></div>`;
                   }
                   h += `<div class="tile-pawns" id="pawns-${index}"></div>`;
                   tileDiv.innerHTML = h;
@@ -1575,19 +1621,19 @@ jobs:
               document.getElementById("turnBadge1").style.display = Game.turn === 1 ? "block" : "none";
 
               if (Game.mode === 'pvp') {
-                  document.getElementById("turnBadge0").innerText = Game.lang==='ar' ? "دورك" : "Turn";
-                  document.getElementById("turnBadge1").innerText = Game.lang==='ar' ? "دورك" : "Turn";
+                  document.getElementById("turnBadge0").innerText = I18N[Game.lang].turn;
+                  document.getElementById("turnBadge1").innerText = I18N[Game.lang].turn;
               } else {
                   document.getElementById("turnBadge0").innerText = I18N[Game.lang].turn;
                   document.getElementById("turnBadge1").innerText = I18N[Game.lang].opp;
               }
 
               const cur = Game.players[Game.turn];
-              document.getElementById("turnAnnouncer").innerText = `${I18N[Game.lang].turn}: ${cur.avatar} ${Game.lang==='ar'?cur.nameAr:cur.nameEn}`;
+              document.getElementById("turnAnnouncer").innerText = `${I18N[Game.lang].turn}: ${cur.avatar} ${cur.nameAr}`;
               document.getElementById("avP0").innerText = p0.avatar;
               document.getElementById("avP1").innerText = p1.avatar;
-              document.getElementById("nameP0").innerText = Game.lang==='ar'?p0.nameAr:p0.nameEn;
-              document.getElementById("nameP1").innerText = Game.lang==='ar'?p1.nameAr:p1.nameEn;
+              document.getElementById("nameP0").innerText = p0.nameAr;
+              document.getElementById("nameP1").innerText = p1.nameAr;
 
               const summaryEl = document.getElementById("txtCurrentGameSummary");
               if (summaryEl) {
@@ -1606,6 +1652,7 @@ jobs:
                   el.classList.remove("owned-glow","owned-tint","owned-border");
                   const b = el.querySelector(".tile-owner-badge"); if (b) b.remove();
                   const mb = el.querySelector(".tile-mortgaged-badge"); if (mb) mb.remove();
+                  const bl = el.querySelector(".tile-building"); if (bl) bl.remove();
 
                   if (t.owner !== undefined) {
                       const owner = Game.players[t.owner];
@@ -1619,6 +1666,20 @@ jobs:
                       if (t.mortgaged) {
                           const mg = document.createElement("div"); mg.className = "tile-mortgaged-badge"; mg.innerText = Game.lang==='ar'?"مَرْهُون":"MORTGAGED"; el.appendChild(mg);
                       }
+                      // إظهار مباني الطوابق وبرج إيفل
+                      if (t.floors && t.floors > 0) {
+                          const bDiv = document.createElement("div");
+                          if (t.floors === 5) {
+                              bDiv.className = "tile-building gold";
+                              bDiv.innerHTML = `<span style="font-size:0.75rem;">🗼</span>`;
+                              bDiv.title = I18N[Game.lang].eiffelTower;
+                          } else {
+                              bDiv.className = "tile-building lime";
+                              bDiv.innerHTML = `<span>🏢</span><span>${t.floors}</span>`;
+                              bDiv.title = `${t.floors} ${I18N[Game.lang].floors}`;
+                          }
+                          el.appendChild(bDiv);
+                      }
                   } else { el.style.color = ""; }
               });
           }
@@ -1626,6 +1687,145 @@ jobs:
           function logEvent(msg) {
               const el = document.getElementById("gameLog");
               el.innerText = msg;
+          }
+
+          // حساب الإيجار بما في ذلك الزيادة 50% لكل طابق تم بناؤه
+          function calculateRent(tile) {
+              if (tile.type === "railroad") {
+                  const cnt = BOARD_TILES.filter(t => t.type === "railroad" && t.owner === tile.owner).length;
+                  return 25 * Math.pow(2, cnt - 1);
+              }
+              if (tile.type === "utility") {
+                  const cnt = BOARD_TILES.filter(t => t.type === "utility" && t.owner === tile.owner).length;
+                  return cnt === 2 ? 50 : 20;
+              }
+              const groupTiles = BOARD_TILES.filter(t => t.group === tile.group);
+              const hasMonopoly = groupTiles.every(t => t.owner === tile.owner);
+
+              const baseRent = Math.round(tile.price * 0.20);
+              const floorCost = Math.round(tile.price * 0.33);
+              const floorRentBonus = Math.round(floorCost * 0.50);
+
+              if (hasMonopoly) {
+                  if (tile.floors && tile.floors > 0) {
+                      return Math.round(tile.price * 0.40) + (tile.floors * floorRentBonus);
+                  }
+                  return Math.round(tile.price * 0.40);
+              }
+              return baseRent;
+          }
+
+          // التحقق من إمكانية بناء طابق
+          function canBuildFloor(tileId, playerId) {
+              const t = BOARD_TILES[tileId];
+              if (!t || t.type !== "property") return { ok: false, reason: "not_property" };
+              if (t.owner !== playerId) return { ok: false, reason: "not_owner" };
+              const groupTiles = BOARD_TILES.filter(x => x.group === t.group);
+              if (!groupTiles.every(x => x.owner === playerId)) return { ok: false, reason: "monopolyRequired" };
+              if (groupTiles.some(x => x.mortgaged)) return { ok: false, reason: "groupMortgaged" };
+              const curFloors = t.floors || 0;
+              if (curFloors >= 5) return { ok: false, reason: "maxFloors" };
+              const minFloors = Math.min(...groupTiles.map(x => x.floors || 0));
+              if (curFloors > minFloors) return { ok: false, reason: "evenBuildNotice", minFloors };
+              const cost = Math.round(t.price * 0.33);
+              const player = Game.players[playerId];
+              if (player.money < cost) return { ok: false, reason: "notEnoughCash", cost };
+              return { ok: true, cost };
+          }
+
+          // التحقق من إمكانية هدم طابق
+          function canDemolishFloor(tileId, playerId) {
+              const t = BOARD_TILES[tileId];
+              if (!t || t.type !== "property") return { ok: false, reason: "not_property" };
+              if (t.owner !== playerId) return { ok: false, reason: "not_owner" };
+              const groupTiles = BOARD_TILES.filter(x => x.group === t.group);
+              const curFloors = t.floors || 0;
+              if (curFloors <= 0) return { ok: false, reason: "noFloors" };
+              const maxFloors = Math.max(...groupTiles.map(x => x.floors || 0));
+              if (curFloors < maxFloors) return { ok: false, reason: "evenDemoNotice", maxFloors };
+              const cost = Math.round(t.price * 0.33);
+              const refund = Math.round(cost * 0.50);
+              return { ok: true, refund };
+          }
+
+          // بناء طابق (ليموني للطوابق 1-4، وبرج إيفل ذهبي للطابق 5)
+          function buildFloor(tileId, playerId) {
+              const pId = (playerId !== undefined) ? playerId : Game.turn;
+              const chk = canBuildFloor(tileId, pId);
+              if (!chk.ok) {
+                  logEvent("⚠️ " + (I18N[Game.lang][chk.reason] || I18N[Game.lang].evenBuildNotice));
+                  return;
+              }
+              const t = BOARD_TILES[tileId];
+              const p = Game.players[pId];
+              p.money -= chk.cost;
+              t.floors = (t.floors || 0) + 1;
+              AudioFX.play('cash');
+              updateBoardVisual();
+              updateUI();
+              if (t.floors === 5) {
+                  logEvent(`🗼 ${p.avatar} ${p.nameAr} ${Game.lang==='ar'?'أكمل بناء برج إيفل الذهبي في':'completed Golden Eiffel Tower in'} (${getTileName(t.id, Game.lang)})!`);
+              } else {
+                  logEvent(`🏗️ ${p.avatar} ${p.nameAr} ${Game.lang==='ar'?'بنى الطابق':'built floor'} ${t.floors} (ليموني) ${Game.lang==='ar'?'في':'in'} (${getTileName(t.id, Game.lang)}) مقابل ${chk.cost}$.`);
+              }
+              const tm = document.getElementById("tileInfoModal");
+              if (tm && tm.classList.contains("show")) openTileInfoModal(tileId);
+              const pm = document.getElementById("propsModal");
+              if (pm && pm.classList.contains("show")) openPropsModal(pId);
+          }
+
+          // هدم طابق واسترداد 50% من قيمة الطابق
+          function demolishFloor(tileId, playerId) {
+              const pId = (playerId !== undefined) ? playerId : Game.turn;
+              const chk = canDemolishFloor(tileId, pId);
+              if (!chk.ok) {
+                  logEvent("⚠️ " + (I18N[Game.lang][chk.reason] || I18N[Game.lang].evenDemoNotice));
+                  return;
+              }
+              const t = BOARD_TILES[tileId];
+              const p = Game.players[pId];
+              p.money += chk.refund;
+              t.floors--;
+              AudioFX.play('cash');
+              updateBoardVisual();
+              updateUI();
+              logEvent(`🔨 ${p.avatar} ${p.nameAr} ${Game.lang==='ar'?'هدم طابقاً من':'demolished floor from'} (${getTileName(t.id, Game.lang)}) واسترد ${chk.refund}$.`);
+              const tm = document.getElementById("tileInfoModal");
+              if (tm && tm.classList.contains("show")) openTileInfoModal(tileId);
+              const pm = document.getElementById("propsModal");
+              if (pm && pm.classList.contains("show")) openPropsModal(pId);
+          }
+
+          // ذكاء اصطناعي لبناء الطوابق
+          function checkAIBuilding() {
+              if (Game.mode !== 'ai' || Game.turn !== 1) return;
+              const ai = Game.players[1];
+              const diff = Game.aiDifficulty || 'medium';
+              const minBuffer = diff === 'hard' ? 120 : (diff === 'medium' ? 250 : 500);
+
+              const monoGroups = [];
+              const groups = ['brown', 'lightblue', 'pink', 'orange', 'red', 'yellow', 'green', 'darkblue'];
+              groups.forEach(g => {
+                  const gTiles = BOARD_TILES.filter(t => t.group === g);
+                  if (gTiles.length > 0 && gTiles.every(t => t.owner === 1)) {
+                      monoGroups.push(g);
+                  }
+              });
+
+              for (const group of monoGroups) {
+                  const groupTiles = BOARD_TILES.filter(t => t.group === group);
+                  if (groupTiles.some(t => t.mortgaged)) continue;
+                  const minFloors = Math.min(...groupTiles.map(t => t.floors || 0));
+                  if (minFloors >= 5) continue;
+
+                  for (const t of groupTiles) {
+                      const cost = Math.round(t.price * 0.33);
+                      if ((t.floors || 0) === minFloors && ai.money >= cost + minBuffer) {
+                          buildFloor(t.id, 1);
+                          return;
+                      }
+                  }
+              }
           }
 
           function rollDice() {
@@ -1723,7 +1923,7 @@ jobs:
               if (tile.type === "tax") {
                   player.money -= tile.price;
                   AudioFX.play('cash');
-                  logEvent(`💸 ${player.avatar} ${player.nameAr} دفع ${tile.price}$ (${Game.lang==='ar'?tile.nameAr:tile.nameEn}).`);
+                  logEvent(`💸 ${player.avatar} ${player.nameAr} دفع ${tile.price}$ (${getTileName(tile.id, Game.lang)}).`);
                   if (checkBankruptcy(player)) return;
                   updateUI(); finishTurn(isDbl); return;
               }
@@ -1746,11 +1946,11 @@ jobs:
                           player.money -= rent;
                           Game.players[tile.owner].money += rent;
                           AudioFX.play('cash');
-                          logEvent(`🏷️ دفع ${player.avatar} ${player.nameAr} ${rent}$ إيجار إلى ${Game.players[tile.owner].avatar} ${Game.players[tile.owner].nameAr} (${Game.lang==='ar'?tile.nameAr:tile.nameEn}).`);
+                          logEvent(`🏷️ دفع ${player.avatar} ${player.nameAr} ${rent}$ إيجار إلى ${Game.players[tile.owner].avatar} ${Game.players[tile.owner].nameAr} (${getTileName(tile.id, Game.lang)}).`);
                           if (checkBankruptcy(player)) return;
                           updateUI();
                       } else {
-                          logEvent(`العقار (${Game.lang==='ar'?tile.nameAr:tile.nameEn}) مَرْهُون، معفى من الإيجار.`);
+                          logEvent(`العقار (${getTileName(tile.id, Game.lang)}) مَرْهُون، معفى من الإيجار.`);
                       }
 
                       if (tile.type === "railroad") {
@@ -1770,6 +1970,23 @@ jobs:
 
           function checkBankruptcy(player) {
               if (player.money >= 0) return false;
+              // 1. هدم الطوابق لاسترداد 50% من قيمتها وسداد الديون
+              while (player.money < 0) {
+                  const builtProps = player.props.map(id => BOARD_TILES[id]).filter(t => t && (t.floors || 0) > 0);
+                  if (builtProps.length === 0) break;
+                  const maxFloors = Math.max(...builtProps.map(t => t.floors || 0));
+                  const target = builtProps.find(t => (t.floors || 0) === maxFloors);
+                  if (!target) break;
+                  const cost = Math.round(target.price * 0.33);
+                  const refund = Math.round(cost * 0.50);
+                  target.floors--;
+                  player.money += refund;
+                  logEvent(`🔨 تم هدم طابق في (${getTileName(target.id, Game.lang)}) لدفع المستحقات (+${refund}$).`);
+              }
+              updateUI();
+              if (player.money >= 0) return false;
+
+              // 2. رهن العقارات المتبقية
               const unmortgaged = player.props.filter(id => !BOARD_TILES[id].mortgaged);
               for (const propId of unmortgaged) {
                   if (player.money >= 0) break;
@@ -1777,7 +1994,7 @@ jobs:
                   t.mortgaged = true;
                   const val = Math.floor(t.price * 0.5);
                   player.money += val;
-                  logEvent(`🏦 تم رهن (${Game.lang==='ar'?t.nameAr:t.nameEn}) تلقائياً لدفع المستحقات.`);
+                  logEvent(`🏦 تم رهن (${getTileName(t.id, Game.lang)}) تلقائياً لدفع المستحقات.`);
               }
               updateUI();
               if (player.money < 0) {
@@ -1825,7 +2042,7 @@ jobs:
                   otherRails.forEach(r => {
                       const opt = document.createElement("option");
                       opt.value = r.id;
-                      opt.innerText = `🚂 ${Game.lang==='ar'?r.nameAr:r.nameEn} (خانة ${r.id})`;
+                      opt.innerText = `🚂 ${getTileName(r.id, Game.lang)} (خانة ${r.id})`;
                       destSelect.appendChild(opt);
                   });
 
@@ -1863,9 +2080,9 @@ jobs:
                   updatePawns(player.id);
                   updateUI();
                   if (cost === 0) {
-                      logEvent(`🚂 سافر ${player.avatar} ${player.nameAr} مجاناً إلى محطة (${Game.lang==='ar'?dest.nameAr:dest.nameEn}).`);
+                      logEvent(`🚂 سافر ${player.avatar} ${player.nameAr} مجاناً إلى محطة (${getTileName(dest.id, Game.lang)}).`);
                   } else {
-                      logEvent(`🚂 سافر ${player.avatar} ${player.nameAr} سريعاً إلى محطة (${Game.lang==='ar'?dest.nameAr:dest.nameEn}) مقابل ${cost}$.`);
+                      logEvent(`🚂 سافر ${player.avatar} ${player.nameAr} سريعاً إلى محطة (${getTileName(dest.id, Game.lang)}) مقابل ${cost}$.`);
                   }
               }
               finishTurn(isDbl);
@@ -1879,26 +2096,12 @@ jobs:
               finishTurn(isDbl);
           }
 
-          function calculateRent(tile) {
-              if (tile.type === "railroad") {
-                  const cnt = BOARD_TILES.filter(t => t.type === "railroad" && t.owner === tile.owner).length;
-                  return 25 * Math.pow(2, cnt - 1);
-              }
-              if (tile.type === "utility") {
-                  const cnt = BOARD_TILES.filter(t => t.type === "utility" && t.owner === tile.owner).length;
-                  return cnt === 2 ? 50 : 20;
-              }
-              const groupTiles = BOARD_TILES.filter(t => t.group === tile.group);
-              const hasMonopoly = groupTiles.every(t => t.owner === tile.owner);
-              return hasMonopoly ? Math.round(tile.price * 0.40) : Math.round(tile.price * 0.20);
-          }
-
           function promptBuyProperty(tile, isDbl) {
               Game.pendingTile = { tile, isDbl };
               const cur = Game.players[Game.turn];
               const baseRent = Math.round(tile.price * 0.20);
               const monoRent = Math.round(tile.price * 0.40);
-              document.getElementById("deedTitle").innerText = `${tile.icon||""} ${Game.lang==='ar'?tile.nameAr:tile.nameEn}`;
+              document.getElementById("deedTitle").innerText = `${tile.icon||""} ${getTileName(tile.id, Game.lang)}`;
               document.getElementById("deedBody").innerHTML = `
                   <div style="text-align:center; margin-bottom:8px;">
                       <div style="font-size:0.78rem; color:var(--dim); margin-bottom:3px;">دور الشراء: <strong style="color:var(--text);">${cur.avatar} ${cur.nameAr}</strong> (الرصيد: <strong style="color:var(--gold);">${cur.money}$</strong>)</div>
@@ -1990,7 +2193,7 @@ jobs:
           function updateAuctionUI() {
               const a = Game.auction;
               if (!a) return;
-              document.getElementById("aucPropDetails").innerText = `${a.tile.icon || "🏙️"} ${Game.lang==='ar'?a.tile.nameAr:a.tile.nameEn}`;
+              document.getElementById("aucPropDetails").innerText = `${a.tile.icon || "🏙️"} ${getTileName(a.tile.id, Game.lang)}`;
               document.getElementById("aucBasePriceVal").innerText = a.tile.price + "$";
               document.getElementById("aucCurrentBid").innerText = a.currentBid + "$";
               document.getElementById("aucHighestBidder").innerText = a.highestBidder !== null ? `${Game.players[a.highestBidder].avatar} ${Game.players[a.highestBidder].nameAr} (${Game.players[a.highestBidder].money}$)` : (Game.lang==='ar'?"لا يوجد مزايد بعد":"No bids yet");
@@ -2045,7 +2248,7 @@ jobs:
               stopAuctionTimer();
               document.getElementById("auctionModal").classList.remove("show");
               const winner = Game.players[a.highestBidder];
-              logEvent(`🏆 فاز ${winner.avatar} ${winner.nameAr} بمزاد (${Game.lang==='ar'?a.tile.nameAr:a.tile.nameEn}) بمبلغ ${a.currentBid}$!`);
+              logEvent(`🏆 فاز ${winner.avatar} ${winner.nameAr} بمزاد (${getTileName(a.tile.id, Game.lang)}) بمبلغ ${a.currentBid}$!`);
               buyProp(winner, a.tile, a.currentBid);
               const isDbl = a.isDbl; Game.auction = null; finishTurn(isDbl);
           }
@@ -2126,7 +2329,7 @@ jobs:
               tile.owner = player.id;
               player.props.push(tile.id);
               AudioFX.play('cash');
-              logEvent(`🎉 اشترى ${player.avatar} ${player.nameAr} (${Game.lang==='ar'?tile.nameAr:tile.nameEn}) مقابل ${price}$.`);
+              logEvent(`🎉 اشترى ${player.avatar} ${player.nameAr} (${getTileName(tile.id, Game.lang)}) مقابل ${price}$.`);
               updateUI();
           }
 
@@ -2233,6 +2436,7 @@ jobs:
               } else {
                   if (Game.mode === 'ai') {
                       document.getElementById("btnRoll").disabled = true;
+                      checkAIBuilding();
                       setTimeout(() => {
                           if (Game.isGameOver || Game.turn !== 1) return;
                           if (cur.inJail) {
@@ -2255,15 +2459,78 @@ jobs:
               const isAr = (Game.lang === 'ar');
               const titleEl = document.getElementById("tileInfoTitle");
               const bodyEl = document.getElementById("tileInfoBody");
+              const tileName = getTileName(t.id, Game.lang);
 
               if (t.type === "property") {
-                  titleEl.innerText = `${t.icon||"🏙️"} ${isAr?t.nameAr:t.nameEn}`;
+                  titleEl.innerText = `${t.icon||"🏙️"} ${tileName}`;
                   const ownerTxt = t.owner !== undefined ? `${Game.players[t.owner].avatar} ${Game.players[t.owner].nameAr}` : (isAr?"متاح للبيع من البنك":"Available for Sale");
                   const statusTxt = t.mortgaged ? (isAr?"مَرْهُون ⚠️":"MORTGAGED ⚠️") : (isAr?"نشط وفعال ✓":"Active ✓");
                   const mortVal = Math.floor(t.price * 0.5);
                   const unmortVal = Math.floor(mortVal * 1.1);
                   const baseRent = Math.round(t.price * 0.20);
                   const monoRent = Math.round(t.price * 0.40);
+                  const curRent = calculateRent(t);
+
+                  const groupTiles = BOARD_TILES.filter(x => x.group === t.group);
+                  const hasMonopoly = t.owner !== undefined && groupTiles.every(x => x.owner === t.owner);
+                  const floorCost = Math.round(t.price * 0.33);
+                  const floorBonus = Math.round(floorCost * 0.50);
+                  const refund = Math.round(floorCost * 0.50);
+                  const curFloors = t.floors || 0;
+
+                  let buildingSectionHtml = "";
+                  if (hasMonopoly) {
+                      const canBuild = canBuildFloor(t.id, t.owner);
+                      const canDemo = canDemolishFloor(t.id, t.owner);
+                      const isOwnerTurn = (t.owner === Game.turn) || (Game.mode === 'pvp');
+
+                      let statusBadge = "";
+                      if (curFloors === 5) {
+                          statusBadge = `<span style="background:linear-gradient(135deg,#FDE047,#F59E0B); color:#451A03; padding:2px 7px; border-radius:5px; font-weight:900;">🗼 ${I18N[Game.lang].eiffelTower} (5/5)</span>`;
+                      } else if (curFloors > 0) {
+                          statusBadge = `<span style="background:#A3E635; color:#142603; padding:2px 7px; border-radius:5px; font-weight:900;">🏢 ${curFloors} ${I18N[Game.lang].floors} (ليموني)</span>`;
+                      } else {
+                          statusBadge = `<span style="color:var(--dim); font-size:0.75rem;">${I18N[Game.lang].noFloors} (0/5)</span>`;
+                      }
+
+                      let buildNotice = "";
+                      if (curFloors >= 5) {
+                          buildNotice = `<div style="font-size:0.72rem; color:var(--gold); margin-top:5px; font-weight:bold;">✨ ${I18N[Game.lang].maxFloors}</div>`;
+                      } else if (!canBuild.ok) {
+                          buildNotice = `<div style="font-size:0.72rem; color:#EF4444; margin-top:5px; font-weight:bold;">⚠️ ${I18N[Game.lang][canBuild.reason] || I18N[Game.lang].evenBuildNotice}</div>`;
+                      }
+
+                      let demoNotice = "";
+                      if (curFloors > 0 && !canDemo.ok) {
+                          demoNotice = `<div style="font-size:0.72rem; color:#EF4444; margin-top:4px;">⚠️ ${I18N[Game.lang][canDemo.reason] || I18N[Game.lang].evenDemoNotice}</div>`;
+                      }
+
+                      buildingSectionHtml = `
+                          <div style="background:var(--box-bg); border:1.5px solid var(--gold); border-radius:9px; padding:10px; margin-top:10px;">
+                              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                  <span style="font-size:0.82rem; font-weight:900; color:var(--gold);">🏗️ ${isAr ? "إدارة المباني والطوابق" : "Building Management"}</span>
+                                  ${statusBadge}
+                              </div>
+                              <div style="font-size:0.74rem; color:var(--dim); line-height:1.5; margin-bottom:8px;">
+                                  <div>• ${I18N[Game.lang].floorCost}: <strong style="color:var(--gold);">${floorCost}$</strong> (33%)</div>
+                                  <div>• ${isAr ? "زيادة الإيجار لكل طابق" : "Rent increase per floor"}: <strong style="color:#10B981;">+${floorBonus}$</strong> (+50%)</div>
+                                  <div>• ${isAr ? "استرداد عند الهدم" : "Demolish refund"}: <strong style="color:#38BDF8;">+${refund}$</strong> (50%)</div>
+                              </div>
+                              ${isOwnerTurn ? `
+                              <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                                  <button class="btn btn-lime" onclick="buildFloor(${t.id}, ${t.owner})" ${canBuild.ok ? '' : 'disabled'} style="font-size:0.78rem; padding:7px 4px;">
+                                      🏗️ ${I18N[Game.lang].buildFloor} (${floorCost}$)
+                                  </button>
+                                  <button class="btn btn-red" onclick="demolishFloor(${t.id}, ${t.owner})" ${canDemo.ok ? '' : 'disabled'} style="font-size:0.78rem; padding:7px 4px;">
+                                      🔨 ${I18N[Game.lang].demolishFloor} (+${refund}$)
+                                  </button>
+                              </div>
+                              ${buildNotice}
+                              ${demoNotice}
+                              ` : `<div style="font-size:0.72rem; color:var(--dim); text-align:center;">${isAr ? "البناء متاح لصاحب العقار في دوره." : "Building available during owner's turn."}</div>`}
+                          </div>
+                      `;
+                  }
 
                   bodyEl.innerHTML = `
                       <div style="text-align:center; margin-bottom:10px;">
@@ -2273,15 +2540,17 @@ jobs:
                       <div class="info-rule-box">
                           <div class="info-rule-item"><strong>${isAr?"الإيجار الأساسي (20%):":"Base Rent (20%):"}</strong> <span>${baseRent}$</span></div>
                           <div class="info-rule-item"><strong>${isAr?"إيجار الاحتكار (40% للمجموعة):":"Monopoly Rent (40%):"}</strong> <span style="color:var(--gold); font-weight:bold;">${monoRent}$</span></div>
+                          <div class="info-rule-item"><strong>${isAr?"الإيجار الحالي الفعلي:":"Current Total Rent:"}</strong> <span style="color:#10B981; font-weight:900; font-size:0.90rem;">${curRent}$</span></div>
                           <div class="info-rule-item"><strong>${isAr?"قيمة الرهن:":"Mortgage Value:"}</strong> <span>${mortVal}$</span></div>
                           <div class="info-rule-item"><strong>${isAr?"تكلفة فك الرهن:":"Unmortgage Cost:"}</strong> <span>${unmortVal}$</span></div>
                           <div class="info-rule-item"><strong>${isAr?"المالك الحالي:":"Current Owner:"}</strong> <span>${ownerTxt}</span></div>
                           <div class="info-rule-item"><strong>${isAr?"الحالة:":"Status:"}</strong> <span>${statusTxt}</span></div>
                       </div>
+                      ${buildingSectionHtml}
                   `;
               } else {
                   const info = SERVICE_INFO[t.type] || SERVICE_INFO['go'];
-                  titleEl.innerText = `${t.icon||"ℹ️"} ${isAr ? t.nameAr : t.nameEn}`;
+                  titleEl.innerText = `${t.icon||"ℹ️"} ${tileName}`;
 
                   let rulesHtml = "";
                   const rulesList = isAr ? info.rulesAr : info.rulesEn;
@@ -2397,7 +2666,7 @@ jobs:
                   oppProps.forEach(t => {
                       const opt = document.createElement("option");
                       opt.value = t.id;
-                      opt.innerText = `${t.icon||""} ${Game.lang==='ar'?t.nameAr:t.nameEn} (${t.price}$)`;
+                      opt.innerText = `${t.icon||""} ${getTileName(t.id, Game.lang)} (${t.price}$)`;
                       if (selectedPropId !== null && t.id === selectedPropId) {
                           opt.selected = true;
                       }
@@ -2410,7 +2679,7 @@ jobs:
 
               if (wasRejected && selectedPropId !== null) {
                   const prop = BOARD_TILES[selectedPropId];
-                  const propName = Game.lang === 'ar' ? prop.nameAr : prop.nameEn;
+                  const propName = getTileName(prop.id, Game.lang);
                   notice.style.display = "block";
                   notice.style.background = "rgba(239, 68, 68, 0.15)";
                   notice.style.border = "1px solid #EF4444";
@@ -2496,9 +2765,9 @@ jobs:
 
               if (ok) {
                   execTrade(td);
-                  logEvent(`🤝 وافق ${ai.nameAr} على بيع (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}) مقابل ${td.offer}$.`);
+                  logEvent(`🤝 وافق ${ai.nameAr} على بيع (${getTileName(td.tile.id, Game.lang)}) مقابل ${td.offer}$.`);
               } else {
-                  logEvent(`❌ رفض ${ai.nameAr} عرض المقايضة لعقار (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}) بمبلغ ${td.offer}$.`);
+                  logEvent(`❌ رفض ${ai.nameAr} عرض المقايضة لعقار (${getTileName(td.tile.id, Game.lang)}) بمبلغ ${td.offer}$.`);
                   setTimeout(() => {
                       openTradeModal(td.tile.id, td.offer, true);
                   }, 500);
@@ -2512,7 +2781,7 @@ jobs:
               descEl.innerHTML = `
                   <span style="color:var(--gold); font-size:1.05rem;">${buyer.avatar} ${buyer.nameAr}</span><br>
                   يعرض عليك مبلغ <strong style="color:var(--gold); font-size:1.25rem;">${td.offer}$</strong><br>
-                  لشراء عقارك (<strong style="color:var(--text);">${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}</strong>).<br><br>
+                  لشراء عقارك (<strong style="color:var(--text);">${getTileName(td.tile.id, Game.lang)}</strong>).<br><br>
                   هل توافق يا <span style="color:var(--p1); font-size:1.05rem;">${seller.avatar} ${seller.nameAr}</span>؟
               `;
               document.getElementById("pvpTradeConfirmModal").classList.add("show");
@@ -2549,7 +2818,7 @@ jobs:
 
           function openPropsModal(pId) {
               const p = Game.players[pId];
-              document.getElementById("propsModalTitle").innerText = `${p.avatar} ${Game.lang==='ar'?p.nameAr:p.nameEn} (${p.money}$)`;
+              document.getElementById("propsModalTitle").innerText = `${p.avatar} ${p.nameAr} (${p.money}$)`;
               const b = document.getElementById("propsModalBody");
               b.innerHTML = "";
               if (p.props.length === 0) {
@@ -2558,22 +2827,47 @@ jobs:
                   p.props.forEach(propId => {
                       const t = BOARD_TILES[propId];
                       const d = document.createElement("div");
-                      d.style = "background:var(--box-bg); border-radius:8px; padding:7px 10px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--card-border);";
+                      d.style = "background:var(--box-bg); border-radius:8px; padding:7px 10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--card-border); flex-wrap:wrap; gap:4px;";
                       const mortVal = Math.floor(t.price * 0.5);
                       const unmortVal = Math.floor(mortVal * 1.1);
 
                       const canManage = (pId === 0) || (Game.mode === 'pvp');
+                      const groupTiles = BOARD_TILES.filter(x => x.group === t.group);
+                      const hasMonopoly = t.owner !== undefined && groupTiles.every(x => x.owner === t.owner);
+                      const curFloors = t.floors || 0;
+                      const floorCost = Math.round(t.price * 0.33);
+                      const refund = Math.round(floorCost * 0.50);
+
+                      let buildingBadge = "";
+                      if (curFloors === 5) {
+                          buildingBadge = ` <span style="background:linear-gradient(135deg,#FDE047,#F59E0B); color:#451A03; font-size:0.65rem; padding:1px 4px; border-radius:3px; font-weight:bold;">🗼 برج إيفل</span>`;
+                      } else if (curFloors > 0) {
+                          buildingBadge = ` <span style="background:#A3E635; color:#142603; font-size:0.65rem; padding:1px 4px; border-radius:3px; font-weight:bold;">🏢 ${curFloors} طوابق</span>`;
+                      }
+
+                      let buildButtons = "";
+                      if (hasMonopoly && canManage) {
+                          const canBuild = canBuildFloor(t.id, pId);
+                          const canDemo = canDemolishFloor(t.id, pId);
+                          buildButtons = `
+                              <div style="display:flex; gap:3px; align-items:center;">
+                                  <button class="btn btn-lime" style="font-size:0.65rem; padding:3px 6px;" onclick="buildFloor(${t.id}, ${pId})" ${canBuild.ok ? '' : 'disabled'}>🏗️ +طابق (${floorCost}$)</button>
+                                  <button class="btn btn-red" style="font-size:0.65rem; padding:3px 6px;" onclick="demolishFloor(${t.id}, ${pId})" ${canDemo.ok ? '' : 'disabled'}>🔨 -طابق (+${refund}$)</button>
+                              </div>
+                          `;
+                      }
 
                       d.innerHTML = `
                           <div>
-                              <strong style="color:${t.color||'var(--gold)'};">${t.icon||""} ${Game.lang==='ar'?t.nameAr:t.nameEn}</strong>
+                              <strong style="color:${t.color||'var(--gold)'};">${t.icon||""} ${getTileName(t.id, Game.lang)}</strong>${buildingBadge}
                               <div style="font-size:0.74rem; color:var(--dim);">القيمة: ${t.price}$ | الرهن: ${mortVal}$</div>
                           </div>
-                          <div>
+                          <div style="display:flex; gap:4px; align-items:center; flex-wrap:wrap;">
+                              ${buildButtons}
                               ${canManage ? (
                                   t.mortgaged ?
                                   `<button class="btn btn-gold" style="font-size:0.70rem; padding:3px 7px;" onclick="unmortgageProp(${t.id}, ${pId})">فك الرهن (${unmortVal}$)</button>` :
-                                  `<button class="btn btn-red" style="font-size:0.70rem; padding:3px 7px;" onclick="mortgageProp(${t.id}, ${pId})">رهن (+${mortVal}$)</button>`
+                                  `<button class="btn btn-red" style="font-size:0.70rem; padding:3px 7px;" onclick="mortgageProp(${t.id}, ${pId})" ${(curFloors > 0) ? 'disabled title="يجب هدم المباني أولاً"' : ''}>رهن (+${mortVal}$)</button>`
                               ) : (t.mortgaged ? `<span style="color:#EF4444; font-size:0.72rem;">مَرْهُون</span>` : '')}
                           </div>
                       `;
@@ -2586,10 +2880,15 @@ jobs:
 
           function mortgageProp(id, pId) {
               const t = BOARD_TILES[id], p = Game.players[pId];
+              const grp = BOARD_TILES.filter(x => x.group === t.group);
+              if (grp.some(x => (x.floors || 0) > 0)) {
+                  logEvent(Game.lang === 'ar' ? "⚠️ يجب هدم كافة الطوابق في المجموعة قبل رهن العقار!" : "⚠️ Must demolish all buildings before mortgaging!");
+                  return;
+              }
               if (t.owner === pId && !t.mortgaged) {
                   t.mortgaged = true; p.money += Math.floor(t.price * 0.5);
                   AudioFX.play('cash'); updateUI(); openPropsModal(pId);
-                  logEvent(`🏦 رهن ${p.avatar} ${p.nameAr} (${Game.lang==='ar'?t.nameAr:t.nameEn}) واستلم ${Math.floor(t.price * 0.5)}$.`);
+                  logEvent(`🏦 رهن ${p.avatar} ${p.nameAr} (${getTileName(t.id, Game.lang)}) واستلم ${Math.floor(t.price * 0.5)}$.`);
               }
           }
           function unmortgageProp(id, pId) {
@@ -2598,7 +2897,7 @@ jobs:
               if (t.owner === pId && t.mortgaged && p.money >= cost) {
                   t.mortgaged = false; p.money -= cost;
                   AudioFX.play('cash'); updateUI(); openPropsModal(pId);
-                  logEvent(`🔓 فك ${p.avatar} ${p.nameAr} رهن (${Game.lang==='ar'?t.nameAr:t.nameEn}) مقابل ${cost}$.`);
+                  logEvent(`🔓 فك ${p.avatar} ${p.nameAr} رهن (${getTileName(t.id, Game.lang)}) مقابل ${cost}$.`);
               }
           }
 
@@ -2615,17 +2914,25 @@ jobs:
               }
           }
 
+          // تبديل اللغة وتحديث كافة النصوص والمدن واتجاه الشاشة
           function setLanguage(l) {
               Game.lang = l;
-              document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
-              document.getElementById("btnLangAr").className = "btn-pill" + (l==='ar'?" active":"");
-              document.getElementById("btnLangEn").className = "btn-pill" + (l==='en'?" active":"");
+              document.documentElement.dir = (l === 'ar' || l === 'fa') ? 'rtl' : 'ltr';
+
+              const sel = document.getElementById("selGameLang");
+              if (sel && sel.value !== l) sel.value = l;
+
               document.getElementById("txtAppTitle").innerText = I18N[l].app;
               document.getElementById("txtBtnRoll").innerText = I18N[l].roll;
+              document.getElementById("txtBtnP0Props").innerText = I18N[l].myProps;
+              document.getElementById("txtBtnTrade").innerText = I18N[l].trade;
+
+              // تحديث أسماء كافة الخانات على الرقعة طبقاً للغة والمجموعة الجغرافية
               BOARD_TILES.forEach(t => {
                   const el = document.getElementById("tName-" + t.id);
-                  if (el) el.innerText = l === 'ar' ? t.nameAr : t.nameEn;
+                  if (el) el.innerText = getTileName(t.id, l);
               });
+
               updateUI();
           }
 
