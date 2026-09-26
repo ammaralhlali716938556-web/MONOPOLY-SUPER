@@ -1,4 +1,4 @@
-name: Build Monopoly Arabia APK
+name: Build MONOPOLY PRO APK
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 jobs:
   build:
-    name: 🎲 بناء تطبيق مونوبولي العرب (APK)
+    name: 🎲 بناء تطبيق MONOPOLY PRO (APK)
     runs-on: ubuntu-latest
 
     steps:
@@ -25,7 +25,7 @@ jobs:
       - name: 🐘 تثبيت وإعداد Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: ⚙️ تجهيز وبرمجة كامل ملفات لعبة مونوبولي العرب تلقائياً
+      - name: ⚙️ تجهيز وبرمجة كامل ملفات لعبة MONOPOLY PRO تلقائياً
         run: |
           python3 - << 'PYEOF'
           import os
@@ -47,7 +47,7 @@ jobs:
                   mavenCentral()
               }
           }
-          rootProject.name = "MonopolyArabia"
+          rootProject.name = "MonopolyPro"
           include ':app'
           """
 
@@ -71,10 +71,10 @@ jobs:
               id 'com.android.application'
           }
           android {
-              namespace 'com.monopoly.arabia'
+              namespace 'com.monopoly.pro'
               compileSdk 34
               defaultConfig {
-                  applicationId "com.monopoly.arabia"
+                  applicationId "com.monopoly.pro"
                   minSdk 21
                   targetSdk 34
                   versionCode 1
@@ -116,7 +116,7 @@ jobs:
                   android:label="@string/app_name"
                   android:supportsRtl="true"
                   android:hardwareAccelerated="true"
-                  android:theme="@style/Theme.MonopolyArabia">
+                  android:theme="@style/Theme.MonopolyPro">
                   <activity
                       android:name=".MainActivity"
                       android:exported="true"
@@ -134,7 +134,7 @@ jobs:
           # 6. Strings
           files["app/src/main/res/values/strings.xml"] = """<?xml version="1.0" encoding="utf-8"?>
           <resources>
-              <string name="app_name">مونوبولي العرب</string>
+              <string name="app_name">MONOPOLY PRO</string>
           </resources>
           """
 
@@ -150,7 +150,7 @@ jobs:
           # 8. Themes
           files["app/src/main/res/values/themes.xml"] = """<?xml version="1.0" encoding="utf-8"?>
           <resources>
-              <style name="Theme.MonopolyArabia" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+              <style name="Theme.MonopolyPro" parent="Theme.MaterialComponents.DayNight.NoActionBar">
                   <item name="colorPrimary">@color/gold</item>
                   <item name="colorPrimaryVariant">@color/gold_dark</item>
                   <item name="android:statusBarColor">@color/bg_main</item>
@@ -190,7 +190,7 @@ jobs:
           """
 
           # 11. MainActivity.java
-          files["app/src/main/java/com/monopoly/arabia/MainActivity.java"] = """package com.monopoly.arabia;
+          files["app/src/main/java/com/monopoly/pro/MainActivity.java"] = """package com.monopoly.pro;
 
           import android.annotation.SuppressLint;
           import android.os.Bundle;
@@ -270,34 +270,77 @@ jobs:
           <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-          <title>مونوبولي العرب • Monopoly Arabia</title>
+          <title>MONOPOLY PRO</title>
           <style>
-          :root{--bg-main:#0B0E14;--bg-board:#111723;--bg-tile:#1B2232;--gold:#F59E0B;--gold-lt:#FDE68A;--text:#F8FAFC;--dim:#94A3B8;--p0:#EF4444;--p1:#38BDF8;--green:#10B981;}
+          :root{
+              --bg-main:#0B0E14;
+              --bg-board:#111723;
+              --bg-tile:#1B2232;
+              --gold:#F59E0B;
+              --gold-lt:#FDE68A;
+              --text:#F8FAFC;
+              --dim:#94A3B8;
+              --p0:#EF4444;
+              --p1:#38BDF8;
+              --green:#10B981;
+              --card-bg:#161D2B;
+              --card-border:#2B3548;
+              --hdr-bg:linear-gradient(135deg,#1E293B,#0F172A);
+              --center-bg:radial-gradient(circle at center,#182235,#0B101A);
+              --modal-bg:linear-gradient(145deg,#1E293B,#0F172A);
+              --input-bg:#0F172A;
+              --box-bg:#0F172A;
+              --btn-pill-bg:#1E293B;
+              --btn-pill-border:#4B5563;
+              --tile-border:rgba(255,255,255,0.08);
+          }
+          body.theme-light{
+              --bg-main:#F1F5F9;
+              --bg-board:#CBD5E1;
+              --bg-tile:#FFFFFF;
+              --gold:#D97706;
+              --gold-lt:#B45309;
+              --text:#0F172A;
+              --dim:#64748B;
+              --p0:#DC2626;
+              --p1:#0284C7;
+              --green:#059669;
+              --card-bg:#FFFFFF;
+              --card-border:#94A3B8;
+              --hdr-bg:linear-gradient(135deg,#FFFFFF,#E2E8F0);
+              --center-bg:radial-gradient(circle at center,#FFFFFF,#F8FAFC);
+              --modal-bg:linear-gradient(145deg,#FFFFFF,#F1F5F9);
+              --input-bg:#F8FAFC;
+              --box-bg:#F1F5F9;
+              --btn-pill-bg:#E2E8F0;
+              --btn-pill-border:#CBD5E1;
+              --tile-border:rgba(0,0,0,0.12);
+          }
           *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
           html,body{width:100%;height:100%;margin:0;padding:2px;box-sizing:border-box;overflow:hidden;}
-          body{background:var(--bg-main);color:var(--text);height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;}
-          .header{width:100%;max-width:480px;flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:4px 8px;background:linear-gradient(135deg,#1E293B,#0F172A);border-radius:12px;border:1px solid rgba(245,158,11,0.4);margin-bottom:3px;}
-          .header-title{display:flex;align-items:center;gap:6px;font-size:0.92rem;font-weight:900;color:var(--gold);text-shadow:0 0 10px rgba(245,158,11,0.4);}
+          body{background:var(--bg-main);color:var(--text);height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;transition:background 0.25s, color 0.25s;}
+          .header{width:100%;max-width:480px;flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:4px 8px;background:var(--hdr-bg);border-radius:12px;border:1px solid rgba(245,158,11,0.4);margin-bottom:3px;box-shadow:0 2px 8px rgba(0,0,0,0.2);}
+          .header-title{display:flex;align-items:center;gap:6px;font-size:0.92rem;font-weight:900;color:var(--gold);text-shadow:0 0 10px rgba(245,158,11,0.3);}
           .header-controls{display:flex;gap:6px;}
-          .btn-hdr{background:#2D3748;border:1px solid #4B5563;color:#E2E8F0;padding:4px 9px;border-radius:6px;font-size:0.75rem;font-weight:bold;cursor:pointer;}
+          .btn-hdr{background:var(--btn-pill-bg);border:1px solid var(--btn-pill-border);color:var(--text);padding:4px 9px;border-radius:6px;font-size:0.75rem;font-weight:bold;cursor:pointer;}
           .scoreboard{width:100%;max-width:480px;flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:3px;}
-          .p-card{background:#161D2B;border:2px solid #2B3548;border-radius:10px;padding:5px 8px;display:flex;align-items:center;justify-content:space-between;position:relative;cursor:pointer;}
-          .p-card.active{border-color:var(--gold);box-shadow:0 0 12px rgba(245,158,11,0.45);background:linear-gradient(135deg,#1C2436,#232D42);}
+          .p-card{background:var(--card-bg);border:2px solid var(--card-border);border-radius:10px;padding:5px 8px;display:flex;align-items:center;justify-content:space-between;position:relative;cursor:pointer;transition:border-color 0.2s, box-shadow 0.2s;}
+          .p-card.active{border-color:var(--gold);box-shadow:0 0 12px rgba(245,158,11,0.45);}
           .p-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.15rem;background:#000;border:2px solid #fff;flex-shrink:0;}
           .p-details{flex:1;margin:0 6px;}
           .p-name{font-size:0.80rem;font-weight:900;line-height:1.2;}
-          .p-cash{font-size:0.92rem;font-weight:900;color:var(--gold-lt);line-height:1.2;}
+          .p-cash{font-size:0.92rem;font-weight:900;color:var(--gold);line-height:1.2;}
           .p-stats{font-size:0.65rem;color:var(--dim);}
           .p-badge{position:absolute;top:-6px;left:6px;background:var(--gold);color:#000;font-size:0.58rem;font-weight:900;padding:1px 6px;border-radius:10px;}
-          .board-wrapper{direction:ltr!important;width:100%;max-width:480px;flex:1;min-height:0;margin:0 auto;box-sizing:border-box;position:relative;background:var(--bg-board);border-radius:12px;border:3px solid var(--gold);box-shadow:0 8px 30px rgba(0,0,0,0.7);display:grid;grid-template-columns:1.15fr repeat(9,1fr) 1.15fr;grid-template-rows:1.1fr repeat(9,1fr) 1.1fr;gap:1.5px;padding:2px;}
-          .tile{direction:rtl;background:var(--bg-tile);border-radius:4px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:2px 1px;overflow:visible;border:1px solid rgba(255,255,255,0.08);cursor:pointer;}
-          .tile:active{filter:brightness(1.2);}
+          .board-wrapper{direction:ltr!important;width:100%;max-width:480px;flex:1;min-height:0;margin:0 auto;box-sizing:border-box;position:relative;background:var(--bg-board);border-radius:12px;border:3px solid var(--gold);box-shadow:0 8px 30px rgba(0,0,0,0.5);display:grid;grid-template-columns:1.15fr repeat(9,1fr) 1.15fr;grid-template-rows:1.1fr repeat(9,1fr) 1.1fr;gap:1.5px;padding:2px;}
+          .tile{direction:rtl;background:var(--bg-tile);border-radius:4px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:2px 1px;overflow:visible;border:1px solid var(--tile-border);cursor:pointer;}
+          .tile:active{filter:brightness(1.15);}
           .tile-bar{width:100%;height:6px;border-radius:2px;flex-shrink:0;}
           .tile-cnt{width:100%;height:calc(100% - 8px);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:1px 0;}
-          .tile-name{font-size:clamp(0.40rem,1.8vw,0.52rem);font-weight:800;text-align:center;line-height:1.1;color:var(--text);word-break:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;padding:0 1px;}
-          .tile-price{font-size:clamp(0.38rem,1.6vw,0.50rem);font-weight:900;color:var(--gold-lt);margin-top:auto;}
+          .tile-name{font-size:clamp(0.42rem,1.9vw,0.56rem);font-weight:900;text-align:center;line-height:1.1;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 1px;}
+          .tile-price{font-size:clamp(0.38rem,1.6vw,0.50rem);font-weight:900;color:var(--gold);margin-top:auto;}
           .tile-icon{font-size:0.95rem;line-height:1;margin:auto 0;}
-          .corner-tile{background:radial-gradient(circle at center,#1E293B,#101726);justify-content:center;}
+          .corner-tile{justify-content:center;}
           .corner-tile .tile-icon{font-size:1.35rem;}
           .corner-tile .tile-name{font-size:0.55rem;color:var(--gold);}
 
@@ -322,12 +365,12 @@ jobs:
           .tile.owned-glow{box-shadow:inset 0 0 8px currentColor;}
           .tile.owned-tint{filter:brightness(1.25);}
           .tile.owned-border{border-width:2.5px!important;border-color:currentColor!important;}
-          .tile-owner-badge{position:absolute;top:1px;right:1px;font-size:0.6rem;background:rgba(0,0,0,0.85);border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;border:1px solid var(--gold);z-index:5;}
+          .tile-owner-badge{position:absolute;top:1px;right:1px;font-size:0.6rem;background:rgba(0,0,0,0.85);color:#FFF;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;border:1px solid var(--gold);z-index:5;}
           [dir="ltr"] .tile-owner-badge{right:auto;left:1px;}
           .tile-mortgaged-badge{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%) rotate(-20deg);background:#DC2626;color:#FFF;font-size:0.5rem;font-weight:900;padding:1px 4px;border-radius:3px;border:1px solid #FFF;z-index:8;}
-          .board-center{direction:rtl;grid-column:2/span 9;grid-row:2/span 9;background:radial-gradient(circle at center,#182235,#0B101A);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px;position:relative;border:1px solid rgba(245,158,11,0.25);overflow:hidden;}
-          .center-brand{font-size:clamp(0.85rem,3.5vw,1.1rem);font-weight:900;color:var(--gold);letter-spacing:1px;text-align:center;text-shadow:0 0 10px rgba(245,158,11,0.5);}
-          .center-turn-announcer{font-size:clamp(0.72rem,2.8vw,0.88rem);font-weight:bold;color:var(--text);background:rgba(255,255,255,0.06);padding:3px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.1);}
+          .board-center{direction:rtl;grid-column:2/span 9;grid-row:2/span 9;background:var(--center-bg);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px;position:relative;border:1px solid rgba(245,158,11,0.25);overflow:hidden;}
+          .center-brand{font-size:clamp(0.85rem,3.5vw,1.1rem);font-weight:900;color:var(--gold);letter-spacing:1px;text-align:center;text-shadow:0 0 10px rgba(245,158,11,0.3);}
+          .center-turn-announcer{font-size:clamp(0.72rem,2.8vw,0.88rem);font-weight:bold;color:var(--text);background:rgba(128,128,128,0.12);padding:3px 12px;border-radius:20px;border:1px solid rgba(128,128,128,0.25);}
           .dice-area{display:flex;align-items:center;justify-content:center;gap:18px;margin:auto 0;perspective:800px;}
           .cube-die{width:46px;height:46px;position:relative;transform-style:preserve-3d;transition:transform 0.1s linear;}
           .cube-die.rolling{animation:rollTumble 0.4s infinite linear;}
@@ -340,31 +383,33 @@ jobs:
           .face-5{transform:rotateY(90deg) translateZ(23px);}
           .face-3{transform:rotateX(90deg) translateZ(23px);}
           .face-4{transform:rotateX(-90deg) translateZ(23px);}
-          .center-btn-roll{background:linear-gradient(135deg,#F59E0B,#D97706);color:#000;border:none;border-radius:24px;padding:8px 24px;font-size:clamp(0.85rem,3.2vw,1.05rem);font-weight:900;cursor:pointer;box-shadow:0 4px 15px rgba(245,158,11,0.5);display:flex;align-items:center;gap:6px;}
+          .center-btn-roll{background:linear-gradient(135deg,#F59E0B,#D97706);color:#000;border:none;border-radius:24px;padding:8px 24px;font-size:clamp(0.85rem,3.2vw,1.05rem);font-weight:900;cursor:pointer;box-shadow:0 4px 15px rgba(245,158,11,0.4);display:flex;align-items:center;gap:6px;}
           .center-btn-roll:active{transform:scale(0.96);}
           .center-btn-roll:disabled{opacity:0.4;cursor:not-allowed;}
-          .log-area{width:95%;height:22px;background:rgba(0,0,0,0.45);border-radius:6px;border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;padding:0 6px;overflow:hidden;white-space:nowrap;font-size:0.65rem;color:var(--gold-lt);}
-          .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.78);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:999;padding:12px;}
+          .log-area{width:95%;height:22px;background:rgba(0,0,0,0.15);border-radius:6px;border:1px solid rgba(128,128,128,0.2);display:flex;align-items:center;justify-content:center;padding:0 6px;overflow:hidden;white-space:nowrap;font-size:0.65rem;color:var(--gold);}
+
+          /* إبقاء رقعة اللعب واضحة تماماً دون تضليل أو تشويش */
+          .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.12);backdrop-filter:none;-webkit-backdrop-filter:none;display:none;align-items:center;justify-content:center;z-index:999;padding:12px;}
           .modal-overlay.show{display:flex;}
-          .modal-card{background:linear-gradient(145deg,#1E293B,#0F172A);border:2px solid var(--gold);border-radius:16px;width:100%;max-width:380px;box-shadow:0 12px 35px rgba(0,0,0,0.9);overflow:hidden;display:flex;flex-direction:column;}
-          .modal-header{padding:10px 14px;background:rgba(0,0,0,0.35);border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;}
+          .modal-card{background:var(--modal-bg);color:var(--text);border:2px solid var(--gold);border-radius:16px;width:100%;max-width:380px;box-shadow:0 12px 35px rgba(0,0,0,0.65);overflow:hidden;display:flex;flex-direction:column;}
+          .modal-header{padding:10px 14px;background:rgba(0,0,0,0.12);border-bottom:1px solid rgba(128,128,128,0.2);display:flex;justify-content:space-between;align-items:center;}
           .modal-title{font-size:0.95rem;font-weight:900;color:var(--gold);display:flex;align-items:center;gap:6px;}
           .modal-body{padding:14px;font-size:0.85rem;line-height:1.5;max-height:65vh;overflow-y:auto;}
-          .modal-footer{padding:10px 14px;background:rgba(0,0,0,0.35);border-top:1px solid rgba(255,255,255,0.1);display:flex;gap:8px;justify-content:flex-end;}
+          .modal-footer{padding:10px 14px;background:rgba(0,0,0,0.12);border-top:1px solid rgba(128,128,128,0.2);display:flex;gap:8px;justify-content:flex-end;}
           .btn{padding:8px 16px;border-radius:8px;font-weight:bold;font-size:0.82rem;cursor:pointer;border:none;}
           .btn-gold{background:var(--gold);color:#000;}
           .btn-blue{background:#2563EB;color:#fff;}
           .btn-red{background:#DC2626;color:#fff;}
           .btn-gray{background:#4B5563;color:#fff;}
-          .btn-pill{padding:5px 12px;border-radius:20px;border:1px solid #4B5563;background:#1E293B;color:#FFF;cursor:pointer;font-size:0.75rem;}
+          .btn-pill{padding:5px 12px;border-radius:20px;border:1px solid var(--btn-pill-border);background:var(--btn-pill-bg);color:var(--text);cursor:pointer;font-size:0.75rem;}
           .btn-pill.active{background:var(--gold);color:#000;border-color:var(--gold);font-weight:bold;}
           .row-opts{display:flex;gap:6px;margin:6px 0 12px 0;flex-wrap:wrap;}
           .settings-section{margin-bottom:12px;}
           .settings-label{font-size:0.78rem;font-weight:bold;color:var(--dim);margin-bottom:4px;}
 
           .info-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:0.72rem;font-weight:bold;background:rgba(245,158,11,0.2);color:var(--gold);border:1px solid rgba(245,158,11,0.3);margin-bottom:8px;}
-          .info-rule-box{background:#0F172A;border:1px solid #334155;border-radius:8px;padding:10px;margin-top:8px;}
-          .info-rule-item{font-size:0.80rem;color:#CBD5E1;margin-bottom:6px;display:flex;align-items:flex-start;gap:6px;line-height:1.4;}
+          .info-rule-box{background:var(--box-bg);border:1px solid var(--card-border);border-radius:8px;padding:10px;margin-top:8px;}
+          .info-rule-item{font-size:0.80rem;color:var(--text);margin-bottom:6px;display:flex;align-items:flex-start;gap:6px;line-height:1.4;}
           .info-rule-item:last-child{margin-bottom:0;}
           </style>
           </head>
@@ -373,7 +418,7 @@ jobs:
           <div class="header">
               <div class="header-title">
                   <span>👑</span>
-                  <span id="txtAppTitle">مونوبولي العرب</span>
+                  <span id="txtAppTitle">MONOPOLY PRO</span>
               </div>
               <div class="header-controls">
                   <button class="btn-hdr" onclick="openPropsModal(0)">🎒 <span id="txtBtnP0Props">عقاراتي</span></button>
@@ -407,7 +452,7 @@ jobs:
 
           <div class="board-wrapper" id="board">
               <div class="board-center">
-                  <div class="center-brand">MONOPOLY ARABIA</div>
+                  <div class="center-brand">MONOPOLY PRO</div>
                   <div class="center-turn-announcer" id="turnAnnouncer">الدور: الملك 👑</div>
 
                   <div class="dice-area">
@@ -434,7 +479,7 @@ jobs:
                       <span id="txtBtnRoll">ارمي النرد</span>
                   </button>
 
-                  <div class="log-area" id="gameLog">مرحباً بكم في مونوبولي العرب الملكية!</div>
+                  <div class="log-area" id="gameLog">مرحباً بكم في لعبة MONOPOLY PRO!</div>
               </div>
           </div>
 
@@ -442,11 +487,11 @@ jobs:
           <div class="modal-overlay" id="startModal">
               <div class="modal-card">
                   <div class="modal-header">
-                      <div class="modal-title">🎲 مرحباً بك في مونوبولي العرب</div>
+                      <div class="modal-title">🎲 مرحباً بك في MONOPOLY PRO</div>
                   </div>
                   <div class="modal-body" style="text-align:center; padding:20px 14px;">
                       <div style="font-size:2.8rem; margin-bottom:10px;">👑🏰</div>
-                      <div style="font-size:1.15rem; font-weight:900; color:var(--gold); margin-bottom:6px;">بنك الحظ الملكي</div>
+                      <div style="font-size:1.15rem; font-weight:900; color:var(--gold); margin-bottom:6px;">بنك الحظ الاحترافي</div>
                       <p style="font-size:0.85rem; color:var(--dim); margin-bottom:18px;">اختر كيف تود بدء رحلتك في عالم التجارة والعقارات:</p>
                       <div style="display:flex; flex-direction:column; gap:10px;">
                           <button class="btn btn-gold" style="padding:12px; font-size:0.95rem; font-weight:900;" onclick="startNewGameFromModal()">
@@ -498,17 +543,15 @@ jobs:
                       <div class="modal-title">🔨 مزاد علني مباشر</div>
                   </div>
                   <div class="modal-body">
-                      <!-- سعر العقار الأساسي في أعلى النافذة -->
-                      <div style="text-align:center; margin-bottom:8px; background:rgba(255,255,255,0.06); padding:8px 12px; border-radius:10px; border:1px solid rgba(245,158,11,0.35);">
+                      <div style="text-align:center; margin-bottom:8px; background:rgba(128,128,128,0.1); padding:8px 12px; border-radius:10px; border:1px solid rgba(245,158,11,0.35);">
                           <div id="aucPropDetails" style="font-size:1.05rem; font-weight:900; color:var(--text); margin-bottom:4px;"></div>
                           <div style="font-size:0.85rem; color:var(--gold-lt); font-weight:bold;">
                               🏷️ السعر الأساسي للعقار: <span id="aucBasePriceVal" style="color:var(--gold); font-size:1.15rem; font-weight:900;">0$</span>
                           </div>
                       </div>
 
-                      <!-- مؤقت المهلة 5 ثواني -->
                       <div style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4); border-radius:8px; padding:6px; text-align:center; margin-bottom:10px;">
-                          <div style="font-size:0.82rem; font-weight:bold; color:#FCA5A5;">
+                          <div style="font-size:0.82rem; font-weight:bold; color:#EF4444;">
                               ⏱️ المهلة المتبقية للمزايدة: <span id="aucTimerNum" style="color:#EF4444; font-size:1.25rem; font-weight:900;">5</span> ثوانٍ
                           </div>
                       </div>
@@ -548,22 +591,22 @@ jobs:
           <div class="modal-overlay" id="fastTravelModal">
               <div class="modal-card">
                   <div class="modal-header">
-                      <div class="modal-title">🚂 السفر السريع بالقطار</div>
+                      <div class="modal-title">🚂 السفر السريع بمحطات القطار</div>
                   </div>
                   <div class="modal-body" style="text-align:center;">
                       <div style="font-size:2rem; margin-bottom:8px;">🚄</div>
-                      <p style="font-size:0.9rem;">هل ترغب بالسفر السريع إلى محطتك الأخرى:</p>
-                      <div style="font-size:1.1rem; font-weight:900; color:var(--gold); margin:8px 0;" id="fastTravelDestName">محطة</div>
-                      <div style="font-size:0.8rem; color:var(--dim);">التكلفة: 200$ تُسحب من رصيدك فوراً.</div>
+                      <p style="font-size:0.9rem; font-weight:bold; margin-bottom:6px;">اختر المحطة التي ترغب بالسفر إليها:</p>
+                      <select id="fastTravelDestSelect" style="width:100%; padding:8px; background:var(--input-bg); color:var(--text); border-radius:8px; border:1px solid var(--gold); font-size:0.9rem; margin:8px 0;"></select>
+                      <div style="font-size:0.84rem; margin-top:8px;" id="fastTravelCostNotice"></div>
                   </div>
                   <div class="modal-footer">
-                      <button class="btn btn-gold" onclick="confirmFastTravel()">سفر سريع (200$)</button>
+                      <button class="btn btn-gold" id="btnFastTravelConfirm" onclick="confirmFastTravel()">سفر سريع</button>
                       <button class="btn btn-gray" onclick="cancelFastTravel()">البقاء هنا</button>
                   </div>
               </div>
           </div>
 
-          <!-- 6. نافذة المقايضة -->
+          <!-- 6. نافذة المقايضة وتجارة العقارات -->
           <div class="modal-overlay" id="tradeModal">
               <div class="modal-card">
                   <div class="modal-header">
@@ -571,19 +614,19 @@ jobs:
                       <div style="font-size:1.2rem; cursor:pointer;" onclick="closeTradeModal()">✕</div>
                   </div>
                   <div class="modal-body" id="tradeBody">
+                      <div id="tradeNotice" style="display:none; padding:8px 12px; border-radius:8px; margin-bottom:10px; font-size:0.82rem; font-weight:bold; line-height:1.4;"></div>
                       <div class="settings-section">
                           <div class="settings-label">اختر عقار الخصم للشراء:</div>
-                          <select id="tradeTargetProp" style="width:100%; padding:6px; background:#0F172A; color:#FFF; border-radius:6px; border:1px solid #4B5563;"></select>
+                          <select id="tradeTargetProp" onchange="onTradeTargetPropChange()" style="width:100%; padding:8px; background:var(--input-bg); color:var(--text); border-radius:6px; border:1px solid #4B5563; font-size:0.85rem;"></select>
                       </div>
                       <div class="settings-section">
                           <div class="settings-label">المبلغ المعروض ($):</div>
-                          <input type="number" id="tradeOfferCash" value="100" min="10" step="10" style="width:100%; padding:6px; background:#0F172A; color:#FFF; border-radius:6px; border:1px solid #4B5563;">
+                          <input type="number" id="tradeOfferCash" value="100" min="10" step="10" style="width:100%; padding:8px; background:var(--input-bg); color:var(--text); border-radius:6px; border:1px solid #4B5563; font-size:0.9rem;">
                       </div>
-                      <div id="tradeNotice" style="color:#EF4444; font-size:0.75rem; display:none; margin-top:4px;"></div>
                   </div>
                   <div class="modal-footer">
-                      <button class="btn btn-gold" onclick="submitTradeOffer()">إرسال العرض</button>
-                      <button class="btn btn-gray" onclick="closeTradeModal()">إلغاء</button>
+                      <button class="btn btn-gold" id="btnSubmitTrade" onclick="submitTradeOffer()">إرسال العرض</button>
+                      <button class="btn btn-gray" onclick="closeTradeModal()">خروج</button>
                   </div>
               </div>
           </div>
@@ -607,6 +650,13 @@ jobs:
                       <div style="font-size:1.2rem; cursor:pointer;" onclick="closeSettingsModal()">✕</div>
                   </div>
                   <div class="modal-body">
+                      <div class="settings-section">
+                          <div class="settings-label">🌓 مظهر اللعبة (Theme):</div>
+                          <div class="row-opts">
+                              <button class="btn-pill active" id="btnThemeDark" onclick="setTheme('dark')">الداكن 🌙</button>
+                              <button class="btn-pill" id="btnThemeLight" onclick="setTheme('light')">الفاتح ☀️</button>
+                          </div>
+                      </div>
                       <div class="settings-section">
                           <div class="settings-label">🌐 اللغة (Language):</div>
                           <div class="row-opts">
@@ -670,8 +720,8 @@ jobs:
                   </div>
                   <div class="modal-body" style="text-align:center;">
                       <div style="font-size:2.4rem; margin-bottom:8px;">🎲👑</div>
-                      <div style="font-size:1.15rem; font-weight:900; color:var(--gold); margin-bottom:4px;">مونوبولي العرب • بنك الحظ الملكي</div>
-                      <div style="font-size:0.8rem; color:var(--dim); margin-bottom:14px;">الإصدار 1.0.0 (Arabic Monopoly Edition)</div>
+                      <div style="font-size:1.15rem; font-weight:900; color:var(--gold); margin-bottom:4px;">MONOPOLY PRO</div>
+                      <div style="font-size:0.8rem; color:var(--dim); margin-bottom:14px;">الإصدار 1.0.0 (MONOPOLY PRO Edition)</div>
                       <div style="background:rgba(245,158,11,0.1); border:1px solid var(--gold); border-radius:10px; padding:10px; font-weight:bold; color:var(--gold-lt);">
                           تصميم وبرمجة عمار الهلالي
                       </div>
@@ -720,48 +770,48 @@ jobs:
           </div>
 
           <script>
-          // الإيجارات الأساسية تعادل 20% من قيمة العقار بدلاً من 10%
+          // أسماء العقارات والمحطات تم اختصارها إلى اسم مفرد واحد لعدم أخذ مساحة من الخانة
           const RAW_TILES = [
           [0,"انطلق","GO","go","",0,0,"#10B981","🏁"],
-          [1,"شارع المعز","Al-Muizz St","property","brown",60,12,"#8B4513",""],
+          [1,"المعز","Al-Muizz","property","brown",60,12,"#8B4513",""],
           [2,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],
-          [3,"خان الخليلي","Khan El-Khalili","property","brown",60,12,"#8B4513",""],
+          [3,"الخليلي","Al-Khalili","property","brown",60,12,"#8B4513",""],
           [4,"ضريبة الدخل","Income Tax","tax","",200,0,"#EF4444","💰"],
-          [5,"قطار الحجاز","Hejaz Rail","railroad","",200,25,"#64748B","🚂"],
-          [6,"شارع الحمراء","Hamra St","property","lightblue",100,20,"#38BDF8",""],
+          [5,"الحجاز","Hejaz","railroad","",200,25,"#64748B","🚂"],
+          [6,"الحمراء","Hamra","property","lightblue",100,20,"#38BDF8",""],
           [7,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],
           [8,"الروشة","Raouche","property","lightblue",100,20,"#38BDF8",""],
-          [9,"وسط بيروت","Downtown","property","lightblue",120,24,"#38BDF8",""],
+          [9,"بيروت","Beirut","property","lightblue",120,24,"#38BDF8",""],
           [10,"السجن / زيارة","Jail","jail","",0,0,"#6B7280","🚔"],
-          [11,"باب توما","Bab Touma","property","pink",140,28,"#EC4899",""],
-          [12,"شركة الكهرباء","Electric Co","utility","",150,0,"#EAB308","💡"],
+          [11,"توما","Touma","property","pink",140,28,"#EC4899",""],
+          [12,"الكهرباء","Electric","utility","",150,0,"#EAB308","💡"],
           [13,"الصالحية","Salhiyeh","property","pink",140,28,"#EC4899",""],
-          [14,"سوق الحميدية","Hamidiyah","property","pink",160,32,"#EC4899",""],
-          [15,"قطار الحرمين","Haramain Rail","railroad","",200,25,"#64748B","🚂"],
-          [16,"شارع الرشيد","Al-Rasheed St","property","orange",180,36,"#F97316",""],
+          [14,"الحميدية","Hamidiyah","property","pink",160,32,"#EC4899",""],
+          [15,"الحرمين","Haramain","railroad","",200,25,"#64748B","🚂"],
+          [16,"الرشيد","Al-Rasheed","property","orange",180,36,"#F97316",""],
           [17,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],
           [18,"المنصور","Mansour","property","orange",180,36,"#F97316",""],
           [19,"الكرادة","Karrada","property","orange",200,40,"#F97316",""],
           [20,"مواقف مجانية","Free Parking","parking","",0,0,"#10B981","🅿️"],
-          [21,"شارع النيل","Nile Street","property","red",220,44,"#EF4444",""],
+          [21,"النيل","Nile","property","red",220,44,"#EF4444",""],
           [22,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],
           [23,"المقرن","Al-Mogran","property","red",220,44,"#EF4444",""],
-          [24,"حي الرياض","Riyadh Dist","property","red",240,48,"#EF4444",""],
-          [25,"قطار المشرق","Mashreq Rail","railroad","",200,25,"#64748B","🚂"],
-          [26,"شارع العليا","Olaya St","property","yellow",260,52,"#EAB308",""],
-          [27,"طريق الملك فهد","King Fahd Rd","property","yellow",260,52,"#EAB308",""],
-          [28,"شركة المياه","Water Works","utility","",150,0,"#06B6D4","💧"],
-          [29,"حي النخيل","Al-Nakheel","property","yellow",280,56,"#EAB308",""],
+          [24,"الرياض","Riyadh","property","red",240,48,"#EF4444",""],
+          [25,"المشرق","Mashreq","railroad","",200,25,"#64748B","🚂"],
+          [26,"العليا","Olaya","property","yellow",260,52,"#EAB308",""],
+          [27,"فهد","Fahd","property","yellow",260,52,"#EAB308",""],
+          [28,"المياه","Water","utility","",150,0,"#06B6D4","💧"],
+          [29,"النخيل","Al-Nakheel","property","yellow",280,56,"#EAB308",""],
           [30,"إلى السجن!","Go to Jail","gotojail","",0,0,"#DC2626","🚨"],
           [31,"الكورنيش","Corniche","property","green",300,60,"#22C55E",""],
           [32,"اللؤلؤة","The Pearl","property","green",300,60,"#22C55E",""],
           [33,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],
           [34,"لوسيل","Lusail","property","green",320,64,"#22C55E",""],
-          [35,"قطار الخليج","Gulf Rail","railroad","",200,25,"#64748B","🚂"],
+          [35,"الخليج","Gulf","railroad","",200,25,"#64748B","🚂"],
           [36,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],
-          [37,"شارع الشيخ زايد","Sheikh Zayed","property","darkblue",350,70,"#1E40AF",""],
+          [37,"زايد","Zayed","property","darkblue",350,70,"#1E40AF",""],
           [38,"ضريبة الرفاهية","Luxury Tax","tax","",100,0,"#EF4444","💎"],
-          [39,"برج خليفة","Burj Khalifa","property","darkblue",400,80,"#1E40AF",""]
+          [39,"خليفة","Khalifa","property","darkblue",400,80,"#1E40AF",""]
           ];
 
           const BOARD_TILES = RAW_TILES.map(r => ({
@@ -779,8 +829,8 @@ jobs:
           }));
 
           const I18N = {
-              ar: { app:"مونوبولي العرب", turn:"دورك", opp:"دور الخصم", roll:"ارمي النرد", buy:"شراء", auction:"مزاد علني", trade:"مقايضة", myProps:"عقاراتي", passGo:"مررت بنقطة الانطلاق وحصلت على 200$!", jailed:"أنت في السجن!", finePaid:"دفعت 50$ كفالة وخرجت من السجن.", doublesJail:"مبروك! نرد متطابق وخرجت من السجن!", rolled:"حصلت على", rentPaid:"دفعت إيجاراً قدره", to:"إلى", deedFor:"عقار متاح للشراء", p:"عقارات", m:"مرهون", ai:"لاعب ضد الصقر (الذكاء)", pvp:"لاعب ضد لاعب (محلي)" },
-              en: { app:"Monopoly Arabia", turn:"Your Turn", opp:"Opponent's Turn", roll:"Roll Dice", buy:"Buy", auction:"Auction", trade:"Trade", myProps:"My Properties", passGo:"Passed GO! Collected 200$!", jailed:"In Jail!", finePaid:"Paid 50$ fine and exited jail.", doublesJail:"Doubles rolled! Exited jail freely!", rolled:"Rolled", rentPaid:"Paid rent of", to:"to", deedFor:"Property available for purchase", p:"Props", m:"Mortgaged", ai:"Player vs Falcon (AI)", pvp:"2 Players (Pass & Play)" }
+              ar: { app:"MONOPOLY PRO", turn:"دورك", opp:"دور الخصم", roll:"ارمي النرد", buy:"شراء", auction:"مزاد علني", trade:"مقايضة", myProps:"عقاراتي", passGo:"مررت بنقطة الانطلاق وحصلت على 200$!", jailed:"أنت في السجن!", finePaid:"دفعت 50$ كفالة وخرجت من السجن.", doublesJail:"مبروك! نرد متطابق وخرجت من السجن!", rolled:"حصلت على", rentPaid:"دفعت إيجاراً قدره", to:"إلى", deedFor:"عقار متاح للشراء", p:"عقارات", m:"مرهون", ai:"لاعب ضد الصقر (الذكاء)", pvp:"لاعب ضد لاعب (محلي)" },
+              en: { app:"MONOPOLY PRO", turn:"Your Turn", opp:"Opponent's Turn", roll:"Roll Dice", buy:"Buy", auction:"Auction", trade:"Trade", myProps:"My Properties", passGo:"Passed GO! Collected 200$!", jailed:"In Jail!", finePaid:"Paid 50$ fine and exited jail.", doublesJail:"Doubles rolled! Exited jail freely!", rolled:"Rolled", rentPaid:"Paid rent of", to:"to", deedFor:"Property available for purchase", p:"Props", m:"Mortgaged", ai:"Player vs Falcon (AI)", pvp:"2 Players (Pass & Play)" }
           };
 
           const SERVICE_INFO = {
@@ -915,9 +965,9 @@ jobs:
               },
               railroad: {
                   badgeAr: "🚂 محطات النقل والمواصلات السريعة", badgeEn: "🚂 Rapid Rail Transit Stations",
-                  titleAr: "شبكة قطارات وسكك حديد العرب", titleEn: "Arabia Railroad Network",
-                  descAr: "أربعة خطوط قطارات استراتيجية تربط أرجاء الوطن العربي.",
-                  descEn: "Four strategic express train routes connecting the Arab world.",
+                  titleAr: "شبكة قطارات وسكك حديد MONOPOLY PRO", titleEn: "MONOPOLY PRO Railroad Network",
+                  descAr: "أربعة خطوط قطارات استراتيجية تربط أرجاء اللعبة.",
+                  descEn: "Four strategic express train routes connecting the board.",
                   rulesAr: [
                       "💵 سعر الشراء: 200$ لكل محطة قطار.",
                       "📈 تضاعف الإيجار تصاعدياً مع عدد المحطات المملوكة:",
@@ -925,12 +975,12 @@ jobs:
                       "  • محطتان: 50$ إيجار.",
                       "  • 3 محطات: 100$ إيجار.",
                       "  • جميع المحطات الأربع: 200$ إيجار كامل!",
-                      "🚄 ميزة السفر السريع: إذا هبطت على محطتك وتملك محطة أخرى، يمكنك الانتقال السريع إليها فوراً مقابل 200$!"
+                      "🚄 ميزة السفر السريع: لا يتم السفر بالقطار لأي لاعب إلا بعد شراء كافة محطات القطار الأربع في اللعبة. ويكون السفر مجانياً تماماً لصاحب المحطات (0$)، بينما تبلغ تكلفته 200$ لغير المالك."
                   ],
                   rulesEn: [
                       "💵 Purchase Price: 200$ per railroad.",
                       "📈 Tiered Rent: 1 Rail = 25$ | 2 Rails = 50$ | 3 Rails = 100$ | 4 Rails = 200$!",
-                      "🚄 Fast Travel: Land on your own station and fast travel to your other owned station for 200$!"
+                      "🚄 Fast Travel: Fast travel between stations is only allowed after ALL four stations are purchased. Travel is 100% FREE for station owners (0$), and costs 200$ for non-owners."
                   ]
               }
           };
@@ -1003,10 +1053,11 @@ jobs:
               }
           };
 
-          const SAVE_KEY = "monopoly_arabia_save_v1";
+          const SAVE_KEY = "monopoly_pro_save_v1";
 
           const Game = {
               lang: 'ar',
+              theme: 'dark',
               propStyle: 'glow',
               diceSpeed: 'normal',
               moveSpeed: 'normal',
@@ -1044,6 +1095,7 @@ jobs:
                       turn: Game.turn,
                       doublesInRow: Game.doublesInRow,
                       mode: Game.mode,
+                      theme: Game.theme,
                       diceSpeed: Game.diceSpeed,
                       moveSpeed: Game.moveSpeed,
                       propStyle: Game.propStyle,
@@ -1069,6 +1121,7 @@ jobs:
                   Game.turn = data.turn ?? 0;
                   Game.doublesInRow = data.doublesInRow ?? 0;
                   if (data.mode) Game.mode = data.mode;
+                  if (data.theme) setTheme(data.theme);
                   if (data.diceSpeed) Game.diceSpeed = data.diceSpeed;
                   if (data.moveSpeed) Game.moveSpeed = data.moveSpeed;
                   if (data.propStyle) Game.propStyle = data.propStyle;
@@ -1401,8 +1454,15 @@ jobs:
                       } else {
                           logEvent(`العقار (${Game.lang==='ar'?tile.nameAr:tile.nameEn}) مَرْهُون، معفى من الإيجار.`);
                       }
+
+                      // فحص السفر السريع لمحطات القطار للخصم إذا تم شراء كافة المحطات
+                      if (tile.type === "railroad") {
+                          promptRailroadFastTravel(player, tile, isDbl);
+                          return;
+                      }
                       finishTurn(isDbl); return;
                   } else {
+                      // هبط اللاعب على محطته
                       if (tile.type === "railroad") {
                           promptRailroadFastTravel(player, tile, isDbl); return;
                       }
@@ -1442,14 +1502,51 @@ jobs:
               document.getElementById("gameOverModal").classList.add("show");
           }
 
+          // لا يتم السفر السريع بين محطات القطار إلا بعد شراء كافة المحطات (الأربع)
+          // ويكون السفر مجانياً (0$) لصاحب المحطات
           function promptRailroadFastTravel(player, currentTile, isDbl) {
-              const otherRails = BOARD_TILES.filter(t => t.type === "railroad" && t.id !== currentTile.id && t.owner === player.id);
-              if (otherRails.length === 0 || player.money < 200) { finishTurn(isDbl); return; }
+              const allRails = BOARD_TILES.filter(t => t.type === "railroad");
+              const allRailsBought = allRails.every(t => t.owner !== undefined);
+
+              // شرط أساسي: لا يتم السفر لأي لاعب إلا إذا تم شراء كافة المحطات
+              if (!allRailsBought) {
+                  finishTurn(isDbl);
+                  return;
+              }
+
+              // التحقق هل اللاعب هو صاحب المحطات (أو مالك المحطة)
+              const isOwner = (currentTile.owner === player.id) || allRails.every(t => t.owner === player.id);
+              const cost = isOwner ? 0 : 200;
+
+              if (player.money < cost) {
+                  finishTurn(isDbl);
+                  return;
+              }
 
               if (player.id === 0) {
-                  const dest = otherRails[0];
-                  Game.fastTravelData = { player, dest, isDbl };
-                  document.getElementById("fastTravelDestName").innerText = `${dest.icon} ${Game.lang==='ar'?dest.nameAr:dest.nameEn}`;
+                  const otherRails = allRails.filter(t => t.id !== currentTile.id);
+                  Game.fastTravelData = { player, currentTile, otherRails, cost, isDbl };
+
+                  const destSelect = document.getElementById("fastTravelDestSelect");
+                  destSelect.innerHTML = "";
+                  otherRails.forEach(r => {
+                      const opt = document.createElement("option");
+                      opt.value = r.id;
+                      opt.innerText = `🚂 ${Game.lang==='ar'?r.nameAr:r.nameEn} (خانة ${r.id})`;
+                      destSelect.appendChild(opt);
+                  });
+
+                  const costNotice = document.getElementById("fastTravelCostNotice");
+                  const btnConfirm = document.getElementById("btnFastTravelConfirm");
+
+                  if (cost === 0) {
+                      costNotice.innerHTML = `<span style="color:#10B981; font-weight:900;">✨ السفر مجاني بالكامل (0$) لأنك صاحب المحطات!</span>`;
+                      btnConfirm.innerText = Game.lang === 'ar' ? "سفر سريع (مجاناً)" : "Fast Travel (Free)";
+                  } else {
+                      costNotice.innerHTML = `<span style="color:var(--gold-lt);">التكلفة: <strong style="color:var(--gold);">${cost}$</strong> تُسحب من رصيدك.</span>`;
+                      btnConfirm.innerText = Game.lang === 'ar' ? `سفر سريع (${cost}$)` : `Fast Travel (${cost}$)`;
+                  }
+
                   document.getElementById("fastTravelModal").classList.add("show");
               } else {
                   finishTurn(isDbl);
@@ -1458,18 +1555,25 @@ jobs:
 
           function confirmFastTravel() {
               if (!Game.fastTravelData) return;
-              const { player, dest, isDbl } = Game.fastTravelData;
+              const { player, cost, isDbl } = Game.fastTravelData;
+              const destSelect = document.getElementById("fastTravelDestSelect");
+              const destId = parseInt(destSelect.value);
+              const dest = BOARD_TILES.find(t => t.id === destId);
               Game.fastTravelData = null;
               document.getElementById("fastTravelModal").classList.remove("show");
 
-              if (player.money >= 200) {
-                  player.money -= 200;
+              if (dest && player.money >= cost) {
+                  player.money -= cost;
                   player.pos = dest.id;
                   AudioFX.play('cash');
                   AudioFX.play('step');
                   updatePawns(player.id);
                   updateUI();
-                  logEvent(`🚂 سافر الملك سريعاً إلى (${Game.lang==='ar'?dest.nameAr:dest.nameEn}) مقابل 200$.`);
+                  if (cost === 0) {
+                      logEvent(`🚂 سافر ${player.avatar} مجاناً إلى محطة (${Game.lang==='ar'?dest.nameAr:dest.nameEn}).`);
+                  } else {
+                      logEvent(`🚂 سافر ${player.avatar} سريعاً إلى محطة (${Game.lang==='ar'?dest.nameAr:dest.nameEn}) مقابل ${cost}$.`);
+                  }
               }
               finishTurn(isDbl);
           }
@@ -1482,7 +1586,6 @@ jobs:
               finishTurn(isDbl);
           }
 
-          // حساب الإيجار: 20% أساسي و 40% عند احتكار المجموعة
           function calculateRent(tile) {
               if (tile.type === "railroad") {
                   const cnt = BOARD_TILES.filter(t => t.type === "railroad" && t.owner === tile.owner).length;
@@ -1537,7 +1640,6 @@ jobs:
               }
           }
 
-          // نظام المزاد العلني مع مؤقت 5 ثوانٍ وإظهار السعر الأساسي
           let aucTimerInterval = null;
           let aucSecondsLeft = 5;
 
@@ -1823,7 +1925,7 @@ jobs:
 
                   bodyEl.innerHTML = `
                       <div style="text-align:center; margin-bottom:10px;">
-                          <span class="info-badge" style="background:${t.color}33; border-color:${t.color}; color:#FFF;">${isAr?"عقار استثماري":"Real Estate Property"}</span>
+                          <span class="info-badge" style="background:${t.color}33; border-color:${t.color}; color:${t.color};">${isAr?"عقار استثماري":"Real Estate Property"}</span>
                           <div style="font-size:1.15rem; font-weight:900; color:var(--gold);">${t.price}$</div>
                       </div>
                       <div class="info-rule-box">
@@ -1849,7 +1951,7 @@ jobs:
                   if (t.type === "railroad" || t.type === "utility") {
                       const ownerTxt = t.owner !== undefined ? `${Game.players[t.owner].avatar} ${isAr?Game.players[t.owner].nameAr:Game.players[t.owner].nameEn}` : (isAr?"متاح للشراء":"Available for purchase");
                       ownershipExtra = `
-                          <div style="background:rgba(255,255,255,0.05); border-radius:6px; padding:6px 10px; margin-top:8px; display:flex; justify-content:space-between; font-size:0.78rem;">
+                          <div style="background:rgba(128,128,128,0.08); border-radius:6px; padding:6px 10px; margin-top:8px; display:flex; justify-content:space-between; font-size:0.78rem;">
                               <span>${isAr?"المالك الحالي:":"Owner:"} <strong>${ownerTxt}</strong></span>
                               <span>${isAr?"السعر:":"Price:"} <strong style="color:var(--gold);">${t.price}$</strong></span>
                           </div>
@@ -1932,22 +2034,65 @@ jobs:
               }
           }
 
-          function openTradeModal() {
+          // فتح نافذة المقايضة - مع دعم إعادة الفتح عند الرفض مع الاحتفاظ بنفس العقار وتنبيه الرفض
+          function openTradeModal(selectedPropId = null, previousOffer = null, wasRejected = false) {
               const sel = document.getElementById("tradeTargetProp");
               sel.innerHTML = "";
               const oppProps = BOARD_TILES.filter(t => t.owner === 1 && !t.mortgaged);
+              const btnSubmit = document.getElementById("btnSubmitTrade");
+
               if (oppProps.length === 0) {
-                  sel.innerHTML = "<option>لا يملك الخصم عقارات متاحة</option>";
+                  sel.innerHTML = "<option value=''>لا يملك الخصم عقارات متاحة</option>";
+                  btnSubmit.disabled = true;
               } else {
+                  btnSubmit.disabled = false;
                   oppProps.forEach(t => {
                       const opt = document.createElement("option");
                       opt.value = t.id;
                       opt.innerText = `${t.icon||""} ${Game.lang==='ar'?t.nameAr:t.nameEn} (${t.price}$)`;
+                      if (selectedPropId !== null && t.id === selectedPropId) {
+                          opt.selected = true;
+                      }
                       sel.appendChild(opt);
                   });
               }
-              document.getElementById("tradeNotice").style.display = "none";
+
+              const notice = document.getElementById("tradeNotice");
+              const inputCash = document.getElementById("tradeOfferCash");
+
+              if (wasRejected && selectedPropId !== null) {
+                  const prop = BOARD_TILES[selectedPropId];
+                  const propName = Game.lang === 'ar' ? prop.nameAr : prop.nameEn;
+                  notice.style.display = "block";
+                  notice.style.background = "rgba(239, 68, 68, 0.15)";
+                  notice.style.border = "1px solid #EF4444";
+                  notice.style.color = "#EF4444";
+                  notice.innerHTML = `⚠️ <strong>تم رفض العرض!</strong> رفض الخصم بيع (${propName}) بمبلغ <strong>${previousOffer}$</strong>.<br>يمكنك رفع السعر وإعادة المحاولة أو الخروج.`;
+                  const suggestedOffer = previousOffer ? (previousOffer + 50) : (prop.price + 50);
+                  inputCash.value = Math.min(Game.players[0].money, suggestedOffer);
+                  btnSubmit.innerText = Game.lang === 'ar' ? "زيادة العرض وإعادة الإرسال" : "Increase Offer & Resubmit";
+              } else {
+                  notice.style.display = "none";
+                  notice.innerText = "";
+                  btnSubmit.innerText = Game.lang === 'ar' ? "إرسال العرض" : "Send Offer";
+                  if (oppProps.length > 0) {
+                      const curProp = selectedPropId !== null ? BOARD_TILES[selectedPropId] : oppProps[0];
+                      if (curProp) inputCash.value = curProp.price;
+                  }
+              }
+
               document.getElementById("tradeModal").classList.add("show");
+          }
+
+          function onTradeTargetPropChange() {
+              const propId = parseInt(document.getElementById("tradeTargetProp").value);
+              const notice = document.getElementById("tradeNotice");
+              notice.style.display = "none";
+              document.getElementById("btnSubmitTrade").innerText = Game.lang === 'ar' ? "إرسال العرض" : "Send Offer";
+              if (!isNaN(propId)) {
+                  const p = BOARD_TILES[propId];
+                  if (p) document.getElementById("tradeOfferCash").value = p.price;
+              }
           }
 
           function submitTradeOffer() {
@@ -1956,8 +2101,11 @@ jobs:
               const notice = document.getElementById("tradeNotice");
               if (isNaN(propId) || isNaN(offerCash) || offerCash <= 0) return;
               if (Game.players[0].money < offerCash) {
-                  notice.innerText = Game.lang === 'ar' ? "رصيدك المالي لا يكفي للمبلغ المعروض!" : "Insufficient funds for this offer!";
                   notice.style.display = "block";
+                  notice.style.background = "rgba(239, 68, 68, 0.15)";
+                  notice.style.border = "1px solid #EF4444";
+                  notice.style.color = "#EF4444";
+                  notice.innerText = Game.lang === 'ar' ? "رصيدك المالي لا يكفي للمبلغ المعروض!" : "Insufficient funds for this offer!";
                   return;
               }
               const targetTile = BOARD_TILES[propId];
@@ -1977,7 +2125,11 @@ jobs:
                   execTrade(td);
                   logEvent(`🤝 وافق الصقر على بيع (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}) مقابل ${td.offer}$.`);
               } else {
-                  logEvent(`❌ رفض الصقر عرض المقايضة لعقار (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}).`);
+                  logEvent(`❌ رفض الصقر عرض المقايضة لعقار (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}) بمبلغ ${td.offer}$.`);
+                  // عند الرفض: تظهر نافذة المقايضة مرة أخرى لنفس العقار لإعطاء خيار زيادة السعر أو الخروج
+                  setTimeout(() => {
+                      openTradeModal(td.tile.id, td.offer, true);
+                  }, 500);
               }
           }
 
@@ -2000,7 +2152,7 @@ jobs:
                   p.props.forEach(propId => {
                       const t = BOARD_TILES[propId];
                       const d = document.createElement("div");
-                      d.style = "background:#0F172A; border-radius:8px; padding:8px 12px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; border:1px solid #334155;";
+                      d.style = "background:var(--box-bg); border-radius:8px; padding:8px 12px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--card-border);";
                       const mortVal = Math.floor(t.price * 0.5);
                       const unmortVal = Math.floor(mortVal * 1.1);
                       d.innerHTML = `
@@ -2038,6 +2190,19 @@ jobs:
                   t.mortgaged = false; p.money -= cost;
                   AudioFX.play('cash'); updateUI(); openPropsModal(0);
                   logEvent(`🔓 فك الملك رهن (${Game.lang==='ar'?t.nameAr:t.nameEn}) مقابل ${cost}$.`);
+              }
+          }
+
+          function setTheme(t) {
+              Game.theme = t;
+              if (t === 'light') {
+                  document.body.classList.add('theme-light');
+                  document.getElementById('btnThemeDark').classList.remove('active');
+                  document.getElementById('btnThemeLight').classList.add('active');
+              } else {
+                  document.body.classList.remove('theme-light');
+                  document.getElementById('btnThemeLight').classList.remove('active');
+                  document.getElementById('btnThemeDark').classList.add('active');
               }
           }
 
@@ -2134,7 +2299,7 @@ jobs:
       - name: 📤 رفع ملف APK كعنصر قابل للتحميل (Artifact)
         uses: actions/upload-artifact@v4
         with:
-          name: MonopolyArabia-APK
+          name: MonopolyPro-APK
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
@@ -2144,8 +2309,8 @@ jobs:
         with:
           files: app/build/outputs/apk/debug/app-debug.apk
           tag_name: v1.0.0
-          name: "مونوبولي العرب - الإصدار 1.0.0"
-          body: "🎲 النسخة الرسمية لتطبيق لعبة مونوبولي العرب بنك الحظ الملكي (APK جاهز للتثبيت المباشر على الأندرويد). برمجة وتصميم عمار الهلالي."
+          name: "MONOPOLY PRO - الإصدار 1.0.0"
+          body: "🎲 النسخة الرسمية لتطبيق لعبة MONOPOLY PRO بنك الحظ الاحترافي (APK جاهز للتثبيت المباشر على الأندرويد). برمجة وتصميم عمار الهلالي."
           draft: false
           prerelease: false
         env:
