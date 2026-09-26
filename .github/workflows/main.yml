@@ -1,4 +1,4 @@
-name: Build MONOPOLY PRO APK
+name: Build Monopoly Arabia APK
 
 on:
   push:
@@ -7,10 +7,9 @@ on:
 
 permissions:
   contents: write
-
 jobs:
   build:
-    name: 🎲 بناء تطبيق MONOPOLY PRO (APK)
+    name: 🎲 بناء تطبيق مونوبولي العرب (APK)
     runs-on: ubuntu-latest
 
     steps:
@@ -26,7 +25,7 @@ jobs:
       - name: 🐘 تثبيت وإعداد Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: ⚙️ تجهيز وبرمجة كامل ملفات لعبة MONOPOLY PRO تلقائياً
+      - name: ⚙️ تجهيز وبرمجة كامل ملفات لعبة مونوبولي العرب تلقائياً
         run: |
           python3 - << 'PYEOF'
           import os
@@ -48,7 +47,7 @@ jobs:
                   mavenCentral()
               }
           }
-          rootProject.name = "MonopolyPro"
+          rootProject.name = "MonopolyArabia"
           include ':app'
           """
 
@@ -72,14 +71,14 @@ jobs:
               id 'com.android.application'
           }
           android {
-              namespace 'com.monopoly.pro'
+              namespace 'com.monopoly.arabia'
               compileSdk 34
               defaultConfig {
-                  applicationId "com.monopoly.pro"
+                  applicationId "com.monopoly.arabia"
                   minSdk 21
                   targetSdk 34
-                  versionCode 3
-                  versionName "2.5.0"
+                  versionCode 1
+                  versionName "1.0.0"
                   vectorDrawables {
                       useSupportLibrary true
                   }
@@ -110,9 +109,6 @@ jobs:
           files["app/src/main/AndroidManifest.xml"] = """<?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
               <uses-permission android:name="android.permission.INTERNET" />
-              <uses-permission android:name="android.permission.BLUETOOTH" />
-              <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-              <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
               <application
                   android:allowBackup="true"
                   android:icon="@drawable/ic_monopoly"
@@ -120,12 +116,12 @@ jobs:
                   android:label="@string/app_name"
                   android:supportsRtl="true"
                   android:hardwareAccelerated="true"
-                  android:theme="@style/Theme.MonopolyPro">
+                  android:theme="@style/Theme.MonopolyArabia">
                   <activity
                       android:name=".MainActivity"
                       android:exported="true"
-                      android:screenOrientation="unspecified"
-                      android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize">
+                      android:screenOrientation="portrait"
+                      android:configChanges="orientation|screenSize">
                       <intent-filter>
                           <action android:name="android.intent.action.MAIN" />
                           <category android:name="android.intent.category.LAUNCHER" />
@@ -138,7 +134,7 @@ jobs:
           # 6. Strings
           files["app/src/main/res/values/strings.xml"] = """<?xml version="1.0" encoding="utf-8"?>
           <resources>
-              <string name="app_name">MONOPOLY PRO</string>
+              <string name="app_name">مونوبولي العرب</string>
           </resources>
           """
 
@@ -154,7 +150,7 @@ jobs:
           # 8. Themes
           files["app/src/main/res/values/themes.xml"] = """<?xml version="1.0" encoding="utf-8"?>
           <resources>
-              <style name="Theme.MonopolyPro" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+              <style name="Theme.MonopolyArabia" parent="Theme.MaterialComponents.DayNight.NoActionBar">
                   <item name="colorPrimary">@color/gold</item>
                   <item name="colorPrimaryVariant">@color/gold_dark</item>
                   <item name="android:statusBarColor">@color/bg_main</item>
@@ -164,33 +160,17 @@ jobs:
           </resources>
           """
 
-          # 9. App Icon (Vector Drawable: Monopoly Top-Hat, 3D Dice & Gold Ribbon)
+          # 9. App Icon
           files["app/src/main/res/drawable/ic_monopoly.xml"] = """<vector xmlns:android="http://schemas.android.com/apk/res/android"
               android:width="128dp"
               android:height="128dp"
-              android:viewportWidth="120"
-              android:viewportHeight="120">
-              <!-- Dark Board Background -->
-              <path android:fillColor="#0B0E14" android:pathData="M60,4 C90.9,4 116,29.1 116,60 C116,90.9 90.9,116 60,116 C29.1,116 4,90.9 4,60 C4,29.1 29.1,4 60,4 Z" />
-              <!-- Outer Golden Border -->
-              <path android:fillColor="#D97706" android:pathData="M60,8 C88.7,8 112,31.3 112,60 C112,88.7 88.7,112 60,112 C31.3,112 8,88.7 8,60 C8,31.3 31.3,8 60,8 Z" />
-              <path android:fillColor="#1E293B" android:pathData="M60,13 C85.9,13 107,34.1 107,60 C107,85.9 85.9,107 60,107 C34.1,107 13,85.9 13,60 C13,34.1 34.1,13 60,13 Z" />
-              <!-- Monopoly Top-Hat -->
-              <path android:fillColor="#0F172A" android:pathData="M42,24 L78,24 L75,54 L45,54 Z" />
-              <path android:fillColor="#DC2626" android:pathData="M44.5,46 L75.5,46 L75,54 L45,54 Z" />
-              <path android:fillColor="#1E293B" android:pathData="M32,54 C32,51 88,51 88,54 C88,58 32,58 32,54 Z" />
-              <!-- Red Monopoly PRO Ribbon / Banner -->
-              <path android:fillColor="#B91C1C" android:pathData="M16,66 L104,66 L98,88 L22,88 Z" />
-              <path android:fillColor="#EF4444" android:pathData="M20,69 L100,69 L95,85 L25,85 Z" />
-              <!-- Banner Gold Trim -->
-              <path android:fillColor="#F59E0B" android:pathData="M16,65 L104,65 L104,68 L16,68 Z" />
-              <path android:fillColor="#F59E0B" android:pathData="M22,86 L98,86 L98,89 L22,89 Z" />
-              <!-- Pair of 3D Dice -->
-              <path android:fillColor="#F8FAFC" android:pathData="M34,92 L50,92 L50,108 L34,108 Z" />
-              <path android:fillColor="#B91C1C" android:pathData="M42,100 C43.1,100 44,99.1 44,98 C44,96.9 43.1,96 42,96 C40.9,96 40,96.9 40,98 C40,99.1 40.9,100 42,100 Z" />
-              <path android:fillColor="#F8FAFC" android:pathData="M70,92 L86,92 L86,108 L70,108 Z" />
-              <path android:fillColor="#1E293B" android:pathData="M74,96 C75.1,96 76,95.1 76,94 C76,92.9 75.1,92 74,92 C72.9,92 72,92.9 72,94 C72,95.1 72.9,96 74,96 Z" />
-              <path android:fillColor="#1E293B" android:pathData="M82,104 C83.1,104 84,103.1 84,102 C84,100.9 83.1,100 82,100 C80.9,100 80,100.9 80,102 C80,103.1 80.9,104 82,104 Z" />
+              android:viewportWidth="100"
+              android:viewportHeight="100">
+              <path android:fillColor="#0B0E14" android:pathData="M50,4 C75.4,4 96,24.6 96,50 C96,75.4 75.4,96 50,96 C24.6,96 4,75.4 4,50 C4,24.6 24.6,4 50,4 Z" />
+              <path android:fillColor="#F59E0B" android:pathData="M50,10 L86,30 L86,70 L50,90 L14,70 L14,30 Z" />
+              <path android:fillColor="#1E293B" android:pathData="M50,16 L80,33 L80,67 L50,84 L20,67 L20,33 Z" />
+              <path android:fillColor="#FBBF24" android:pathData="M32,38 L40,55 L50,42 L60,55 L68,38 L68,64 L32,64 Z" />
+              <path android:fillColor="#EF4444" android:pathData="M50,55 C53,55 55,57 55,60 C55,63 53,65 50,65 C47,65 45,63 45,60 C45,57 47,55 50,55 Z" />
           </vector>
           """
 
@@ -210,10 +190,9 @@ jobs:
           """
 
           # 11. MainActivity.java
-          files["app/src/main/java/com/monopoly/pro/MainActivity.java"] = """package com.monopoly.pro;
+          files["app/src/main/java/com/monopoly/arabia/MainActivity.java"] = """package com.monopoly.arabia;
 
           import android.annotation.SuppressLint;
-          import android.content.pm.ActivityInfo;
           import android.os.Bundle;
           import android.webkit.JavascriptInterface;
           import android.webkit.RenderProcessGoneDetail;
@@ -231,19 +210,6 @@ jobs:
                   @JavascriptInterface
                   public void exitApp() {
                       runOnUiThread(() -> finish());
-                  }
-
-                  @JavascriptInterface
-                  public void setOrientation(String mode) {
-                      runOnUiThread(() -> {
-                          if ("landscape".equalsIgnoreCase(mode)) {
-                              setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-                          } else if ("portrait".equalsIgnoreCase(mode)) {
-                              setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
-                          } else {
-                              setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-                          }
-                      });
                   }
               }
 
@@ -277,6 +243,7 @@ jobs:
                   webView.setWebChromeClient(new WebChromeClient());
                   webView.loadUrl("file:///android_asset/index.html");
 
+                  // اعتراض زر الرجوع لمنع الخروج المفاجئ وإظهار نافذة الحفظ والخروج
                   getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
                       @Override
                       public void handleOnBackPressed() {
@@ -298,946 +265,217 @@ jobs:
           """
 
           # 12. app/src/main/assets/index.html
-          files["app/src/main/assets/index.html"] = r'''
-          <!DOCTYPE html>
+          files["app/src/main/assets/index.html"] = r'''<!DOCTYPE html>
           <html lang="ar" dir="rtl">
           <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-          <title>MONOPOLY PRO</title>
+          <title>مونوبولي العرب • Monopoly Arabia</title>
           <style>
-          /* === SKEUOMORPHIC & CASUAL LOW-POLY DESIGN TOKENS === */
-          :root {
-            --bg-main: radial-gradient(circle at 50% 30%, #1e2638 0%, #0b0f19 100%);
-            --bg-board: radial-gradient(circle at center, #243048 0%, #141c2c 100%);
-            --board-bevel: linear-gradient(145deg, #3a4b6e 0%, #101622 100%);
-            --board-paper: #1b2537;
-            --tile-bg: linear-gradient(180deg, #222d42 0%, #172033 100%);
-            --tile-border: #33435e;
-            --tile-bevel: inset 1px 1px 0px rgba(255,255,255,0.18), inset -1px -1px 0px rgba(0,0,0,0.4);
-            --gold: #F59E0B;
-            --gold-glow: #FBBF24;
-            --gold-shadow: #B45309;
-            --gold-lt: #FEF3C7;
-            --text: #F8FAFC;
-            --dim: #94A3B8;
-            --p0: #EF4444;
-            --p1: #0EA5E9;
-            --green: #10B981;
-            --lime: #84CC16;
-            --card-bg: linear-gradient(160deg, #1f2a3f 0%, #121927 100%);
-            --modal-bg: rgba(18, 25, 40, 0.94);
-            --btn-shadow: 0 4px 0 #92400E;
-            --btn-shadow-blue: 0 4px 0 #1D4ED8;
-            --btn-shadow-red: 0 4px 0 #991B1B;
-            --btn-shadow-gray: 0 4px 0 #374151;
-            --dice-glow: rgba(255,255,255,0.4);
-          }
+          :root{--bg-main:#0B0E14;--bg-board:#111723;--bg-tile:#1B2232;--gold:#F59E0B;--gold-lt:#FDE68A;--text:#F8FAFC;--dim:#94A3B8;--p0:#EF4444;--p1:#38BDF8;--green:#10B981;}
+          *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+          html,body{width:100%;height:100%;margin:0;padding:2px;box-sizing:border-box;overflow:hidden;}
+          body{background:var(--bg-main);color:var(--text);height:100%;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;}
+          .header{width:100%;max-width:480px;flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:4px 8px;background:linear-gradient(135deg,#1E293B,#0F172A);border-radius:12px;border:1px solid rgba(245,158,11,0.4);margin-bottom:3px;}
+          .header-title{display:flex;align-items:center;gap:6px;font-size:0.92rem;font-weight:900;color:var(--gold);text-shadow:0 0 10px rgba(245,158,11,0.4);}
+          .header-controls{display:flex;gap:6px;}
+          .btn-hdr{background:#2D3748;border:1px solid #4B5563;color:#E2E8F0;padding:4px 9px;border-radius:6px;font-size:0.75rem;font-weight:bold;cursor:pointer;}
+          .scoreboard{width:100%;max-width:480px;flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:3px;}
+          .p-card{background:#161D2B;border:2px solid #2B3548;border-radius:10px;padding:5px 8px;display:flex;align-items:center;justify-content:space-between;position:relative;cursor:pointer;}
+          .p-card.active{border-color:var(--gold);box-shadow:0 0 12px rgba(245,158,11,0.45);background:linear-gradient(135deg,#1C2436,#232D42);}
+          .p-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.15rem;background:#000;border:2px solid #fff;flex-shrink:0;}
+          .p-details{flex:1;margin:0 6px;}
+          .p-name{font-size:0.80rem;font-weight:900;line-height:1.2;}
+          .p-cash{font-size:0.92rem;font-weight:900;color:var(--gold-lt);line-height:1.2;}
+          .p-stats{font-size:0.65rem;color:var(--dim);}
+          .p-badge{position:absolute;top:-6px;left:6px;background:var(--gold);color:#000;font-size:0.58rem;font-weight:900;padding:1px 6px;border-radius:10px;}
+          .board-wrapper{direction:ltr!important;width:100%;max-width:480px;flex:1;min-height:0;margin:0 auto;box-sizing:border-box;position:relative;background:var(--bg-board);border-radius:12px;border:3px solid var(--gold);box-shadow:0 8px 30px rgba(0,0,0,0.7);display:grid;grid-template-columns:1.15fr repeat(9,1fr) 1.15fr;grid-template-rows:1.1fr repeat(9,1fr) 1.1fr;gap:1.5px;padding:2px;}
+          .tile{direction:rtl;background:var(--bg-tile);border-radius:4px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:2px 1px;overflow:visible;border:1px solid rgba(255,255,255,0.08);cursor:pointer;}
+          .tile:active{filter:brightness(1.2);}
+          .tile-bar{width:100%;height:6px;border-radius:2px;flex-shrink:0;}
+          .tile-cnt{width:100%;height:calc(100% - 8px);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:1px 0;}
+          .tile-name{font-size:clamp(0.40rem,1.8vw,0.52rem);font-weight:800;text-align:center;line-height:1.1;color:var(--text);word-break:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;padding:0 1px;}
+          .tile-price{font-size:clamp(0.38rem,1.6vw,0.50rem);font-weight:900;color:var(--gold-lt);margin-top:auto;}
+          .tile-icon{font-size:0.95rem;line-height:1;margin:auto 0;}
+          .corner-tile{background:radial-gradient(circle at center,#1E293B,#101726);justify-content:center;}
+          .corner-tile .tile-icon{font-size:1.35rem;}
+          .corner-tile .tile-name{font-size:0.55rem;color:var(--gold);}
 
-          body.light-theme {
-            --bg-main: radial-gradient(circle at 50% 30%, #E2E8F0 0%, #CBD5E1 100%);
-            --bg-board: radial-gradient(circle at center, #FFFFFF 0%, #F1F5F9 100%);
-            --board-bevel: linear-gradient(145deg, #E2E8F0 0%, #94A3B8 100%);
-            --board-paper: #F8FAFC;
-            --tile-bg: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%);
-            --tile-border: #CBD5E1;
-            --tile-bevel: inset 1px 1px 0px rgba(255,255,255,0.9), inset -1px -1px 0px rgba(0,0,0,0.08);
-            --gold: #D97706;
-            --gold-glow: #F59E0B;
-            --gold-shadow: #92400E;
-            --gold-lt: #92400E;
-            --text: #0F172A;
-            --dim: #475569;
-            --card-bg: linear-gradient(160deg, #FFFFFF 0%, #F8FAFC 100%);
-            --modal-bg: rgba(255, 255, 255, 0.96);
-            --btn-shadow: 0 4px 0 #78350F;
-            --btn-shadow-blue: 0 4px 0 #1E40AF;
-            --btn-shadow-red: 0 4px 0 #7F1D1D;
-            --btn-shadow-gray: 0 4px 0 #475569;
-            --dice-glow: rgba(0,0,0,0.15);
-          }
+          .pawn{width:clamp(20px,5vw,24px);height:clamp(20px,5vw,24px);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:clamp(0.75rem,3vw,0.92rem);box-shadow:0 2px 7px rgba(0,0,0,0.9);border:2px solid #fff;background:#000;flex-shrink:0;pointer-events:none;transition:transform 0.12s ease-out!important;}
+          .pawn.moving-step{transform:scale(1.25);box-shadow:0 0 10px var(--gold);}
+          .pawn-p0{background:radial-gradient(circle,#EF4444,#991B1B);}
+          .pawn-p1{background:radial-gradient(circle,#38BDF8,#075985);}
+          .tile-pawns{position:absolute;display:flex!important;align-items:center;justify-content:center;gap:2px;z-index:50;pointer-events:none;}
 
-          * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Fredoka", "Nunito", sans-serif;
-          }
+          .side-bottom .tile-pawns{top:-12px;bottom:auto;left:50%;transform:translateX(-50%);flex-direction:row;width:max-content;}
+          .side-top .tile-pawns{bottom:-12px;top:auto;left:50%;transform:translateX(-50%);flex-direction:row;width:max-content;}
+          .side-left .tile-pawns{right:-12px;left:auto;top:50%;transform:translateY(-50%);flex-direction:column;height:max-content;width:auto;}
+          .side-right .tile-pawns{left:-12px;right:auto;top:50%;transform:translateY(-50%);flex-direction:column;height:max-content;width:auto;}
 
-          html, body {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-          }
+          .corner-0 .tile-pawns{top:-6px;left:-6px;bottom:auto;right:auto;flex-direction:row;}
+          .corner-10 .tile-pawns{top:-6px;right:-6px;bottom:auto;left:auto;flex-direction:row;}
+          .corner-20 .tile-pawns{bottom:-6px;right:-6px;top:auto;left:auto;flex-direction:row;}
+          .corner-30 .tile-pawns{bottom:-6px;left:-6px;top:auto;right:auto;flex-direction:row;}
 
-          body {
-            background: var(--bg-main);
-            color: var(--text);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 4px;
-            transition: background 0.3s;
-          }
+          .side-bottom .tile-bar{margin-top:auto;margin-bottom:0;}
+          .side-top .tile-bar{margin-top:0;margin-bottom:auto;}
+          .tile.owned-glow{box-shadow:inset 0 0 8px currentColor;}
+          .tile.owned-tint{filter:brightness(1.25);}
+          .tile.owned-border{border-width:2.5px!important;border-color:currentColor!important;}
+          .tile-owner-badge{position:absolute;top:1px;right:1px;font-size:0.6rem;background:rgba(0,0,0,0.85);border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;border:1px solid var(--gold);z-index:5;}
+          [dir="ltr"] .tile-owner-badge{right:auto;left:1px;}
+          .tile-mortgaged-badge{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%) rotate(-20deg);background:#DC2626;color:#FFF;font-size:0.5rem;font-weight:900;padding:1px 4px;border-radius:3px;border:1px solid #FFF;z-index:8;}
+          .board-center{direction:rtl;grid-column:2/span 9;grid-row:2/span 9;background:radial-gradient(circle at center,#182235,#0B101A);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px;position:relative;border:1px solid rgba(245,158,11,0.25);overflow:hidden;}
+          .center-brand{font-size:clamp(0.85rem,3.5vw,1.1rem);font-weight:900;color:var(--gold);letter-spacing:1px;text-align:center;text-shadow:0 0 10px rgba(245,158,11,0.5);}
+          .center-turn-announcer{font-size:clamp(0.72rem,2.8vw,0.88rem);font-weight:bold;color:var(--text);background:rgba(255,255,255,0.06);padding:3px 12px;border-radius:20px;border:1px solid rgba(255,255,255,0.1);}
+          .dice-area{display:flex;align-items:center;justify-content:center;gap:18px;margin:auto 0;perspective:800px;}
+          .cube-die{width:46px;height:46px;position:relative;transform-style:preserve-3d;transition:transform 0.1s linear;}
+          .cube-die.rolling{animation:rollTumble 0.4s infinite linear;}
+          @keyframes rollTumble{0%{transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);}100%{transform:rotateX(360deg) rotateY(720deg) rotateZ(360deg);}}
+          .cube-face{position:absolute;width:46px;height:46px;background:linear-gradient(145deg,#FFF,#E2E8F0);border:2px solid #CBD5E1;border-radius:8px;box-shadow:inset 0 0 6px rgba(0,0,0,0.15),0 4px 10px rgba(0,0,0,0.6);display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:5px;box-sizing:border-box;}
+          .dot{width:8px;height:8px;background:#B91C1C;border-radius:50%;align-self:center;justify-self:center;box-shadow:inset 0 1px 2px rgba(0,0,0,0.6);}
+          .face-1{transform:rotateY(0deg) translateZ(23px);}
+          .face-6{transform:rotateY(180deg) translateZ(23px);}
+          .face-2{transform:rotateY(-90deg) translateZ(23px);}
+          .face-5{transform:rotateY(90deg) translateZ(23px);}
+          .face-3{transform:rotateX(90deg) translateZ(23px);}
+          .face-4{transform:rotateX(-90deg) translateZ(23px);}
+          .center-btn-roll{background:linear-gradient(135deg,#F59E0B,#D97706);color:#000;border:none;border-radius:24px;padding:8px 24px;font-size:clamp(0.85rem,3.2vw,1.05rem);font-weight:900;cursor:pointer;box-shadow:0 4px 15px rgba(245,158,11,0.5);display:flex;align-items:center;gap:6px;}
+          .center-btn-roll:active{transform:scale(0.96);}
+          .center-btn-roll:disabled{opacity:0.4;cursor:not-allowed;}
+          .log-area{width:95%;height:22px;background:rgba(0,0,0,0.45);border-radius:6px;border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;padding:0 6px;overflow:hidden;white-space:nowrap;font-size:0.65rem;color:var(--gold-lt);}
+          .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.78);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:999;padding:12px;}
+          .modal-overlay.show{display:flex;}
+          .modal-card{background:linear-gradient(145deg,#1E293B,#0F172A);border:2px solid var(--gold);border-radius:16px;width:100%;max-width:380px;box-shadow:0 12px 35px rgba(0,0,0,0.9);overflow:hidden;display:flex;flex-direction:column;}
+          .modal-header{padding:10px 14px;background:rgba(0,0,0,0.35);border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;}
+          .modal-title{font-size:0.95rem;font-weight:900;color:var(--gold);display:flex;align-items:center;gap:6px;}
+          .modal-body{padding:14px;font-size:0.85rem;line-height:1.5;max-height:65vh;overflow-y:auto;}
+          .modal-footer{padding:10px 14px;background:rgba(0,0,0,0.35);border-top:1px solid rgba(255,255,255,0.1);display:flex;gap:8px;justify-content:flex-end;}
+          .btn{padding:8px 16px;border-radius:8px;font-weight:bold;font-size:0.82rem;cursor:pointer;border:none;}
+          .btn-gold{background:var(--gold);color:#000;}
+          .btn-blue{background:#2563EB;color:#fff;}
+          .btn-red{background:#DC2626;color:#fff;}
+          .btn-gray{background:#4B5563;color:#fff;}
+          .btn-pill{padding:5px 12px;border-radius:20px;border:1px solid #4B5563;background:#1E293B;color:#FFF;cursor:pointer;font-size:0.75rem;}
+          .btn-pill.active{background:var(--gold);color:#000;border-color:var(--gold);font-weight:bold;}
+          .row-opts{display:flex;gap:6px;margin:6px 0 12px 0;flex-wrap:wrap;}
+          .settings-section{margin-bottom:12px;}
+          .settings-label{font-size:0.78rem;font-weight:bold;color:var(--dim);margin-bottom:4px;}
 
-          /* === CASUAL GAME UI ELEMENTS === */
-          .app-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 560px;
-          }
-
-          .app-container.landscape-mode {
-            max-width: 100%;
-            flex-direction: row;
-            justify-content: center;
-            gap: 12px;
-            padding: 6px 14px;
-          }
-
-          /* Top Skeuomorphic Bar */
-          .header {
-            width: 100%;
-            flex-shrink: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 12px;
-            background: var(--card-bg);
-            border-radius: 16px;
-            border: 2px solid rgba(245,158,11,0.5);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
-            margin-bottom: 4px;
-          }
-
-          .header-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1.05rem;
-            font-weight: 900;
-            letter-spacing: 0.5px;
-            color: var(--gold);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.4), 0 0 12px rgba(245,158,11,0.45);
-          }
-
-          .header-controls {
-            display: flex;
-            gap: 6px;
-          }
-
-          /* Chunky Casual Game Buttons */
-          .btn-hdr {
-            background: linear-gradient(180deg, #334155 0%, #1E293B 100%);
-            border: 1px solid #475569;
-            border-bottom: 3px solid #0F172A;
-            color: #F8FAFC;
-            padding: 6px 10px;
-            border-radius: 12px;
-            font-size: 0.82rem;
-            font-weight: 800;
-            cursor: pointer;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.25);
-            transition: all 0.1s ease;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-          }
-          .btn-hdr:active {
-            transform: translateY(2px);
-            border-bottom-width: 1px;
-          }
-
-          /* Scoreboard Cards */
-          .scoreboard {
-            width: 100%;
-            flex-shrink: 0;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 4px;
-          }
-
-          .p-card {
-            background: var(--card-bg);
-            border: 2px solid #334155;
-            border-radius: 16px;
-            padding: 6px 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.15);
-            transition: transform 0.2s, border-color 0.2s;
-          }
-          .p-card.active {
-            border-color: var(--gold);
-            box-shadow: 0 0 16px rgba(245,158,11,0.5), inset 0 1px 0 rgba(255,255,255,0.25);
-            transform: translateY(-2px);
-          }
-
-          /* Metallic Skeuomorphic Avatar Badges */
-          .p-avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.35rem;
-            background: radial-gradient(circle at 35% 35%, #ffffff 0%, #cbd5e1 50%, #475569 100%);
-            border: 2px solid #fff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,255,255,0.8);
-            flex-shrink: 0;
-          }
-          .p-details {
-            flex: 1;
-            margin: 0 8px;
-          }
-          .p-name {
-            font-size: 0.84rem;
-            font-weight: 900;
-            line-height: 1.2;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-          }
-          .p-cash {
-            font-size: 0.98rem;
-            font-weight: 900;
-            color: var(--gold);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-            line-height: 1.2;
-          }
-          .p-stats {
-            font-size: 0.68rem;
-            font-weight: 700;
-            color: var(--dim);
-          }
-          .p-badge {
-            position: absolute;
-            top: -8px;
-            left: 8px;
-            background: linear-gradient(180deg, #FBBF24 0%, #D97706 100%);
-            color: #000;
-            font-size: 0.62rem;
-            font-weight: 900;
-            padding: 2px 8px;
-            border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.35);
-          }
-
-          /* === BOARD PERSPECTIVES: ISOMETRIC vs TOP-DOWN === */
-          .board-perspective-wrapper {
-            width: 100%;
-            flex: 1;
-            min-height: 0;
-            perspective: 1200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: visible;
-          }
-
-          /* Skeuomorphic Paper Board with Cardstock Texture & Shadow */
-          .board-wrapper {
-            direction: ltr !important;
-            width: 100%;
-            height: 100%;
-            max-width: 510px;
-            max-height: 510px;
-            position: relative;
-            background: var(--bg-board);
-            border-radius: 18px;
-            border: 4px solid #1E293B;
-            box-shadow: 0 12px 36px rgba(0,0,0,0.8), inset 0 0 0 3px rgba(245,158,11,0.65), inset 0 0 25px rgba(0,0,0,0.5);
-            display: grid;
-            grid-template-columns: 1.38fr repeat(9, 1fr) 1.38fr;
-            grid-template-rows: 1.38fr repeat(9, 1fr) 1.38fr;
-            gap: 2.5px;
-            padding: 3.5px;
-            transform-style: preserve-3d;
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.5s ease;
-          }
-
-          /* 1. Isometric / Angled View (True Low-Poly 3D angle) */
-          .board-wrapper.isometric-view {
-            transform: rotateX(32deg) rotateZ(-4deg) scale(0.92);
-            box-shadow: 0 32px 50px rgba(0,0,0,0.92), 0 12px 20px rgba(0,0,0,0.6), 0 0 30px rgba(245,158,11,0.25);
-          }
-
-          /* 2. Top-Down Perspective (Pure 2D/3D vertical direct layout) */
-          .board-wrapper.topdown-view {
-            transform: rotateX(0deg) rotateZ(0deg) scale(1.0);
-            box-shadow: 0 12px 30px rgba(0,0,0,0.7), inset 0 0 0 3px rgba(245,158,11,0.55);
-          }
-
-          /* Skeuomorphic Board Tile */
-          .tile {
-            direction: rtl;
-            background: var(--tile-bg);
-            border-radius: 6px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 3px 1.5px;
-            border: 1px solid var(--tile-border);
-            box-shadow: var(--tile-bevel);
-            cursor: pointer;
-            overflow: visible;
-            transition: transform 0.15s, filter 0.15s;
-          }
-          .tile:active {
-            transform: scale(0.97);
-            filter: brightness(1.2);
-          }
-
-          /* Tile Color Banner with Emboss */
-          .tile-bar {
-            width: 100%;
-            height: 8px;
-            border-radius: 3px;
-            flex-shrink: 0;
-            box-shadow: inset 0 1px 1px rgba(255,255,255,0.4), 0 1px 2px rgba(0,0,0,0.3);
-          }
-
-          .tile-cnt {
-            width: 100%;
-            height: calc(100% - 8px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1px 0;
-            position: relative;
-          }
-
-          .tile-name {
-            font-size: clamp(0.44rem, 2.0vw, 0.58rem);
-            font-weight: 900;
-            text-align: center;
-            line-height: 1.1;
-            color: var(--text);
-            word-break: keep-all;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.6);
-          }
-
-          .tile-price {
-            font-size: clamp(0.40rem, 1.8vw, 0.54rem);
-            font-weight: 900;
-            color: var(--gold-lt);
-            background: rgba(0,0,0,0.45);
-            padding: 0.5px 3px;
-            border-radius: 4px;
-            border: 0.5px solid rgba(245,158,11,0.3);
-            margin-top: auto;
-          }
-
-          .tile-icon {
-            font-size: 1.05rem;
-            line-height: 1;
-            margin: auto 0;
-            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
-          }
-
-          /* === LOW POLY 3D STYLIZED BUILDINGS & EIFFEL TOWER === */
-          .bld-zone {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 2px;
-            min-height: 11px;
-            margin: 1px 0;
-            perspective: 60px;
-          }
-
-          /* Low-Poly Isometric Lime House Block */
-          .bld-block {
-            width: 9px;
-            height: 9px;
-            border-radius: 2px;
-            background: linear-gradient(135deg, #BEF264 0%, #84CC16 50%, #4D7C0F 100%);
-            border: 1px solid #365314;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.7);
-            transform: perspective(60px) rotateX(25deg) rotateY(-10deg);
-            animation: popBld 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          }
-
-          /* Stylized 3D Golden Eiffel Tower */
-          .eiffel-tower {
-            font-size: 1.05rem;
-            line-height: 1;
-            filter: drop-shadow(0 3px 6px rgba(245,158,11,0.9)) drop-shadow(0 1px 1px #000);
-            transform: perspective(100px) translateZ(6px);
-            animation: popBld 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          }
-          @keyframes popBld {
-            from { transform: scale(0.2) translateY(-8px); opacity: 0; }
-            to { transform: scale(1) translateY(0); opacity: 1; }
-          }
-
-          /* Corner Tiles */
-          .corner-tile {
-            background: radial-gradient(circle at center, #2A364F 0%, #151D2C 100%);
-            border: 2px solid var(--tile-border);
-            justify-content: center;
-          }
-          .corner-tile .tile-icon { font-size: 1.45rem; }
-          .corner-tile .tile-name { font-size: 0.60rem; color: var(--gold); }
-
-          /* === SKEUOMORPHIC SHINY METALLIC PAWNS === */
-          .pawn {
-            width: clamp(21px, 5.0vw, 26px);
-            height: clamp(21px, 5.0vw, 26px);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.88rem;
-            box-shadow: 0 5px 12px rgba(0,0,0,0.85), inset 0 2px 4px rgba(255,255,255,0.7);
-            border: 2px solid #FFFFFF;
-            flex-shrink: 0;
-            pointer-events: none;
-            transition: transform 0.12s ease-out !important;
-            z-index: 100;
-          }
-          .pawn.moving-step {
-            transform: scale(1.35) translateY(-6px);
-            box-shadow: 0 10px 20px rgba(245,158,11,0.8);
-          }
-          .pawn-p0 {
-            background: radial-gradient(circle at 35% 30%, #FCA5A5 0%, #EF4444 45%, #7F1D1D 90%);
-          }
-          .pawn-p1 {
-            background: radial-gradient(circle at 35% 30%, #BAE6FD 0%, #0EA5E9 45%, #0369A1 90%);
-          }
-
-          .tile-pawns {
-            position: absolute;
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            z-index: 60;
-            pointer-events: none;
-          }
-
-          .side-bottom .tile-pawns { top: -14px; bottom: auto; left: 50%; transform: translateX(-50%); flex-direction: row; width: max-content; }
-          .side-top .tile-pawns { bottom: -14px; top: auto; left: 50%; transform: translateX(-50%); flex-direction: row; width: max-content; }
-          .side-left .tile-pawns { right: -14px; left: auto; top: 50%; transform: translateY(-50%); flex-direction: column; height: max-content; width: auto; }
-          .side-right .tile-pawns { left: -14px; right: auto; top: 50%; transform: translateY(-50%); flex-direction: column; height: max-content; width: auto; }
-
-          .corner-0 .tile-pawns { top: -8px; left: -8px; bottom: auto; right: auto; flex-direction: row; }
-          .corner-10 .tile-pawns { top: -8px; right: -8px; bottom: auto; left: auto; flex-direction: row; }
-          .corner-20 .tile-pawns { bottom: -8px; right: -8px; top: auto; left: auto; flex-direction: row; }
-          .corner-30 .tile-pawns { bottom: -8px; left: -8px; top: auto; right: auto; flex-direction: row; }
-
-          .side-bottom .tile-bar { margin-top: auto; margin-bottom: 0; }
-          .side-top .tile-bar { margin-top: 0; margin-bottom: auto; }
-          .tile.owned-glow { box-shadow: inset 0 0 10px currentColor, 0 0 8px currentColor; }
-          .tile.owned-tint { filter: brightness(1.3); }
-          .tile.owned-border { border-width: 2.5px !important; border-color: currentColor !important; }
-          .tile-owner-badge {
-            position: absolute; top: 2px; right: 2px; font-size: 0.62rem;
-            background: radial-gradient(circle at 35% 35%, #ffffff 0%, #e2e8f0 60%, #64748b 100%);
-            border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;
-            border: 1.5px solid var(--gold); box-shadow: 0 2px 5px rgba(0,0,0,0.6); z-index: 5;
-          }
-          [dir="ltr"] .tile-owner-badge { right: auto; left: 2px; }
-          .tile-mortgaged-badge {
-            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%) rotate(-20deg);
-            background: #DC2626; color: #FFF; font-size: 0.52rem; font-weight: 900; padding: 2px 5px;
-            border-radius: 4px; border: 1px solid #FFF; box-shadow: 0 3px 6px rgba(0,0,0,0.6); z-index: 8;
-          }
-
-          /* === BOARD CENTER: LOW-POLY 3D DICE & BIG BUTTON === */
-          .board-center {
-            direction: rtl;
-            grid-column: 2 / span 9;
-            grid-row: 2 / span 9;
-            background: radial-gradient(circle at center, #1b283d 0%, #0d1522 100%);
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px;
-            position: relative;
-            border: 2px solid rgba(245,158,11,0.35);
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.6);
-            overflow: hidden;
-          }
-
-          .center-brand {
-            font-size: clamp(0.92rem, 3.8vw, 1.25rem);
-            font-weight: 900;
-            color: var(--gold);
-            letter-spacing: 1.5px;
-            text-align: center;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.6), 0 0 14px rgba(245,158,11,0.6);
-          }
-
-          .center-turn-announcer {
-            font-size: clamp(0.72rem, 2.8vw, 0.88rem);
-            font-weight: 800;
-            color: var(--text);
-            background: rgba(255,255,255,0.08);
-            padding: 3px 12px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.15);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-          }
-
-          /* Skeuomorphic High-Gloss 3D Dice */
-          .dice-area {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin: auto 0;
-            perspective: 900px;
-          }
-          .cube-die {
-            width: 48px;
-            height: 48px;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.1s linear;
-          }
-          .cube-die.rolling {
-            animation: rollTumble 0.4s infinite linear;
-          }
-          @keyframes rollTumble {
-            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-            100% { transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg); }
-          }
-
-          .cube-face {
-            position: absolute;
-            width: 48px;
-            height: 48px;
-            background: radial-gradient(circle at 35% 35%, #FFFFFF 0%, #F1F5F9 60%, #CBD5E1 100%);
-            border: 2px solid #94A3B8;
-            border-radius: 10px;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.9), inset 0 -2px 4px rgba(0,0,0,0.2), 0 6px 14px rgba(0,0,0,0.5);
-            display: grid;
-            grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-            padding: 5px;
-            box-sizing: border-box;
-          }
-
-          .dot {
-            width: 8px;
-            height: 8px;
-            background: radial-gradient(circle at 40% 40%, #EF4444 0%, #B91C1C 60%, #7F1D1D 100%);
-            border-radius: 50%;
-            align-self: center;
-            justify-self: center;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.7), 0 1px 1px rgba(255,255,255,0.5);
-          }
-
-          .face-1 { transform: rotateY(0deg) translateZ(24px); }
-          .face-6 { transform: rotateY(180deg) translateZ(24px); }
-          .face-2 { transform: rotateY(-90deg) translateZ(24px); }
-          .face-5 { transform: rotateY(90deg) translateZ(24px); }
-          .face-3 { transform: rotateX(90deg) translateZ(24px); }
-          .face-4 { transform: rotateX(-90deg) translateZ(24px); }
-
-          /* Chunky Casual Roll Button */
-          .center-btn-roll {
-            background: linear-gradient(180deg, #FBBF24 0%, #F59E0B 45%, #D97706 100%);
-            color: #1E1B4B;
-            border: 2px solid #FDE68A;
-            border-bottom: 4px solid #B45309;
-            border-radius: 26px;
-            padding: 8px 24px;
-            font-size: clamp(0.85rem, 3.2vw, 1.05rem);
-            font-weight: 900;
-            cursor: pointer;
-            box-shadow: 0 6px 16px rgba(245,158,11,0.5), inset 0 2px 2px rgba(255,255,255,0.6);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.1s ease;
-          }
-          .center-btn-roll:active {
-            transform: translateY(3px);
-            border-bottom-width: 1px;
-          }
-          .center-btn-roll:disabled {
-            opacity: 0.45;
-            cursor: not-allowed;
-            filter: grayscale(0.6);
-            transform: none;
-          }
-
-          .log-area {
-            width: 96%;
-            height: 24px;
-            background: rgba(0,0,0,0.55);
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.12);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 8px;
-            overflow: hidden;
-            white-space: nowrap;
-            font-size: 0.68rem;
-            font-weight: 700;
-            color: var(--gold-lt);
-          }
-
-          /* === CASUAL GAME MODALS (NO BOARD DIMMING) === */
-          .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.20); /* Light clear overlay so board stays crisp */
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 999;
-            padding: 12px;
-            pointer-events: auto;
-          }
-          .modal-overlay.show { display: flex; }
-
-          .modal-card {
-            background: var(--modal-bg);
-            border: 3px solid var(--gold);
-            border-radius: 20px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 16px 40px rgba(0,0,0,0.85), inset 0 1px 0 rgba(255,255,255,0.2);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            animation: modalPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          }
-          @keyframes modalPop {
-            from { transform: scale(0.85); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-          }
-
-          .modal-header {
-            padding: 11px 16px;
-            background: rgba(0,0,0,0.3);
-            border-bottom: 2px solid rgba(255,255,255,0.08);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          }
-          .modal-title {
-            font-size: 0.96rem;
-            font-weight: 900;
-            color: var(--gold);
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-          }
-          .modal-body {
-            padding: 14px 16px;
-            font-size: 0.84rem;
-            line-height: 1.5;
-            max-height: 68vh;
-            overflow-y: auto;
-          }
-          .modal-footer {
-            padding: 10px 16px;
-            background: rgba(0,0,0,0.3);
-            border-top: 2px solid rgba(255,255,255,0.08);
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-          }
-
-          /* Chunky UI Action Buttons */
-          .btn {
-            padding: 9px 18px;
-            border-radius: 14px;
-            font-weight: 900;
-            font-size: 0.84rem;
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.25);
-            transition: all 0.1s ease;
-          }
-          .btn:active {
-            transform: translateY(2px);
-          }
-
-          .btn-gold {
-            background: linear-gradient(180deg, #FBBF24 0%, #F59E0B 100%);
-            color: #1E1B4B;
-            border-bottom: 3.5px solid var(--gold-shadow);
-            box-shadow: 0 4px 12px rgba(245,158,11,0.4);
-          }
-          .btn-blue {
-            background: linear-gradient(180deg, #3B82F6 0%, #2563EB 100%);
-            color: #FFF;
-            border-bottom: 3.5px solid #1D4ED8;
-            box-shadow: 0 4px 12px rgba(37,99,235,0.4);
-          }
-          .btn-red {
-            background: linear-gradient(180deg, #EF4444 0%, #DC2626 100%);
-            color: #FFF;
-            border-bottom: 3.5px solid #991B1B;
-            box-shadow: 0 4px 12px rgba(220,38,38,0.4);
-          }
-          .btn-gray {
-            background: linear-gradient(180deg, #4B5563 0%, #374151 100%);
-            color: #FFF;
-            border-bottom: 3.5px solid #1F2937;
-          }
-
-          .btn-pill {
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 1.5px solid #4B5563;
-            background: #1E293B;
-            color: #FFF;
-            cursor: pointer;
-            font-size: 0.76rem;
-            font-weight: 800;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            transition: all 0.15s;
-          }
-          .btn-pill.active {
-            background: linear-gradient(180deg, #FBBF24 0%, #F59E0B 100%);
-            color: #000;
-            border-color: #F59E0B;
-            box-shadow: 0 3px 8px rgba(245,158,11,0.5);
-          }
-
-          .row-opts {
-            display: flex;
-            gap: 6px;
-            margin: 6px 0 12px 0;
-            flex-wrap: wrap;
-          }
-          .settings-section {
-            margin-bottom: 12px;
-          }
-          .settings-label {
-            font-size: 0.80rem;
-            font-weight: 900;
-            color: var(--dim);
-            margin-bottom: 4px;
-          }
-
-          .info-badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 14px;
-            font-size: 0.72rem;
-            font-weight: 900;
-            background: rgba(245,158,11,0.2);
-            color: var(--gold);
-            border: 1px solid rgba(245,158,11,0.4);
-            margin-bottom: 6px;
-          }
-          .info-rule-box {
-            background: #0F172A;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 10px;
-            margin-top: 6px;
-          }
-          .info-rule-item {
-            font-size: 0.80rem;
-            color: #CBD5E1;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: flex-start;
-            gap: 6px;
-            line-height: 1.4;
-          }
-          .info-rule-item:last-child { margin-bottom: 0; }
-
-          select.form-ctrl, input.form-ctrl {
-            width: 100%;
-            padding: 9px 12px;
-            background: #0F172A;
-            color: #FFF;
-            border-radius: 10px;
-            border: 1.5px solid #4B5563;
-            font-size: 0.85rem;
-            font-weight: 700;
-          }
+          .info-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:0.72rem;font-weight:bold;background:rgba(245,158,11,0.2);color:var(--gold);border:1px solid rgba(245,158,11,0.3);margin-bottom:8px;}
+          .info-rule-box{background:#0F172A;border:1px solid #334155;border-radius:8px;padding:10px;margin-top:8px;}
+          .info-rule-item{font-size:0.80rem;color:#CBD5E1;margin-bottom:6px;display:flex;align-items:flex-start;gap:6px;line-height:1.4;}
+          .info-rule-item:last-child{margin-bottom:0;}
           </style>
           </head>
           <body>
 
-          <div class="app-container" id="appContainer">
-              <!-- Top Skeuomorphic Control Header -->
-              <div class="header">
-                  <div class="header-title">
-                      <span>🎩</span>
-                      <span id="txtAppTitle">MONOPOLY PRO</span>
-                  </div>
-                  <div class="header-controls">
-                      <!-- Perspective Toggle Button: Isometric vs Top-Down -->
-                      <button class="btn-hdr" onclick="togglePerspectiveView()" id="btnPerspToggle" title="تبديل زاوية الرؤية (أيزومتريك / علوي)">📐 أيزومتريك</button>
-                      <!-- Orientation Toggle Button: Portrait vs Landscape -->
-                      <button class="btn-hdr" onclick="toggleScreenOrientation()" id="btnOrientToggle" title="طول / عرض">🔄</button>
-                      <button class="btn-hdr" onclick="openPropsModal(0)">🎒 <span id="txtBtnP0Props">عقاراتي</span></button>
-                      <button class="btn-hdr" onclick="openTradeModal()">🤝 <span id="txtBtnTrade">مقايضة</span></button>
-                      <button class="btn-hdr" onclick="openSettingsModal()">⚙️</button>
-                      <button class="btn-hdr" onclick="openExitModal()" title="خروج">🚪</button>
-                  </div>
+          <div class="header">
+              <div class="header-title">
+                  <span>👑</span>
+                  <span id="txtAppTitle">مونوبولي العرب</span>
               </div>
-
-              <!-- Skeuomorphic Scoreboard with Shiny Metallic Avatars -->
-              <div class="scoreboard">
-                  <div class="p-card active" id="pCard0" onclick="openPropsModal(0)">
-                      <div class="p-avatar" style="border-color:var(--p0);" id="avP0">👑</div>
-                      <div class="p-details">
-                          <div class="p-name" style="color:var(--p0);" id="nameP0">الملك</div>
-                          <div class="p-cash" id="cashP0">3000$</div>
-                          <div class="p-stats"><span id="propsP0">عقارات 0</span> <span id="mortP0" style="color:#EF4444;"></span></div>
-                      </div>
-                      <div class="p-badge" id="turnBadge0">دورك</div>
-                  </div>
-                  <div class="p-card" id="pCard1" onclick="openPropsModal(1)">
-                      <div class="p-avatar" style="border-color:var(--p1);" id="avP1">🤖</div>
-                      <div class="p-details">
-                          <div class="p-name" style="color:var(--p1);" id="nameP1">روبوت</div>
-                          <div class="p-cash" id="cashP1">3000$</div>
-                          <div class="p-stats"><span id="propsP1">عقارات 0</span> <span id="mortP1" style="color:#EF4444;"></span></div>
-                      </div>
-                      <div class="p-badge" id="turnBadge1" style="display:none;background:var(--p1);">دور الخصم</div>
-                  </div>
-              </div>
-
-              <!-- 3D Perspective Canvas with Skeuomorphic Paper Board -->
-              <div class="board-perspective-wrapper">
-                  <div class="board-wrapper isometric-view" id="board">
-                      <div class="board-center">
-                          <div class="center-brand">MONOPOLY PRO</div>
-                          <div class="center-turn-announcer" id="turnAnnouncer">الدور: الملك 👑</div>
-
-                          <!-- 3D High-Gloss Plastic Dice -->
-                          <div class="dice-area">
-                              <div class="cube-die" id="die0">
-                                  <div class="cube-face face-1"><div class="dot" style="grid-area:2/2;"></div></div>
-                                  <div class="cube-face face-2"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
-                                  <div class="cube-face face-3"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:2/2;"></div><div class="dot" style="grid-area:3/3;"></div></div>
-                                  <div class="cube-face face-4"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
-                                  <div class="cube-face face-5"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:2/2;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
-                                  <div class="cube-face face-6"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:2/1;"></div><div class="dot" style="grid-area:2/3;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
-                              </div>
-                              <div class="cube-die" id="die1">
-                                  <div class="cube-face face-1"><div class="dot" style="grid-area:2/2;"></div></div>
-                                  <div class="cube-face face-2"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
-                                  <div class="cube-face face-3"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:2/2;"></div><div class="dot" style="grid-area:3/3;"></div></div>
-                                  <div class="cube-face face-4"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
-                                  <div class="cube-face face-5"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:2/2;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
-                                  <div class="cube-face face-6"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:2/1;"></div><div class="dot" style="grid-area:2/3;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
-                              </div>
-                          </div>
-
-                          <!-- Chunky Roll Button -->
-                          <button class="center-btn-roll" id="btnRoll" onclick="rollDice()">
-                              <span>🎲</span>
-                              <span id="txtBtnRoll">ارمي النرد</span>
-                          </button>
-
-                          <div class="log-area" id="gameLog">مرحباً بك في MONOPOLY PRO!</div>
-                      </div>
-                  </div>
+              <div class="header-controls">
+                  <button class="btn-hdr" onclick="openPropsModal(0)">🎒 <span id="txtBtnP0Props">عقاراتي</span></button>
+                  <button class="btn-hdr" onclick="openTradeModal()">🤝 <span id="txtBtnTrade">مقايضة</span></button>
+                  <button class="btn-hdr" onclick="openSettingsModal()">⚙️</button>
+                  <button class="btn-hdr" onclick="openAboutModal()">ℹ️</button>
+                  <button class="btn-hdr" onclick="openExitModal()" title="خروج">🚪</button>
               </div>
           </div>
 
-          <!-- 0. نافذة خيارات بدء لعبة جديدة المتكاملة -->
+          <div class="scoreboard">
+              <div class="p-card active" id="pCard0" onclick="openPropsModal(0)">
+                  <div class="p-avatar" style="border-color:var(--p0);" id="avP0">👑</div>
+                  <div class="p-details">
+                      <div class="p-name" style="color:var(--p0);" id="nameP0">الملك (أنت)</div>
+                      <div class="p-cash" id="cashP0">1500$</div>
+                      <div class="p-stats"><span id="propsP0">عقارات 0</span> <span id="mortP0" style="color:#EF4444;"></span></div>
+                  </div>
+                  <div class="p-badge" id="turnBadge0">دورك</div>
+              </div>
+              <div class="p-card" id="pCard1" onclick="openPropsModal(1)">
+                  <div class="p-avatar" style="border-color:var(--p1);" id="avP1">🦅</div>
+                  <div class="p-details">
+                      <div class="p-name" style="color:var(--p1);" id="nameP1">الصقر (الذكاء)</div>
+                      <div class="p-cash" id="cashP1">1500$</div>
+                      <div class="p-stats"><span id="propsP1">عقارات 0</span> <span id="mortP1" style="color:#EF4444;"></span></div>
+                  </div>
+                  <div class="p-badge" id="turnBadge1" style="display:none;background:var(--p1);">دور الخصم</div>
+              </div>
+          </div>
+
+          <div class="board-wrapper" id="board">
+              <div class="board-center">
+                  <div class="center-brand">MONOPOLY ARABIA</div>
+                  <div class="center-turn-announcer" id="turnAnnouncer">الدور: الملك 👑</div>
+
+                  <div class="dice-area">
+                      <div class="cube-die" id="die0">
+                          <div class="cube-face face-1"><div class="dot" style="grid-area:2/2;"></div></div>
+                          <div class="cube-face face-2"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                          <div class="cube-face face-3"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:2/2;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                          <div class="cube-face face-4"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                          <div class="cube-face face-5"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:2/2;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                          <div class="cube-face face-6"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:2/1;"></div><div class="dot" style="grid-area:2/3;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                      </div>
+                      <div class="cube-die" id="die1">
+                          <div class="cube-face face-1"><div class="dot" style="grid-area:2/2;"></div></div>
+                          <div class="cube-face face-2"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                          <div class="cube-face face-3"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:2/2;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                          <div class="cube-face face-4"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                          <div class="cube-face face-5"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:2/2;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                          <div class="cube-face face-6"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:2/1;"></div><div class="dot" style="grid-area:2/3;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
+                      </div>
+                  </div>
+
+                  <button class="center-btn-roll" id="btnRoll" onclick="rollDice()">
+                      <span>🎲</span>
+                      <span id="txtBtnRoll">ارمي النرد</span>
+                  </button>
+
+                  <div class="log-area" id="gameLog">مرحباً بكم في مونوبولي العرب الملكية!</div>
+              </div>
+          </div>
+
+          <!-- 0. نافذة البداية: لعبة جديدة أو إكمال اللعبة السابقة -->
           <div class="modal-overlay" id="startModal">
               <div class="modal-card">
                   <div class="modal-header">
-                      <div class="modal-title">🎲 MONOPOLY PRO • بدء اللعب</div>
+                      <div class="modal-title">🎲 مرحباً بك في مونوبولي العرب</div>
                   </div>
-                  <div class="modal-body">
-                      <div class="settings-section">
-                          <div class="settings-label">💰 المبلغ المالي لبدء اللعبة:</div>
-                          <div class="row-opts">
-                              <button class="btn-pill active" id="btnInit3000" onclick="setInitCash(3000)">3,000$</button>
-                              <button class="btn-pill" id="btnInit6000" onclick="setInitCash(6000)">6,000$</button>
-                              <button class="btn-pill" id="btnInit9000" onclick="setInitCash(9000)">9,000$</button>
-                          </div>
-                      </div>
-
-                      <div class="settings-section">
-                          <div class="settings-label">👥 خيار وطريقة اللعب:</div>
-                          <div class="row-opts">
-                              <button class="btn-pill active" id="btnModeVsAi" onclick="setPlayMode('ai')">ضد الكمبيوتر</button>
-                              <button class="btn-pill" id="btnModePassPlay" onclick="setPlayMode('pvp')">لاعبان بنفس الهاتف</button>
-                              <button class="btn-pill" id="btnModeBt" onclick="setPlayMode('bt')">بلوتوث (هاتف آخر)</button>
-                          </div>
-                      </div>
-
-                      <div class="settings-section" id="secDifficulty">
-                          <div class="settings-label">🎯 مستوى صعوبة الكمبيوتر:</div>
-                          <div class="row-opts">
-                              <button class="btn-pill" id="btnDiffEasy" onclick="setDifficulty('easy')">سهل</button>
-                              <button class="btn-pill active" id="btnDiffMedium" onclick="setDifficulty('medium')">متوسط</button>
-                              <button class="btn-pill" id="btnDiffHard" onclick="setDifficulty('hard')">صعب</button>
-                          </div>
-                      </div>
-
-                      <div class="settings-section">
-                          <div class="settings-label">✏️ أسماء اللاعبين:</div>
-                          <div style="display:flex; flex-direction:column; gap:8px;">
-                              <input type="text" id="inpP0Name" class="form-ctrl" placeholder="اسم اللاعب الأول" value="الملك">
-                              <input type="text" id="inpP1Name" class="form-ctrl" placeholder="اسم اللاعب الثاني" value="روبوت" readonly style="opacity:0.85;">
-                          </div>
-                      </div>
-
-                      <div style="display:flex; flex-direction:column; gap:10px; margin-top:14px;">
-                          <button class="btn btn-gold" style="padding:11px; font-weight:900;" onclick="confirmStartNewGame()">
-                              ✨ ابدأ اللعبة الآن
+                  <div class="modal-body" style="text-align:center; padding:20px 14px;">
+                      <div style="font-size:2.8rem; margin-bottom:10px;">👑🏰</div>
+                      <div style="font-size:1.15rem; font-weight:900; color:var(--gold); margin-bottom:6px;">بنك الحظ الملكي</div>
+                      <p style="font-size:0.85rem; color:var(--dim); margin-bottom:18px;">اختر كيف تود بدء رحلتك في عالم التجارة والعقارات:</p>
+                      <div style="display:flex; flex-direction:column; gap:10px;">
+                          <button class="btn btn-gold" style="padding:12px; font-size:0.95rem; font-weight:900;" onclick="startNewGameFromModal()">
+                              ✨ بدء لعبة جديدة
                           </button>
-                          <button class="btn btn-blue" id="btnContinueGame" style="padding:11px; font-weight:900;" onclick="continueSavedGameFromModal()">
+                          <button class="btn btn-blue" id="btnContinueGame" style="padding:12px; font-size:0.95rem; font-weight:900;" onclick="continueSavedGameFromModal()">
                               📂 إكمال اللعبة السابقة
                           </button>
                       </div>
-                      <div id="savedGameStatus" style="font-size:0.75rem; color:var(--dim); text-align:center; margin-top:8px;"></div>
+                      <div id="savedGameStatus" style="font-size:0.75rem; color:var(--dim); margin-top:14px;"></div>
                   </div>
               </div>
           </div>
 
-          <!-- 1. نافذة معلومات الخانة -->
+          <!-- 1. نافذة دليل وتعليمات الخانات الخدمية -->
           <div class="modal-overlay" id="tileInfoModal">
               <div class="modal-card">
                   <div class="modal-header">
-                      <div class="modal-title" id="tileInfoTitle">ℹ️ دليل الخانة</div>
+                      <div class="modal-title" id="tileInfoTitle">ℹ️ دليل الخانة والتعليمات</div>
                       <div style="font-size:1.2rem; cursor:pointer;" onclick="closeTileInfoModal()">✕</div>
                   </div>
                   <div class="modal-body" id="tileInfoBody"></div>
                   <div class="modal-footer">
-                      <button class="btn btn-gold" onclick="closeTileInfoModal()">إغلاق</button>
+                      <button class="btn btn-gold" onclick="closeTileInfoModal()">فهمت ذلك ✓</button>
                   </div>
               </div>
           </div>
 
-          <!-- 2. نافذة شراء العقار -->
+          <!-- 2. نافذة شراء العقارات -->
           <div class="modal-overlay" id="deedModal">
               <div class="modal-card">
                   <div class="modal-header">
@@ -1253,28 +491,32 @@ jobs:
               </div>
           </div>
 
-          <!-- 3. نافذة المزاد العلني -->
+          <!-- 3. نافذة المزاد العلني مع السعر الأساسي ومؤقت الـ 5 ثواني -->
           <div class="modal-overlay" id="auctionModal">
               <div class="modal-card">
                   <div class="modal-header">
                       <div class="modal-title">🔨 مزاد علني مباشر</div>
                   </div>
                   <div class="modal-body">
-                      <div style="text-align:center; margin-bottom:8px; background:rgba(255,255,255,0.06); padding:8px 12px; border-radius:12px; border:1px solid rgba(245,158,11,0.35);">
+                      <!-- سعر العقار الأساسي في أعلى النافذة -->
+                      <div style="text-align:center; margin-bottom:8px; background:rgba(255,255,255,0.06); padding:8px 12px; border-radius:10px; border:1px solid rgba(245,158,11,0.35);">
                           <div id="aucPropDetails" style="font-size:1.05rem; font-weight:900; color:var(--text); margin-bottom:4px;"></div>
                           <div style="font-size:0.85rem; color:var(--gold-lt); font-weight:bold;">
-                              🏷️ السعر الأساسي: <span id="aucBasePriceVal" style="color:var(--gold); font-size:1.15rem; font-weight:900;">0$</span>
+                              🏷️ السعر الأساسي للعقار: <span id="aucBasePriceVal" style="color:var(--gold); font-size:1.15rem; font-weight:900;">0$</span>
                           </div>
                       </div>
-                      <div style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4); border-radius:10px; padding:8px; text-align:center; margin-bottom:10px;">
-                          <div style="font-size:0.85rem; font-weight:bold; color:#FCA5A5;">
-                              ⏱️ المهلة المتبقية: <span id="aucTimerNum" style="color:#EF4444; font-size:1.3rem; font-weight:900;">5</span> ثوانٍ
+
+                      <!-- مؤقت المهلة 5 ثواني -->
+                      <div style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4); border-radius:8px; padding:6px; text-align:center; margin-bottom:10px;">
+                          <div style="font-size:0.82rem; font-weight:bold; color:#FCA5A5;">
+                              ⏱️ المهلة المتبقية للمزايدة: <span id="aucTimerNum" style="color:#EF4444; font-size:1.25rem; font-weight:900;">5</span> ثوانٍ
                           </div>
                       </div>
+
                       <div style="text-align:center; margin:8px 0;">
                           <div style="font-size:0.8rem; color:var(--dim);">أعلى مزايدة حالية:</div>
-                          <div style="font-size:1.7rem; font-weight:900; color:var(--gold);" id="aucCurrentBid">10$</div>
-                          <div style="font-size:0.85rem; font-weight:800;" id="aucHighestBidder">-</div>
+                          <div style="font-size:1.6rem; font-weight:900; color:var(--gold);" id="aucCurrentBid">10$</div>
+                          <div style="font-size:0.82rem;" id="aucHighestBidder">-</div>
                       </div>
                       <div id="aucTurnPrompt" style="text-align:center; font-weight:bold; color:var(--text); margin-top:8px;"></div>
                   </div>
@@ -1293,7 +535,7 @@ jobs:
                       <div class="modal-title">🚔 أنت في السجن!</div>
                   </div>
                   <div class="modal-body">
-                      <p id="jailMsg">أنت مقيد في السجن. اختر كيفية الخروج:</p>
+                      <p id="jailMsg">أنت مقيد في السجن. كيف ترغب بالخروج؟</p>
                   </div>
                   <div class="modal-footer">
                       <button class="btn btn-gold" onclick="payJailFine()">دفع كفالة (50$)</button>
@@ -1306,22 +548,22 @@ jobs:
           <div class="modal-overlay" id="fastTravelModal">
               <div class="modal-card">
                   <div class="modal-header">
-                      <div class="modal-title">🚂 السفر السريع بمحطات القطار</div>
+                      <div class="modal-title">🚂 السفر السريع بالقطار</div>
                   </div>
                   <div class="modal-body" style="text-align:center;">
-                      <div style="font-size:2.4rem; margin-bottom:8px;">🚄</div>
-                      <p style="font-size:0.90rem;">لقد تم شراء كافة المحطات الأربع بالكامل!</p>
-                      <div style="font-size:1.15rem; font-weight:900; color:var(--gold); margin:8px 0;" id="fastTravelDestName">محطة الوجهة</div>
-                      <div style="font-size:0.85rem; color:#10B981; font-weight:900;">🎉 السفر مجاني 100% (0$) لمالك المحطات!</div>
+                      <div style="font-size:2rem; margin-bottom:8px;">🚄</div>
+                      <p style="font-size:0.9rem;">هل ترغب بالسفر السريع إلى محطتك الأخرى:</p>
+                      <div style="font-size:1.1rem; font-weight:900; color:var(--gold); margin:8px 0;" id="fastTravelDestName">محطة</div>
+                      <div style="font-size:0.8rem; color:var(--dim);">التكلفة: 200$ تُسحب من رصيدك فوراً.</div>
                   </div>
                   <div class="modal-footer">
-                      <button class="btn btn-gold" onclick="confirmFastTravel()">انتقال مجاني ✓</button>
+                      <button class="btn btn-gold" onclick="confirmFastTravel()">سفر سريع (200$)</button>
                       <button class="btn btn-gray" onclick="cancelFastTravel()">البقاء هنا</button>
                   </div>
               </div>
           </div>
 
-          <!-- 6. نافذة المقايضة (مع إعادة الفتح التلقائي عند الرفض) -->
+          <!-- 6. نافذة المقايضة -->
           <div class="modal-overlay" id="tradeModal">
               <div class="modal-card">
                   <div class="modal-header">
@@ -1331,22 +573,22 @@ jobs:
                   <div class="modal-body" id="tradeBody">
                       <div class="settings-section">
                           <div class="settings-label">اختر عقار الخصم للشراء:</div>
-                          <select id="tradeTargetProp" class="form-ctrl"></select>
+                          <select id="tradeTargetProp" style="width:100%; padding:6px; background:#0F172A; color:#FFF; border-radius:6px; border:1px solid #4B5563;"></select>
                       </div>
                       <div class="settings-section">
                           <div class="settings-label">المبلغ المعروض ($):</div>
-                          <input type="number" id="tradeOfferCash" class="form-ctrl" value="100" min="10" step="10">
+                          <input type="number" id="tradeOfferCash" value="100" min="10" step="10" style="width:100%; padding:6px; background:#0F172A; color:#FFF; border-radius:6px; border:1px solid #4B5563;">
                       </div>
-                      <div id="tradeNotice" style="color:#EF4444; font-size:0.78rem; font-weight:bold; display:none; margin-top:4px;"></div>
+                      <div id="tradeNotice" style="color:#EF4444; font-size:0.75rem; display:none; margin-top:4px;"></div>
                   </div>
                   <div class="modal-footer">
                       <button class="btn btn-gold" onclick="submitTradeOffer()">إرسال العرض</button>
-                      <button class="btn btn-gray" onclick="closeTradeModal()">إلغاء / خروج</button>
+                      <button class="btn btn-gray" onclick="closeTradeModal()">إلغاء</button>
                   </div>
               </div>
           </div>
 
-          <!-- 7. نافذة عقارات اللاعب والبناء المجسم -->
+          <!-- 7. نافذة عقارات اللاعب -->
           <div class="modal-overlay" id="propsModal">
               <div class="modal-card">
                   <div class="modal-header">
@@ -1357,7 +599,7 @@ jobs:
               </div>
           </div>
 
-          <!-- 8. نافذة الإعدادات الشاملة (تتضمن قسم من نحن، وقائمة الـ 14 لغة) -->
+          <!-- 8. نافذة الإعدادات -->
           <div class="modal-overlay" id="settingsModal">
               <div class="modal-card">
                   <div class="modal-header">
@@ -1365,67 +607,42 @@ jobs:
                       <div style="font-size:1.2rem; cursor:pointer;" onclick="closeSettingsModal()">✕</div>
                   </div>
                   <div class="modal-body">
-                      <!-- 14 Languages Dropdown -->
                       <div class="settings-section">
                           <div class="settings-label">🌐 اللغة (Language):</div>
-                          <select id="selGameLanguage" class="form-ctrl" onchange="setLanguage(this.value)">
-                              <option value="ar">العربية (Arabic)</option>
-                              <option value="en">English (الإنجليزية)</option>
-                              <option value="zh">中文 (اللغة الصينية)</option>
-                              <option value="fr">Français (اللغة الفرنسية)</option>
-                              <option value="ru">Русский (اللغة الروسية)</option>
-                              <option value="es">Español (اللغة الإسبانية)</option>
-                              <option value="hi">हिन्दी (اللغة الهندية)</option>
-                              <option value="pt">Português (اللغة البرتغالية)</option>
-                              <option value="ko">한국어 (اللغة الكورية)</option>
-                              <option value="ja">日本語 (اللغة اليابانية)</option>
-                              <option value="de">Deutsch (اللغة الألمانية)</option>
-                              <option value="it">Italiano (اللغة الإيطالية)</option>
-                              <option value="tr">Türkçe (اللغة التركية)</option>
-                              <option value="fa">فارسی (اللغة الفارسية)</option>
-                          </select>
-                      </div>
-
-                      <!-- Perspective Mode (Isometric vs Top-Down) -->
-                      <div class="settings-section">
-                          <div class="settings-label">📐 منظور الرؤية (Perspective):</div>
                           <div class="row-opts">
-                              <button class="btn-pill active" id="btnPerspIso" onclick="setPerspective('isometric')">أيزومتريك مائل (3D)</button>
-                              <button class="btn-pill" id="btnPerspTop" onclick="setPerspective('topdown')">عمودي من الأعلى (Top-Down)</button>
+                              <button class="btn-pill active" id="btnLangAr" onclick="setLanguage('ar')">العربية</button>
+                              <button class="btn-pill" id="btnLangEn" onclick="setLanguage('en')">English</button>
                           </div>
                       </div>
-
-                      <!-- Dark / Light Theme -->
-                      <div class="settings-section">
-                          <div class="settings-label">🌓 مظهر اللعبة:</div>
-                          <div class="row-opts">
-                              <button class="btn-pill active" id="btnThemeDark" onclick="setAppTheme('dark')">الوضع الداكن</button>
-                              <button class="btn-pill" id="btnThemeLight" onclick="setAppTheme('light')">الوضع الفاتح</button>
-                          </div>
-                      </div>
-
-                      <!-- Style of owned properties -->
                       <div class="settings-section">
                           <div class="settings-label">🎨 تمييز العقارات المملوكة:</div>
                           <div class="row-opts">
                               <button class="btn-pill active" id="btnPropStyleGlow" onclick="setPropStyle('glow')">توهج (Glow)</button>
                               <button class="btn-pill" id="btnPropStyleTint" onclick="setPropStyle('tint')">تظليل (Tint)</button>
                               <button class="btn-pill" id="btnPropStyleBorder" onclick="setPropStyle('border')">إطار ملون</button>
-                              <button class="btn-pill" id="btnPropStyleBadge" onclick="setPropStyle('badge')">شارة</button>
+                              <button class="btn-pill" id="btnPropStyleBadge" onclick="setPropStyle('badge')">شارة الرمز</button>
                           </div>
                       </div>
-
-                      <!-- Dice Speed -->
                       <div class="settings-section">
-                          <div class="settings-label">🎲 سرعة النرد:</div>
+                          <div class="settings-label">🎲 سرعة دحرجة النرد:</div>
                           <div class="row-opts">
+                              <button class="btn-pill" id="btnDiceSpeed_v_slow" onclick="setDiceSpeed('v_slow')">بطيء جداً</button>
                               <button class="btn-pill" id="btnDiceSpeed_slow" onclick="setDiceSpeed('slow')">بطيء</button>
                               <button class="btn-pill active" id="btnDiceSpeed_normal" onclick="setDiceSpeed('normal')">متوازن</button>
                               <button class="btn-pill" id="btnDiceSpeed_fast" onclick="setDiceSpeed('fast')">سريع</button>
+                              <button class="btn-pill" id="btnDiceSpeed_v_fast" onclick="setDiceSpeed('v_fast')">فائق السرعة</button>
                           </div>
                       </div>
-
-                      <!-- Sound FX -->
+                      <div class="settings-section">
+                          <div class="settings-label">🏃 سرعة مشي الرمز:</div>
+                          <div class="row-opts">
+                              <button class="btn-pill" id="btnMoveSpeed_v_slow" onclick="setMoveSpeed('v_slow')">بطيء جداً</button>
+                              <button class="btn-pill" id="btnMoveSpeed_slow" onclick="setMoveSpeed('slow')">بطيء</button>
+                              <button class="btn-pill active" id="btnMoveSpeed_normal" onclick="setMoveSpeed('normal')">متوازن</button>
+                              <button class="btn-pill" id="btnMoveSpeed_fast" onclick="setMoveSpeed('fast')">سريع</button>
+                              <button class="btn-pill" id="btnMoveSpeed_v_fast" onclick="setMoveSpeed('v_fast')">فائق السرعة</button>
+                          </div>
+                      </div>
                       <div class="settings-section">
                           <div class="settings-label">🔊 المؤثرات الصوتية:</div>
                           <div class="row-opts">
@@ -1433,113 +650,121 @@ jobs:
                               <button class="btn-pill" id="btnSoundOff" onclick="setSound(false)">كتم 🔇</button>
                           </div>
                       </div>
-
-                      <!-- About Us Section Moved Inside Settings -->
-                      <div class="settings-section" style="border-top:1px solid rgba(255,255,255,0.1); padding-top:10px;">
-                          <div class="settings-label">ℹ️ من نحن (About):</div>
-                          <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3); border-radius:10px; padding:10px; font-size:0.78rem; color:var(--text); line-height:1.45;">
-                              <div style="font-weight:900; color:var(--gold); margin-bottom:4px;">🎲 MONOPOLY PRO Edition 2.5</div>
-                              <div>لعبة لوحية استراتيجية بنمط Isometric / Top-Down 3D، ومجسمات كرتونية منخفضة المضلعات (Low-Poly)، ولوحة واقعية محاكية، ودعم لـ 14 لغة عالمية.</div>
-                              <div style="color:var(--dim); margin-top:6px;">برمجة وتطوير عمار الهلالي • جميع الحقوق محفوظة.</div>
+                      <div class="settings-section">
+                          <div class="settings-label">👥 نمط اللعب:</div>
+                          <div class="row-opts">
+                              <button class="btn-pill active" id="txtMode" onclick="toggleMode()">لاعب ضد الصقر (الذكاء)</button>
                           </div>
                       </div>
-
-                      <button class="btn btn-red" style="width:100%; margin-top:8px;" onclick="promptNewGameFromSettings()">🔄 بدء لعبة جديدة</button>
+                      <button class="btn btn-red" style="width:100%; margin-top:8px;" onclick="restartGame()">🔄 إعادة بدء اللعبة من جديد</button>
                   </div>
               </div>
           </div>
 
-          <!-- 9. نافذة تأكيد الخروج -->
+          <!-- 9. نافذة حول اللعبة -->
+          <div class="modal-overlay" id="aboutModal">
+              <div class="modal-card">
+                  <div class="modal-header">
+                      <div class="modal-title">ℹ️ حول اللعبة</div>
+                      <div style="font-size:1.2rem; cursor:pointer;" onclick="closeAboutModal()">✕</div>
+                  </div>
+                  <div class="modal-body" style="text-align:center;">
+                      <div style="font-size:2.4rem; margin-bottom:8px;">🎲👑</div>
+                      <div style="font-size:1.15rem; font-weight:900; color:var(--gold); margin-bottom:4px;">مونوبولي العرب • بنك الحظ الملكي</div>
+                      <div style="font-size:0.8rem; color:var(--dim); margin-bottom:14px;">الإصدار 1.0.0 (Arabic Monopoly Edition)</div>
+                      <div style="background:rgba(245,158,11,0.1); border:1px solid var(--gold); border-radius:10px; padding:10px; font-weight:bold; color:var(--gold-lt);">
+                          تصميم وبرمجة عمار الهلالي
+                      </div>
+                      <p style="font-size:0.75rem; color:var(--dim); margin-top:12px;">تجربة عربية استراتيجية متكاملة للمنافسة وشراء العقارات وبنك الحظ بنظام تحكيم آلي وسرعات تحكم مرنة.</p>
+                  </div>
+              </div>
+          </div>
+
+          <!-- 10. نافذة تأكيد الخروج مع خيار حفظ اللعبة -->
           <div class="modal-overlay" id="exitModal">
               <div class="modal-card">
                   <div class="modal-header">
                       <div class="modal-title">🚪 مغادرة اللعبة</div>
                       <div style="font-size:1.2rem; cursor:pointer;" onclick="closeExitModal()">✕</div>
                   </div>
-                  <div class="modal-body" style="text-align:center;">
-                      <div style="font-size:2.4rem; margin-bottom:8px;">💾</div>
-                      <div style="font-size:1.05rem; font-weight:bold; margin-bottom:6px;">هل ترغب بحفظ اللعبة لمتابعتها لاحقاً؟</div>
-                      <div style="font-size:0.78rem; color:var(--dim);">عند الحفظ، يمكنك استئناف المباراة من نفس النقطة تماماً.</div>
+                  <div class="modal-body" style="text-align:center; padding:18px 14px;">
+                      <div style="font-size:2.2rem; margin-bottom:8px;">💾</div>
+                      <div style="font-size:1.05rem; font-weight:bold; margin-bottom:8px;">هل ترغب في حفظ اللعبة لإكمالها لاحقاً؟</div>
+                      <div style="font-size:0.8rem; color:var(--dim);">إذا اخترت حفظ اللعبة، يمكنك متابعتها في أي وقت لاحق من حيث توقفت تماماً.</div>
                   </div>
                   <div class="modal-footer" style="display:flex; flex-direction:column; gap:8px;">
                       <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%;">
                           <button class="btn btn-gold" style="width:100%;" onclick="confirmExitWithSave()">💾 حفظ وخروج</button>
                           <button class="btn btn-red" style="width:100%;" onclick="confirmExitWithoutSave()">❌ خروج بدون حفظ</button>
                       </div>
-                      <button class="btn btn-gray" style="width:100%;" onclick="closeExitModal()">↩️ استمرار باللعب</button>
+                      <button class="btn btn-gray" style="width:100%;" onclick="closeExitModal()">↩️ متابعة اللعب</button>
                   </div>
               </div>
           </div>
 
-          <!-- 10. نافذة نهاية المباراة -->
+          <!-- 11. نافذة إعلان الفائز والتتويج -->
           <div class="modal-overlay" id="gameOverModal">
               <div class="modal-card">
                   <div class="modal-header">
                       <div class="modal-title">🏆 نهاية اللعبة</div>
                   </div>
                   <div class="modal-body" style="text-align:center; padding:20px 14px;">
-                      <div style="font-size:3.2rem; margin-bottom:10px;" id="goTrophy">👑</div>
-                      <div style="font-size:1.25rem; font-weight:900; color:var(--gold); margin-bottom:6px;" id="goWinnerText">فاز اللاعب!</div>
-                      <p style="font-size:0.84rem; color:var(--dim);" id="goDetails">أفلس الخصم ولم يعد يملك أموالاً أو أصولاً تغطي التزاماته.</p>
+                      <div style="font-size:3rem; margin-bottom:10px;" id="goTrophy">👑</div>
+                      <div style="font-size:1.25rem; font-weight:900; color:var(--gold); margin-bottom:8px;" id="goWinnerText">فاز الملك!</div>
+                      <p style="font-size:0.85rem; color:var(--dim);" id="goDetails">أفلس الخصم ولم يعد يملك أموالاً أو عقارات لتغطية التكاليف.</p>
                   </div>
                   <div class="modal-footer" style="justify-content:center;">
-                      <button class="btn btn-gold" onclick="promptNewGameFromSettings()">🔄 بدء مباراة جديدة</button>
+                      <button class="btn btn-gold" onclick="restartGame()">🔄 بدء مباراة جديدة</button>
                   </div>
               </div>
           </div>
 
           <script>
-          // القواميس الجغرافية للمدن بحسب اللغة (اسم مدينة واحد لكل عقار)
-          const CITY_NAMES = {
-              ar: ["مكة","المدينة","الرياض","جدة","الدمام","القاهرة","الإسكندرية","بغداد","البصرة","دمشق","حلب","بيروت","الدوحة","المنامة","مسقط","الكويت","القدس","صنعاء","عدن","عمان","الرباط","دبي"],
-              europe: ["London","Paris","Rome","Berlin","Madrid","Vienna","Lisbon","Amsterdam","Brussels","Dublin","Athens","Prague","Warsaw","Oslo","Stockholm","Helsinki","Zurich","Milan","Munich","Istanbul","Moscow","Venice"],
-              asia: ["Tokyo","Beijing","Seoul","Shanghai","Kyoto","Mumbai","Delhi","Bangkok","Singapore","Jakarta","Manila","Kuala","Hanoi","Taipei","Osaka","Busan","Tehran","Dhaka","Colombo","Karachi","Dubai","Doha"]
-          };
-
+          // الإيجارات الأساسية تعادل 20% من قيمة العقار بدلاً من 10%
           const RAW_TILES = [
           [0,"انطلق","GO","go","",0,0,"#10B981","🏁"],
-          [1,"مكة","Mecca","property","brown",60,12,"#8B4513",""],
-          [2,"صندوق","Chest","chest","",0,0,"#3B82F6","📦"],
-          [3,"المدينة","Medina","property","brown",60,12,"#8B4513",""],
-          [4,"ضريبة","Tax","tax","",200,0,"#EF4444","💰"],
-          [5,"قطار 1","Rail 1","railroad","",200,25,"#64748B","🚂"],
-          [6,"الرياض","Riyadh","property","lightblue",100,20,"#38BDF8",""],
+          [1,"شارع المعز","Al-Muizz St","property","brown",60,12,"#8B4513",""],
+          [2,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],
+          [3,"خان الخليلي","Khan El-Khalili","property","brown",60,12,"#8B4513",""],
+          [4,"ضريبة الدخل","Income Tax","tax","",200,0,"#EF4444","💰"],
+          [5,"قطار الحجاز","Hejaz Rail","railroad","",200,25,"#64748B","🚂"],
+          [6,"شارع الحمراء","Hamra St","property","lightblue",100,20,"#38BDF8",""],
           [7,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],
-          [8,"جدة","Jeddah","property","lightblue",100,20,"#38BDF8",""],
-          [9,"الدمام","Dammam","property","lightblue",120,24,"#38BDF8",""],
-          [10,"السجن","Jail","jail","",0,0,"#6B7280","🚔"],
-          [11,"القاهرة","Cairo","property","pink",140,28,"#EC4899",""],
-          [12,"كهرباء","Electric","utility","",150,0,"#EAB308","💡"],
-          [13,"الإسكندرية","Alexandria","property","pink",140,28,"#EC4899",""],
-          [14,"بغداد","Baghdad","property","pink",160,32,"#EC4899",""],
-          [15,"قطار 2","Rail 2","railroad","",200,25,"#64748B","🚂"],
-          [16,"البصرة","Basra","property","orange",180,36,"#F97316",""],
-          [17,"صندوق","Chest","chest","",0,0,"#3B82F6","📦"],
-          [18,"دمشق","Damascus","property","orange",180,36,"#F97316",""],
-          [19,"حلب","Aleppo","property","orange",200,40,"#F97316",""],
-          [20,"استراحة","Parking","parking","",0,0,"#10B981","🅿️"],
-          [21,"بيروت","Beirut","property","red",220,44,"#EF4444",""],
+          [8,"الروشة","Raouche","property","lightblue",100,20,"#38BDF8",""],
+          [9,"وسط بيروت","Downtown","property","lightblue",120,24,"#38BDF8",""],
+          [10,"السجن / زيارة","Jail","jail","",0,0,"#6B7280","🚔"],
+          [11,"باب توما","Bab Touma","property","pink",140,28,"#EC4899",""],
+          [12,"شركة الكهرباء","Electric Co","utility","",150,0,"#EAB308","💡"],
+          [13,"الصالحية","Salhiyeh","property","pink",140,28,"#EC4899",""],
+          [14,"سوق الحميدية","Hamidiyah","property","pink",160,32,"#EC4899",""],
+          [15,"قطار الحرمين","Haramain Rail","railroad","",200,25,"#64748B","🚂"],
+          [16,"شارع الرشيد","Al-Rasheed St","property","orange",180,36,"#F97316",""],
+          [17,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],
+          [18,"المنصور","Mansour","property","orange",180,36,"#F97316",""],
+          [19,"الكرادة","Karrada","property","orange",200,40,"#F97316",""],
+          [20,"مواقف مجانية","Free Parking","parking","",0,0,"#10B981","🅿️"],
+          [21,"شارع النيل","Nile Street","property","red",220,44,"#EF4444",""],
           [22,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],
-          [23,"الدوحة","Doha","property","red",220,44,"#EF4444",""],
-          [24,"المنامة","Manama","property","red",240,48,"#EF4444",""],
-          [25,"قطار 3","Rail 3","railroad","",200,25,"#64748B","🚂"],
-          [26,"مسقط","Muscat","property","yellow",260,52,"#EAB308",""],
-          [27,"الكويت","Kuwait","property","yellow",260,52,"#EAB308",""],
-          [28,"مياه","Water","utility","",150,0,"#06B6D4","💧"],
-          [29,"القدس","Jerusalem","property","yellow",280,56,"#EAB308",""],
-          [30,"للسجن","GoJail","gotojail","",0,0,"#DC2626","🚨"],
-          [31,"صنعاء","Sanaa","property","green",300,60,"#22C55E",""],
-          [32,"عدن","Aden","property","green",300,60,"#22C55E",""],
-          [33,"صندوق","Chest","chest","",0,0,"#3B82F6","📦"],
-          [34,"عمان","Amman","property","green",320,64,"#22C55E",""],
-          [35,"قطار 4","Rail 4","railroad","",200,25,"#64748B","🚂"],
+          [23,"المقرن","Al-Mogran","property","red",220,44,"#EF4444",""],
+          [24,"حي الرياض","Riyadh Dist","property","red",240,48,"#EF4444",""],
+          [25,"قطار المشرق","Mashreq Rail","railroad","",200,25,"#64748B","🚂"],
+          [26,"شارع العليا","Olaya St","property","yellow",260,52,"#EAB308",""],
+          [27,"طريق الملك فهد","King Fahd Rd","property","yellow",260,52,"#EAB308",""],
+          [28,"شركة المياه","Water Works","utility","",150,0,"#06B6D4","💧"],
+          [29,"حي النخيل","Al-Nakheel","property","yellow",280,56,"#EAB308",""],
+          [30,"إلى السجن!","Go to Jail","gotojail","",0,0,"#DC2626","🚨"],
+          [31,"الكورنيش","Corniche","property","green",300,60,"#22C55E",""],
+          [32,"اللؤلؤة","The Pearl","property","green",300,60,"#22C55E",""],
+          [33,"صندوق الجماعة","Community","chest","",0,0,"#3B82F6","📦"],
+          [34,"لوسيل","Lusail","property","green",320,64,"#22C55E",""],
+          [35,"قطار الخليج","Gulf Rail","railroad","",200,25,"#64748B","🚂"],
           [36,"فرصة","Chance","chance","",0,0,"#F59E0B","❓"],
-          [37,"الرباط","Rabat","property","darkblue",350,70,"#1E40AF",""],
-          [38,"ضريبة رفاهية","LuxTax","tax","",100,0,"#EF4444","💎"],
-          [39,"دبي","Dubai","property","darkblue",400,80,"#1E40AF",""]
+          [37,"شارع الشيخ زايد","Sheikh Zayed","property","darkblue",350,70,"#1E40AF",""],
+          [38,"ضريبة الرفاهية","Luxury Tax","tax","",100,0,"#EF4444","💎"],
+          [39,"برج خليفة","Burj Khalifa","property","darkblue",400,80,"#1E40AF",""]
           ];
 
-          const BOARD_TILES = RAW_TILES.map((r) => ({
+          const BOARD_TILES = RAW_TILES.map(r => ({
               id: r[0],
               nameAr: r[1],
               nameEn: r[2],
@@ -1550,31 +775,165 @@ jobs:
               color: r[7],
               icon: r[8],
               owner: undefined,
-              mortgaged: false,
-              buildings: 0 // 1 to 4 floors = Lime 3D blocks, 5 = Golden Eiffel Tower
+              mortgaged: false
           }));
 
-          const PROPERTY_INDICES = BOARD_TILES.filter(t => t.type === "property").map(t => t.id);
-
           const I18N = {
-              ar: { app:"MONOPOLY PRO", turn:"دورك", opp:"دور الخصم", roll:"ارمي النرد", buy:"شراء", auction:"مزاد علني", trade:"مقايضة", myProps:"عقاراتي", passGo:"مررت بنقطة الانطلاق وحصلت على 200$!", p:"عقارات", m:"مرهون", robot:"روبوت", build:"بناء طابق", maxBld:"مكتمل (برج إيفل)" },
-              en: { app:"MONOPOLY PRO", turn:"Your Turn", opp:"Opponent Turn", roll:"Roll Dice", buy:"Buy", auction:"Auction", trade:"Trade", myProps:"My Properties", passGo:"Passed GO! Collected 200$!", p:"Props", m:"Mortgaged", robot:"Robot", build:"Build Floor", maxBld:"Max (Eiffel Tower)" },
-              zh: { app:"MONOPOLY PRO", turn:"你的回合", opp:"对手回合", roll:"掷骰子", buy:"购买", auction:"拍卖", trade:"交易", myProps:"我的资产", passGo:"通过起点，获得200$!", p:"地产", m:"已抵押", robot:"机器人", build:"加建楼层", maxBld:"终极 (埃菲尔铁塔)" },
-              fr: { app:"MONOPOLY PRO", turn:"Votre Tour", opp:"Tour Adverse", roll:"Lancer Dé", buy:"Acheter", auction:"Enchère", trade:"Échanger", myProps:"Propriétés", passGo:"Départ franchi! +200$!", p:"Biens", m:"Hypothéqué", robot:"Robot", build:"Bâtir Étage", maxBld:"Max (Tour Eiffel)" },
-              ru: { app:"MONOPOLY PRO", turn:"Ваш ход", opp:"Ход соперника", roll:"Бросить кубик", buy:"Купить", auction:"Аукцион", trade:"Обмен", myProps:"Мое имущество", passGo:"Пройден СТАРТ! +200$!", p:"Активы", m:"Заложено", robot:"Робот", build:"Построить этаж", maxBld:"Макс (Эйфелева башня)" },
-              es: { app:"MONOPOLY PRO", turn:"Tu Turno", opp:"Turno Rival", roll:"Tirar Dados", buy:"Comprar", auction:"Subasta", trade:"Intercambio", myProps:"Mis Bienes", passGo:"¡Pasaste por la Salida! +200$!", p:"Propiedades", m:"Hipotecado", robot:"Robot", build:"Construir Piso", maxBld:"Máximo (Torre Eiffel)" },
-              hi: { app:"MONOPOLY PRO", turn:"आपकी बारी", opp:"विरोधी की बारी", roll:"पासा फेंकें", buy:"खरीदें", auction:"नीलामी", trade:"व्यापार", myProps:"मेरी संपत्ति", passGo:"GO पार किया! 200$ प्राप्त!", p:"संपत्ति", m:"बंधक", robot:"रोबोट", build:"मंजिल बनाएं", maxBld:"अधिकतम (एफिल टॉवर)" },
-              pt: { app:"MONOPOLY PRO", turn:"Sua Vez", opp:"Vez do Oponente", roll:"Rolar Dados", buy:"Comprar", auction:"Leilão", trade:"Trocar", myProps:"Meus Imóveis", passGo:"Passou pelo Ponto de Partida! +200$!", p:"Imóveis", m:"Hipotecado", robot:"Robô", build:"Construir Andar", maxBld:"Máximo (Torre Eiffel)" },
-              ko: { app:"MONOPOLY PRO", turn:"당신의 턴", opp:"상대방 턴", roll:"주사위 굴리기", buy:"구매", auction:"경매", trade:"거래", myProps:"내 부동산", passGo:"출발점 통과! 200$ 획득!", p:"부동산", m:"저당됨", robot:"로봇", build:"층 증축", maxBld:"최대 (에펠탑)" },
-              ja: { app:"MONOPOLY PRO", turn:"あなたの番", opp:"相手の番", roll:"サイコロを振る", buy:"購入", auction:"オークション", trade:"交渉", myProps:"所有地", passGo:"GOを通過！200$獲得！", p:"資産", m:"抵当済", robot:"ロボット", build:"フロア建設", maxBld:"完成 (エッフェル塔)" },
-              de: { app:"MONOPOLY PRO", turn:"Dein Zug", opp:"Gegnerzug", roll:"Würfeln", buy:"Kaufen", auction:"Auktion", trade:"Handel", myProps:"Mein Besitz", passGo:"LOS überschritten! +200$!", p:"Besitz", m:"Hypothek", robot:"Roboter", build:"Stockwerk bauen", maxBld:"Max (Eiffelturm)" },
-              it: { app:"MONOPOLY PRO", turn:"Tuo Turno", opp:"Turno Avversario", roll:"Lancia Dadi", buy:"Acquista", auction:"Asta", trade:"Scambia", myProps:"Proprietà", passGo:"Passato dal VIA! +200$!", p:"Immobili", m:"Ipotecato", robot:"Robot", build:"Costruisci Piano", maxBld:"Max (Torre Eiffel)" },
-              tr: { app:"MONOPOLY PRO", turn:"Sıra Sende", opp:"Rakip Sırası", roll:"Zar At", buy:"Satın Al", auction:"Açık Artırma", trade:"Takas", myProps:"Mülklerim", passGo:"BAŞLANGIÇ'tan geçildi! +200$!", p:"Mülk", m:"İpotekli", robot:"Robot", build:"Kat İnşa Et", maxBld:"Maksimum (Eyfel Kulesi)" },
-              fa: { app:"MONOPOLY PRO", turn:"نوبت شما", opp:"نوبت حریف", roll:"پرتاب تاس", buy:"خرید", auction:"حراج", trade:"معامله", myProps:"املاک من", passGo:"عبور از شروع! دریافت 200$!", p:"املاک", m:"در رهن", robot:"ربات", build:"ساخت طبقه", maxBld:"نهایی (برج ایفل)" }
+              ar: { app:"مونوبولي العرب", turn:"دورك", opp:"دور الخصم", roll:"ارمي النرد", buy:"شراء", auction:"مزاد علني", trade:"مقايضة", myProps:"عقاراتي", passGo:"مررت بنقطة الانطلاق وحصلت على 200$!", jailed:"أنت في السجن!", finePaid:"دفعت 50$ كفالة وخرجت من السجن.", doublesJail:"مبروك! نرد متطابق وخرجت من السجن!", rolled:"حصلت على", rentPaid:"دفعت إيجاراً قدره", to:"إلى", deedFor:"عقار متاح للشراء", p:"عقارات", m:"مرهون", ai:"لاعب ضد الصقر (الذكاء)", pvp:"لاعب ضد لاعب (محلي)" },
+              en: { app:"Monopoly Arabia", turn:"Your Turn", opp:"Opponent's Turn", roll:"Roll Dice", buy:"Buy", auction:"Auction", trade:"Trade", myProps:"My Properties", passGo:"Passed GO! Collected 200$!", jailed:"In Jail!", finePaid:"Paid 50$ fine and exited jail.", doublesJail:"Doubles rolled! Exited jail freely!", rolled:"Rolled", rentPaid:"Paid rent of", to:"to", deedFor:"Property available for purchase", p:"Props", m:"Mortgaged", ai:"Player vs Falcon (AI)", pvp:"2 Players (Pass & Play)" }
           };
 
-          const EURO_LANGS = ["en","fr","ru","es","pt","de","it","tr"];
-          const ASIA_LANGS = ["zh","hi","ko","ja","fa"];
+          const SERVICE_INFO = {
+              go: {
+                  badgeAr: "🏁 خانة البداية الرسمية", badgeEn: "🏁 Official Starting Point",
+                  titleAr: "محطة انطلق (GO)", titleEn: "GO Station",
+                  descAr: "نقطة انطلاق جميع اللاعبين في بداية اللعبة ومصدر الدخل الدوري الأساسي.",
+                  descEn: "The starting point for all players and primary periodic income source.",
+                  rulesAr: [
+                      "💵 في كل مرة تمر فيها على هذه الخانة أو تهبط عليها، تستلم 200$ فوراً من البنك.",
+                      "🔄 تتجدد سيولتك المالية مع كل دورة كاملة حول اللوحة للاستثمار في العقارات والمشاريع."
+                  ],
+                  rulesEn: [
+                      "💵 Collect 200$ salary from the Bank every time you pass or land on GO.",
+                      "🔄 Cash is replenished every full lap around the board to fuel your investments."
+                  ]
+              },
+              chest: {
+                  badgeAr: "📦 بطاقات الجماعة والمفاجآت", badgeEn: "📦 Community Chest Cards",
+                  titleAr: "صندوق الجماعة الملكي", titleEn: "Community Chest",
+                  descAr: "مفاجآت وهدايا غير متوقعة أو غرامات تكافل مجتمعي يمنحها البنك الملكي.",
+                  descEn: "Unexpected cash windfalls, charity bonuses or civic penalties.",
+                  rulesAr: [
+                      "🎁 قد تربح مكافأة مالية نقدية من مسابقات الحظ الملكية (100$).",
+                      "⚖️ قد تُفرض عليك غرامات مالية أو رسوم بلدية (50$).",
+                      "🚀 قد تسحب بطاقة سفر فوري إلى خانة 'انطلق' لربح 200$ أو أمر تحويل فوري للسجن!"
+                  ],
+                  rulesEn: [
+                      "🎁 Win instant cash prizes from royal contests (100$).",
+                      "⚖️ Or incur municipal charges or fines (50$).",
+                      "🚀 Or draw an instant teleport to GO (earn 200$) or straight to Jail!"
+                  ]
+              },
+              chance: {
+                  badgeAr: "❓ بطاقات الفرصة والمغامرة", badgeEn: "❓ Chance Cards",
+                  titleAr: "خانة الفرصة والحظ", titleEn: "Chance Tile",
+                  descAr: "تقلبات غير متوقعة للمغامرة! بطاقات حظ قد تقلب موازين المباراة في ثوانٍ.",
+                  descEn: "High-stakes fortune cards that can turn the tide of the game.",
+                  rulesAr: [
+                      "🎲 جوائز مالية مفاجئة أو تكاليف غير متوقعة لإصلاحات وسفر.",
+                      "🚔 احتمالية التحويل الفوري إلى السجن دون المرور بخانة انطلق.",
+                      "✨ الحظ يلعب دوراً كبيراً، لذا احرص دائماً على وجود سيولة نقدية احتياطية لديك."
+                  ],
+                  rulesEn: [
+                      "🎲 Sudden cash windfalls or surprise travel fees.",
+                      "🚔 Risk of direct arrest sending you to Jail without passing GO.",
+                      "✨ Keep a cash reserve ready for whatever fate deals you!"
+                  ]
+              },
+              tax: {
+                  badgeAr: "💰 ضرائب ورسوم مالية", badgeEn: "💰 Government Taxes",
+                  titleAr: "خزينة الضرائب والرسوم", titleEn: "Treasury Taxes",
+                  descAr: "رسوم وضرائب حكومية إلزامية تذهب مباشرة للبنك ولا يمكن شراؤها أو امتلاكها.",
+                  descEn: "Mandatory civic taxes paid directly to the bank. Cannot be owned.",
+                  rulesAr: [
+                      "🏛️ ضريبة الدخل (خانة 4): يدفع اللاعب 200$ إجبارية لخزينة البنك.",
+                      "💎 ضريبة الرفاهية (خانة 38): يدفع اللاعب 100$ إجبارية لخزينة البنك.",
+                      "⚠️ تُخصم المبالغ فور هبوط الرمز على الخانة وتُسحب من رصيدك المالي."
+                  ],
+                  rulesEn: [
+                      "🏛️ Income Tax (Tile 4): Mandatory 200$ deduction to the Bank.",
+                      "💎 Luxury Tax (Tile 38): Mandatory 100$ deduction to the Bank.",
+                      "⚠️ Taxes are deducted automatically upon landing."
+                  ]
+              },
+              jail: {
+                  badgeAr: "🚔 خانة أمنية ورقابية", badgeEn: "🚔 Security / Correctional",
+                  titleAr: "السجن الملكي / زيارة عادية", titleEn: "Royal Jail / Just Visiting",
+                  descAr: "منطقة حجز المخالفين والغارمين، أو محطة للزيارة العادية أثناء السير.",
+                  descEn: "Detention facility for penalised players, or a safe 'Just Visiting' stop.",
+                  rulesAr: [
+                      "👣 الزيارة العادية: إذا وصلت هنا برمية نرد عادية، فأنت زائر حر تماماً وتتحرك في دورك القادم دون أي عوائق.",
+                      "🔒 في حالة الحبس: إذا أُرسلت كعقوبة، يتم تقييد حركتك داخل السجن.",
+                      "🔓 شروط الخروج من السجن:",
+                      "  1️⃣ دفع كفالة مالية قدرها 50$ في بداية دورك.",
+                      "  2️⃣ رمي نردين برقمين متطابقين في إحدى محاولاتك الثلاث.",
+                      "  3️⃣ بعد 3 أدوار غير متطابقة، تُدفع 50$ كفالة إجبارية وتتحرك فوراً بقيمة النرد."
+                  ],
+                  rulesEn: [
+                      "👣 Just Visiting: If landed on normally, you are free to leave on your next turn.",
+                      "🔒 Incarcerated: If sent here as a penalty, your movement is restricted.",
+                      "🔓 How to get out: Pay 50$ fine, roll doubles within 3 turns, or pay mandatory 50$ after 3 turns."
+                  ]
+              },
+              parking: {
+                  badgeAr: "🅿️ واحة استراحة مجانية", badgeEn: "🅿️ Free Parking Zone",
+                  titleAr: "المواقف المجانية والاستراحة", titleEn: "Free Parking Zone",
+                  descAr: "واحة استراحة آمنة للاعبين خالية من أي التزامات مالية أو مخاطر.",
+                  descEn: "A completely safe zone with no rent, taxes or obligations.",
+                  rulesAr: [
+                      "🛡️ لا تدفع أي إيجارات أو رسوم عند التوقف هنا إطلاقاً.",
+                      "⏳ موقع مثالي للاستراحة عندما تكون شوارع الخصم مليئة بالعقارات المهددة لأموالك."
+                  ],
+                  rulesEn: [
+                      "🛡️ Absolutely safe haven. Zero rent, zero fees, zero risks.",
+                      "⏳ A welcome respite when opponent streets are densely built."
+                  ]
+              },
+              gotojail: {
+                  badgeAr: "🚨 فخ القبض الفوري", badgeEn: "🚨 Instant Arrest Trap",
+                  titleAr: "إلى السجن مباشرة!", titleEn: "Go Directly to Jail!",
+                  descAr: "أمر قبض فوري يحيل اللاعب إلى السجن دون تهاون!",
+                  descEn: "Direct arrest warrant sending you straight to Jail!",
+                  rulesAr: [
+                      "🚔 يُنقل رمز اللاعب فوراً إلى خانة السجن (خانة رقم 10).",
+                      "🚫 لا تمر بخانة 'انطلق' ولا تستلم الـ 200$.",
+                      "⛔ ينتهي دورك الحالي فوراً ويجب عليك دفع الكفالة أو مطابقة النرد في أدوارك اللاحقة."
+                  ],
+                  rulesEn: [
+                      "🚔 Sent immediately to Tile 10 (Jail).",
+                      "🚫 Do NOT pass GO, do NOT collect 200$.",
+                      "⛔ Turn ends immediately."
+                  ]
+              },
+              utility: {
+                  badgeAr: "💡 مرافق وخدمات عامة", badgeEn: "💡 Public Utilities",
+                  titleAr: "شركات الخدمات والمرافق (الكهرباء والمياه)", titleEn: "Public Utilities (Electric & Water)",
+                  descAr: "مرافق حيوية هامة تقدم خدمات أساسية وتدر دخلاً منتظماً.",
+                  descEn: "Vital utility providers generating regular service income.",
+                  rulesAr: [
+                      "💵 سعر الشراء: 150$ من البنك عند الهبوط عليها وهي شاغرة.",
+                      "⚡ تسعيرة الإيجار الخدمي:",
+                      "  • امتلاك شركة واحدة: يدفع الخصم 20$ إيجار خدمة.",
+                      "  • امتلاك الشركتين معاً (الكهرباء والمياه): يتضاعف الإيجار تلقائياً إلى 50$!",
+                      "🏦 قيمة الرهن: يمكنك رهنها للبنك واستلام 75$ نقداً، وفك رهنها مقابل 82$."
+                  ],
+                  rulesEn: [
+                      "💵 Purchase Price: 150$ from Bank when unowned.",
+                      "⚡ Rent Schedule: Own 1 utility = 20$ rent | Own both utilities = 50$ rent!",
+                      "🏦 Mortgage value: 75$ cash; 82$ to lift mortgage."
+                  ]
+              },
+              railroad: {
+                  badgeAr: "🚂 محطات النقل والمواصلات السريعة", badgeEn: "🚂 Rapid Rail Transit Stations",
+                  titleAr: "شبكة قطارات وسكك حديد العرب", titleEn: "Arabia Railroad Network",
+                  descAr: "أربعة خطوط قطارات استراتيجية تربط أرجاء الوطن العربي.",
+                  descEn: "Four strategic express train routes connecting the Arab world.",
+                  rulesAr: [
+                      "💵 سعر الشراء: 200$ لكل محطة قطار.",
+                      "📈 تضاعف الإيجار تصاعدياً مع عدد المحطات المملوكة:",
+                      "  • محطة واحدة: 25$ إيجار.",
+                      "  • محطتان: 50$ إيجار.",
+                      "  • 3 محطات: 100$ إيجار.",
+                      "  • جميع المحطات الأربع: 200$ إيجار كامل!",
+                      "🚄 ميزة السفر السريع: إذا هبطت على محطتك وتملك محطة أخرى، يمكنك الانتقال السريع إليها فوراً مقابل 200$!"
+                  ],
+                  rulesEn: [
+                      "💵 Purchase Price: 200$ per railroad.",
+                      "📈 Tiered Rent: 1 Rail = 25$ | 2 Rails = 50$ | 3 Rails = 100$ | 4 Rails = 200$!",
+                      "🚄 Fast Travel: Land on your own station and fast travel to your other owned station for 200$!"
+                  ]
+              }
+          };
 
           const AudioFX = {
               ctx: null,
@@ -1582,11 +941,13 @@ jobs:
               init() {
                   try {
                       if (!this.ctx) {
-                          const AC = window.AudioContext || window.webkitAudioContext;
-                          if (AC) this.ctx = new AC();
+                          const AudioContext = window.AudioContext || window.webkitAudioContext;
+                          if (AudioContext) this.ctx = new AudioContext();
                       }
-                      if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume().catch(()=>{});
-                  } catch(e){}
+                      if (this.ctx && this.ctx.state === 'suspended') {
+                          this.ctx.resume().catch(() => {});
+                      }
+                  } catch(e) {}
               },
               play(type) {
                   if (!this.enabled) return;
@@ -1598,50 +959,58 @@ jobs:
                       const g = this.ctx.createGain();
                       osc.connect(g);
                       g.connect(this.ctx.destination);
-                      osc.onended = () => { try{ osc.disconnect(); g.disconnect(); }catch(e){} };
+
+                      osc.onended = () => {
+                          try {
+                              osc.disconnect();
+                              g.disconnect();
+                          } catch(e) {}
+                      };
 
                       if (type === 'dice') {
-                          osc.type = 'triangle'; osc.frequency.setValueAtTime(140, t);
+                          osc.type = 'triangle';
+                          osc.frequency.setValueAtTime(140, t);
                           osc.frequency.exponentialRampToValueAtTime(40, t + 0.12);
-                          g.gain.setValueAtTime(0.2, t); g.gain.linearRampToValueAtTime(0.01, t + 0.12);
-                          osc.start(t); osc.stop(t + 0.12);
+                          g.gain.setValueAtTime(0.2, t);
+                          g.gain.linearRampToValueAtTime(0.01, t + 0.12);
+                          osc.start(t);
+                          osc.stop(t + 0.12);
                       } else if (type === 'step') {
-                          osc.type = 'sine'; osc.frequency.setValueAtTime(440, t);
-                          g.gain.setValueAtTime(0.08, t); g.gain.linearRampToValueAtTime(0.01, t + 0.05);
-                          osc.start(t); osc.stop(t + 0.05);
+                          osc.type = 'sine';
+                          osc.frequency.setValueAtTime(440, t);
+                          g.gain.setValueAtTime(0.1, t);
+                          g.gain.linearRampToValueAtTime(0.01, t + 0.05);
+                          osc.start(t);
+                          osc.stop(t + 0.05);
                       } else if (type === 'cash') {
-                          osc.type = 'sine'; osc.frequency.setValueAtTime(587, t);
+                          osc.type = 'sine';
+                          osc.frequency.setValueAtTime(587.33, t);
                           osc.frequency.setValueAtTime(880, t + 0.08);
-                          g.gain.setValueAtTime(0.18, t); g.gain.linearRampToValueAtTime(0.01, t + 0.2);
-                          osc.start(t); osc.stop(t + 0.2);
-                      } else if (type === 'build') {
-                          osc.type = 'square'; osc.frequency.setValueAtTime(320, t);
-                          osc.frequency.setValueAtTime(480, t + 0.08);
-                          g.gain.setValueAtTime(0.12, t); g.gain.linearRampToValueAtTime(0.01, t + 0.25);
-                          osc.start(t); osc.stop(t + 0.25);
+                          g.gain.setValueAtTime(0.18, t);
+                          g.gain.linearRampToValueAtTime(0.01, t + 0.22);
+                          osc.start(t);
+                          osc.stop(t + 0.22);
                       } else if (type === 'jail') {
-                          osc.type = 'sawtooth'; osc.frequency.setValueAtTime(180, t);
+                          osc.type = 'sawtooth';
+                          osc.frequency.setValueAtTime(180, t);
                           osc.frequency.linearRampToValueAtTime(80, t + 0.3);
-                          g.gain.setValueAtTime(0.2, t); g.gain.linearRampToValueAtTime(0.01, t + 0.3);
-                          osc.start(t); osc.stop(t + 0.3);
+                          g.gain.setValueAtTime(0.2, t);
+                          g.gain.linearRampToValueAtTime(0.01, t + 0.3);
+                          osc.start(t);
+                          osc.stop(t + 0.3);
                       }
-                  } catch(e){}
+                  } catch(e) {}
               }
           };
 
-          const SAVE_KEY = "monopoly_pro_save_v2";
+          const SAVE_KEY = "monopoly_arabia_save_v1";
 
           const Game = {
               lang: 'ar',
-              theme: 'dark',
-              perspective: 'isometric', // 'isometric' or 'topdown'
-              isLandscape: false,
-              initCash: 3000,
-              difficulty: 'medium', // easy, medium, hard
-              mode: 'ai', // ai, pvp, bt
               propStyle: 'glow',
               diceSpeed: 'normal',
               moveSpeed: 'normal',
+              mode: 'ai',
               turn: 0,
               doublesInRow: 0,
               isRolling: false,
@@ -1651,8 +1020,8 @@ jobs:
               fastTravelData: null,
               isGameOver: false,
               players: [
-                  { id:0, name:"الملك", avatar:"👑", color:"#EF4444", money:3000, pos:0, inJail:false, jailTurns:0, props:[] },
-                  { id:1, name:"روبوت", avatar:"🤖", color:"#38BDF8", money:3000, pos:0, inJail:false, jailTurns:0, props:[] }
+                  { id:0, nameAr:"الملك (أنت)", nameEn:"King (You)", avatar:"👑", color:"#EF4444", money:1500, pos:0, inJail:false, jailTurns:0, props:[] },
+                  { id:1, nameAr:"الصقر (الذكاء)", nameEn:"Falcon (AI)", avatar:"🦅", color:"#38BDF8", money:1500, pos:0, inJail:false, jailTurns:0, props:[] }
               ]
           };
 
@@ -1662,7 +1031,9 @@ jobs:
                   if (!raw) return false;
                   const data = JSON.parse(raw);
                   return !!(data && data.players && data.players.length > 0 && !data.isGameOver);
-              } catch(e) { return false; }
+              } catch(e) {
+                  return false;
+              }
           }
 
           function saveCurrentGame() {
@@ -1671,18 +1042,21 @@ jobs:
                       savedAt: Date.now(),
                       isGameOver: Game.isGameOver,
                       turn: Game.turn,
+                      doublesInRow: Game.doublesInRow,
                       mode: Game.mode,
-                      difficulty: Game.difficulty,
-                      initCash: Game.initCash,
-                      theme: Game.theme,
-                      perspective: Game.perspective,
+                      diceSpeed: Game.diceSpeed,
+                      moveSpeed: Game.moveSpeed,
+                      propStyle: Game.propStyle,
                       lang: Game.lang,
                       players: JSON.parse(JSON.stringify(Game.players)),
-                      tiles: BOARD_TILES.map(t => ({ id: t.id, owner: t.owner, mortgaged: t.mortgaged, buildings: t.buildings }))
+                      tiles: BOARD_TILES.map(t => ({ id: t.id, owner: t.owner, mortgaged: t.mortgaged }))
                   };
                   localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
                   return true;
-              } catch(e) { return false; }
+              } catch(e) {
+                  console.error("Save error:", e);
+                  return false;
+              }
           }
 
           function loadSavedGame() {
@@ -1693,12 +1067,12 @@ jobs:
                   if (!data || !data.players) return false;
 
                   Game.turn = data.turn ?? 0;
+                  Game.doublesInRow = data.doublesInRow ?? 0;
                   if (data.mode) Game.mode = data.mode;
-                  if (data.difficulty) Game.difficulty = data.difficulty;
-                  if (data.initCash) Game.initCash = data.initCash;
-                  if (data.theme) setAppTheme(data.theme);
-                  if (data.perspective) setPerspective(data.perspective);
-                  if (data.lang) setLanguage(data.lang);
+                  if (data.diceSpeed) Game.diceSpeed = data.diceSpeed;
+                  if (data.moveSpeed) Game.moveSpeed = data.moveSpeed;
+                  if (data.propStyle) Game.propStyle = data.propStyle;
+                  if (data.lang) Game.lang = data.lang;
 
                   Game.players = data.players;
                   if (data.tiles) {
@@ -1707,15 +1081,22 @@ jobs:
                           if (t) {
                               t.owner = st.owner;
                               t.mortgaged = st.mortgaged;
-                              t.buildings = st.buildings || 0;
                           }
                       });
                   }
+
+                  setLanguage(Game.lang);
+                  setPropStyle(Game.propStyle);
+                  setDiceSpeed(Game.diceSpeed);
+                  setMoveSpeed(Game.moveSpeed);
                   updateBoardVisual();
                   updatePawns();
                   updateUI();
                   return true;
-              } catch(e) { return false; }
+              } catch(e) {
+                  console.error("Load error:", e);
+                  return false;
+              }
           }
 
           function showStartModal() {
@@ -1726,109 +1107,42 @@ jobs:
               if (canContinue) {
                   btnCont.disabled = false;
                   btnCont.style.opacity = "1";
+                  btnCont.style.cursor = "pointer";
                   btnCont.classList.remove("btn-gray");
                   btnCont.classList.add("btn-blue");
                   try {
                       const d = JSON.parse(localStorage.getItem(SAVE_KEY));
-                      const dt = d.savedAt ? new Date(d.savedAt).toLocaleDateString() : "";
-                      statusTxt.innerText = `يوجد لعبة سابقة محفوظة (${dt}).`;
-                  } catch(e){ statusTxt.innerText = "يوجد لعبة سابقة جاهزة للإكمال."; }
+                      const dt = d.savedAt ? new Date(d.savedAt).toLocaleDateString('ar-EG', { hour: '2-digit', minute: '2-digit' }) : "";
+                      statusTxt.innerText = dt ? `يوجد لعبة محفوظة بتاريخ: ${dt}` : "يوجد لعبة سابقة محفوظة جاهزة للإكمال.";
+                  } catch(e) {
+                      statusTxt.innerText = "يوجد لعبة سابقة محفوظة جاهزة للإكمال.";
+                  }
               } else {
                   btnCont.disabled = true;
                   btnCont.style.opacity = "0.45";
+                  btnCont.style.cursor = "not-allowed";
                   btnCont.classList.remove("btn-blue");
                   btnCont.classList.add("btn-gray");
-                  statusTxt.innerText = "لا توجد لعبة سابقة محفوظة.";
+                  statusTxt.innerText = "لا توجد لعبة سابقة محفوظة حتى الآن (أول تشغيل بعد التثبيت).";
               }
               document.getElementById("startModal").classList.add("show");
           }
 
-          function setInitCash(val) {
-              Game.initCash = val;
-              [3000, 6000, 9000].forEach(c => {
-                  const b = document.getElementById("btnInit" + c);
-                  if (b) b.className = "btn-pill" + (c === val ? " active" : "");
-              });
-          }
-
-          function setPlayMode(m) {
-              Game.mode = m;
-              ["ai", "pvp", "bt"].forEach(id => {
-                  const b = document.getElementById("btnMode" + (id==='ai'?'VsAi':(id==='pvp'?'PassPlay':'Bt')));
-                  if (b) b.className = "btn-pill" + (id === m ? " active" : "");
-              });
-
-              const p1Input = document.getElementById("inpP1Name");
-              const secDiff = document.getElementById("secDifficulty");
-
-              if (m === 'ai') {
-                  p1Input.value = (I18N[Game.lang] && I18N[Game.lang].robot) ? I18N[Game.lang].robot : "روبوت";
-                  p1Input.readOnly = true;
-                  p1Input.style.opacity = "0.85";
-                  secDiff.style.display = "block";
-              } else {
-                  p1Input.readOnly = false;
-                  p1Input.style.opacity = "1";
-                  p1Input.value = m === 'bt' ? "لاعب بلوتوث" : "اللاعب 2";
-                  secDiff.style.display = "none";
-              }
-          }
-
-          function setDifficulty(d) {
-              Game.difficulty = d;
-              ["easy", "medium", "hard"].forEach(id => {
-                  const b = document.getElementById("btnDiff" + id.charAt(0).toUpperCase() + id.slice(1));
-                  if (b) b.className = "btn-pill" + (id === d ? " active" : "");
-              });
-          }
-
-          function confirmStartNewGame() {
-              const p0Name = document.getElementById("inpP0Name").value.trim() || "الملك";
-              let p1Name = document.getElementById("inpP1Name").value.trim();
-
-              if (Game.mode === 'ai') {
-                  p1Name = (I18N[Game.lang] && I18N[Game.lang].robot) ? I18N[Game.lang].robot : "روبوت";
-              } else if (!p1Name) {
-                  p1Name = "لاعب 2";
-              }
-
-              Game.players[0].name = p0Name;
-              Game.players[0].money = Game.initCash;
-              Game.players[0].pos = 0;
-              Game.players[0].props = [];
-              Game.players[0].inJail = false;
-
-              Game.players[1].name = p1Name;
-              Game.players[1].avatar = Game.mode === 'ai' ? "🤖" : "🦅";
-              Game.players[1].money = Game.initCash;
-              Game.players[1].pos = 0;
-              Game.players[1].props = [];
-              Game.players[1].inJail = false;
-
-              BOARD_TILES.forEach(t => { t.owner = undefined; t.mortgaged = false; t.buildings = 0; });
-              Game.turn = 0;
-              Game.isGameOver = false;
-
+          function startNewGameFromModal() {
               document.getElementById("startModal").classList.remove("show");
-              updateBoardVisual();
-              updatePawns();
-              updateUI();
-              logEvent(`🎲 بدأت لعبة جديدة بمبلغ ${Game.initCash}$ ضد ${p1Name}!`);
               startPlayerTurn();
           }
 
           function continueSavedGameFromModal() {
               if (!hasSavedGame()) return;
-              if (loadSavedGame()) {
+              const ok = loadSavedGame();
+              if (ok) {
                   document.getElementById("startModal").classList.remove("show");
-                  logEvent("📂 تم استئناف اللعبة السابقة بنجاح!");
+                  logEvent("📂 تم استئناف اللعبة السابقة بنجاح من حيث توقفت!");
                   startPlayerTurn();
+              } else {
+                  startNewGameFromModal();
               }
-          }
-
-          function promptNewGameFromSettings() {
-              closeSettingsModal();
-              showStartModal();
           }
 
           function getGridCoords(i) {
@@ -1841,22 +1155,6 @@ jobs:
               if (i === 30) return { r: 1, c: 11 };
               if (i >= 31 && i <= 39) return { r: 1 + (i - 30), c: 11 };
               return { r: 11, c: 11 };
-          }
-
-          function getTileDisplayName(t) {
-              if (t.type === "property") {
-                  const pIdx = PROPERTY_INDICES.indexOf(t.id);
-                  if (pIdx !== -1) {
-                      if (Game.lang === 'ar') {
-                          return CITY_NAMES.ar[pIdx] || t.nameAr;
-                      } else if (EURO_LANGS.includes(Game.lang)) {
-                          return CITY_NAMES.europe[pIdx] || t.nameEn;
-                      } else if (ASIA_LANGS.includes(Game.lang)) {
-                          return CITY_NAMES.asia[pIdx] || t.nameEn;
-                      }
-                  }
-              }
-              return Game.lang === 'ar' ? t.nameAr : t.nameEn;
           }
 
           function renderBoard() {
@@ -1878,23 +1176,11 @@ jobs:
 
                   let h = "";
                   if (tile.type === "property") {
-                      h += `<div class="tile-bar" style="background:${tile.color}"></div>
-                            <div class="tile-cnt">
-                              <div class="bld-zone" id="bldZone-${index}"></div>
-                              <div class="tile-name" id="tName-${index}">${getTileDisplayName(tile)}</div>
-                              <div class="tile-price">${tile.price}$</div>
-                            </div>`;
+                      h += `<div class="tile-bar" style="background:${tile.color}"></div><div class="tile-cnt"><div class="tile-name" id="tName-${index}">${Game.lang==='ar'?tile.nameAr:tile.nameEn}</div><div class="tile-price">${tile.price}$</div></div>`;
                   } else if (tile.type === "railroad" || tile.type === "utility") {
-                      h += `<div class="tile-cnt">
-                              <div class="tile-icon">${tile.icon}</div>
-                              <div class="tile-name" id="tName-${index}">${getTileDisplayName(tile)}</div>
-                              <div class="tile-price">${tile.price}$</div>
-                            </div>`;
+                      h += `<div class="tile-cnt"><div class="tile-icon">${tile.icon}</div><div class="tile-name" id="tName-${index}">${Game.lang==='ar'?tile.nameAr:tile.nameEn}</div><div class="tile-price">${tile.price}$</div></div>`;
                   } else {
-                      h += `<div class="tile-cnt">
-                              <div class="tile-icon">${tile.icon||"🏛️"}</div>
-                              <div class="tile-name" id="tName-${index}">${getTileDisplayName(tile)}</div>
-                            </div>`;
+                      h += `<div class="tile-cnt"><div class="tile-icon">${tile.icon||"🏛️"}</div><div class="tile-name" id="tName-${index}">${Game.lang==='ar'?tile.nameAr:tile.nameEn}</div></div>`;
                   }
                   h += `<div class="tile-pawns" id="pawns-${index}"></div>`;
                   tileDiv.innerHTML = h;
@@ -1939,30 +1225,28 @@ jobs:
 
           function updateUI() {
               const p0 = Game.players[0], p1 = Game.players[1];
-              const dict = I18N[Game.lang] || I18N.ar;
-
               document.getElementById("cashP0").innerText = p0.money + "$";
               document.getElementById("cashP1").innerText = p1.money + "$";
               const m0 = p0.props.filter(id => BOARD_TILES[id].mortgaged).length;
               const m1 = p1.props.filter(id => BOARD_TILES[id].mortgaged).length;
-              document.getElementById("propsP0").innerText = `${dict.p} ${p0.props.length}`;
-              document.getElementById("propsP1").innerText = `${dict.p} ${p1.props.length}`;
-              document.getElementById("mortP0").innerText = m0 > 0 ? `(${dict.m} ${m0})` : "";
-              document.getElementById("mortP1").innerText = m1 > 0 ? `(${dict.m} ${m1})` : "";
+              document.getElementById("propsP0").innerText = `${I18N[Game.lang].p} ${p0.props.length}`;
+              document.getElementById("propsP1").innerText = `${I18N[Game.lang].p} ${p1.props.length}`;
+              document.getElementById("mortP0").innerText = m0 > 0 ? `(${I18N[Game.lang].m} ${m0})` : "";
+              document.getElementById("mortP1").innerText = m1 > 0 ? `(${I18N[Game.lang].m} ${m1})` : "";
 
               document.getElementById("pCard0").className = "p-card" + (Game.turn === 0 ? " active" : "");
               document.getElementById("pCard1").className = "p-card" + (Game.turn === 1 ? " active" : "");
               document.getElementById("turnBadge0").style.display = Game.turn === 0 ? "block" : "none";
               document.getElementById("turnBadge1").style.display = Game.turn === 1 ? "block" : "none";
-              document.getElementById("turnBadge0").innerText = dict.turn;
-              document.getElementById("turnBadge1").innerText = dict.opp;
+              document.getElementById("turnBadge0").innerText = I18N[Game.lang].turn;
+              document.getElementById("turnBadge1").innerText = I18N[Game.lang].opp;
 
               const cur = Game.players[Game.turn];
-              document.getElementById("turnAnnouncer").innerText = `${dict.turn}: ${cur.avatar} ${cur.name}`;
-              document.getElementById("nameP0").innerText = p0.name;
-              document.getElementById("nameP1").innerText = p1.name;
+              document.getElementById("turnAnnouncer").innerText = `${I18N[Game.lang].turn}: ${cur.avatar} ${Game.lang==='ar'?cur.nameAr:cur.nameEn}`;
               document.getElementById("avP0").innerText = p0.avatar;
               document.getElementById("avP1").innerText = p1.avatar;
+              document.getElementById("nameP0").innerText = Game.lang==='ar'?p0.nameAr:p0.nameEn;
+              document.getElementById("nameP1").innerText = Game.lang==='ar'?p1.nameAr:p1.nameEn;
 
               updateBoardVisual();
           }
@@ -1975,19 +1259,6 @@ jobs:
                   const b = el.querySelector(".tile-owner-badge"); if (b) b.remove();
                   const mb = el.querySelector(".tile-mortgaged-badge"); if (mb) mb.remove();
 
-                  // Update low poly 3D building visualization
-                  const bldZone = document.getElementById("bldZone-" + t.id);
-                  if (bldZone) {
-                      bldZone.innerHTML = "";
-                      if (t.buildings >= 5) {
-                          bldZone.innerHTML = `<span class="eiffel-tower" title="برج إيفل الذهبي">🗼</span>`;
-                      } else if (t.buildings > 0) {
-                          for (let i = 0; i < t.buildings; i++) {
-                              bldZone.innerHTML += `<div class="bld-block" title="طابق ${i+1}"></div>`;
-                          }
-                      }
-                  }
-
                   if (t.owner !== undefined) {
                       const owner = Game.players[t.owner];
                       el.style.color = t.owner === 0 ? "var(--p0)" : "var(--p1)";
@@ -1998,7 +1269,7 @@ jobs:
                           const bg = document.createElement("div"); bg.className = "tile-owner-badge"; bg.innerText = owner.avatar; el.appendChild(bg);
                       }
                       if (t.mortgaged) {
-                          const mg = document.createElement("div"); mg.className = "tile-mortgaged-badge"; mg.innerText = I18N[Game.lang]?.m || "مَرْهُون"; el.appendChild(mg);
+                          const mg = document.createElement("div"); mg.className = "tile-mortgaged-badge"; mg.innerText = Game.lang==='ar'?"مَرْهُون":"MORTGAGED"; el.appendChild(mg);
                       }
                   } else { el.style.color = ""; }
               });
@@ -2009,71 +1280,11 @@ jobs:
               el.innerText = msg;
           }
 
-          /* Perspective Controller: Isometric vs Top-Down */
-          function setPerspective(mode) {
-              Game.perspective = mode;
-              const bw = document.getElementById("board");
-              const btn = document.getElementById("btnPerspToggle");
-              const btnIso = document.getElementById("btnPerspIso");
-              const btnTop = document.getElementById("btnPerspTop");
-
-              if (mode === 'topdown') {
-                  bw.classList.remove("isometric-view");
-                  bw.classList.add("topdown-view");
-                  if (btn) btn.innerText = "⬇️ علوي مباشر";
-                  if (btnTop) btnTop.className = "btn-pill active";
-                  if (btnIso) btnIso.className = "btn-pill";
-              } else {
-                  bw.classList.remove("topdown-view");
-                  bw.classList.add("isometric-view");
-                  if (btn) btn.innerText = "📐 أيزومتريك";
-                  if (btnIso) btnIso.className = "btn-pill active";
-                  if (btnTop) btnTop.className = "btn-pill";
-              }
-          }
-
-          function togglePerspectiveView() {
-              if (Game.perspective === 'isometric') {
-                  setPerspective('topdown');
-              } else {
-                  setPerspective('isometric');
-              }
-          }
-
-          function toggleScreenOrientation() {
-              Game.isLandscape = !Game.isLandscape;
-              const cont = document.getElementById("appContainer");
-              if (Game.isLandscape) {
-                  cont.classList.add("landscape-mode");
-                  if (window.Android && window.Android.setOrientation) {
-                      window.Android.setOrientation("landscape");
-                  }
-              } else {
-                  cont.classList.remove("landscape-mode");
-                  if (window.Android && window.Android.setOrientation) {
-                      window.Android.setOrientation("portrait");
-                  }
-              }
-          }
-
-          function setAppTheme(mode) {
-              Game.theme = mode;
-              if (mode === 'light') {
-                  document.body.classList.add("light-theme");
-                  document.getElementById("btnThemeLight").className = "btn-pill active";
-                  document.getElementById("btnThemeDark").className = "btn-pill";
-              } else {
-                  document.body.classList.remove("light-theme");
-                  document.getElementById("btnThemeDark").className = "btn-pill active";
-                  document.getElementById("btnThemeLight").className = "btn-pill";
-              }
-          }
-
           function rollDice() {
               if (Game.isRolling || Game.isGameOver) return;
               const cur = Game.players[Game.turn];
               if (cur.inJail) {
-                  if (Game.turn === 0 || Game.mode !== 'ai') openJailModal();
+                  if (Game.turn === 0) openJailModal();
                   else {
                       if (cur.money >= 300) payJailFine();
                       else rollForJail();
@@ -2090,7 +1301,7 @@ jobs:
               d1.classList.add("rolling");
               AudioFX.play('dice');
 
-              const dur = Game.diceSpeed === "slow" ? 850 : (Game.diceSpeed === "fast" ? 250 : 500);
+              const dur = Game.diceSpeed === "v_slow" ? 1400 : (Game.diceSpeed === "slow" ? 900 : (Game.diceSpeed === "fast" ? 250 : (Game.diceSpeed === "v_fast" ? 100 : 500)));
               setTimeout(() => {
                   d0.classList.remove("rolling");
                   d1.classList.remove("rolling");
@@ -2102,13 +1313,13 @@ jobs:
 
                   const sum = val0 + val1;
                   const isDbl = (val0 === val1);
-                  logEvent(`${cur.avatar} رمى النرد: ${sum} (${val0}+${val1})${isDbl ? " 🔥 متطابق!" : ""}`);
+                  logEvent(`${cur.avatar} ${I18N[Game.lang].rolled} ${sum} (${val0}+${val1})${isDbl ? " 🔥 متطابق!" : ""}`);
 
                   if (isDbl) {
                       Game.doublesInRow++;
                       if (Game.doublesInRow >= 3) {
                           Game.doublesInRow = 0;
-                          logEvent("🚔 3 رميات متطابقة! أُرسلت للسجن.");
+                          logEvent("🚔 3 رميات متطابقة! أُرسل إلى السجن.");
                           sendToJail(cur); finishTurn(false); return;
                       }
                   } else { Game.doublesInRow = 0; }
@@ -2131,7 +1342,7 @@ jobs:
 
           function moveSteps(player, steps, isDbl) {
               let rem = steps;
-              const iv = Game.moveSpeed === "slow" ? 200 : (Game.moveSpeed === "fast" ? 60 : 120);
+              const iv = Game.moveSpeed === "v_slow" ? 350 : (Game.moveSpeed === "slow" ? 200 : (Game.moveSpeed === "fast" ? 60 : (Game.moveSpeed === "v_fast" ? 20 : 120)));
               const t = setInterval(() => {
                   player.pos = (player.pos + 1) % 40;
                   AudioFX.play('step');
@@ -2139,7 +1350,7 @@ jobs:
                   if (player.pos === 0) {
                       player.money += 200;
                       AudioFX.play('cash');
-                      logEvent(I18N[Game.lang]?.passGo || "مررت بنقطة الانطلاق وحصلت على 200$!");
+                      logEvent(I18N[Game.lang].passGo);
                       updateUI();
                   }
                   rem--;
@@ -2161,7 +1372,7 @@ jobs:
               if (tile.type === "tax") {
                   player.money -= tile.price;
                   AudioFX.play('cash');
-                  logEvent(`💸 ${player.avatar} دفع ضريبة ${tile.price}$ (${getTileDisplayName(tile)}).`);
+                  logEvent(`💸 ${player.avatar} دفع ${tile.price}$ (${Game.lang==='ar'?tile.nameAr:tile.nameEn}).`);
                   if (checkBankruptcy(player)) return;
                   updateUI(); finishTurn(isDbl); return;
               }
@@ -2172,7 +1383,7 @@ jobs:
 
               if (["property", "railroad", "utility"].includes(tile.type)) {
                   if (tile.owner === undefined) {
-                      if (player.id === 0 || Game.mode !== 'ai') {
+                      if (player.id === 0) {
                           promptBuyProperty(tile, isDbl);
                       } else {
                           handleAIBuyDecision(player, tile, isDbl);
@@ -2184,11 +1395,11 @@ jobs:
                           player.money -= rent;
                           Game.players[tile.owner].money += rent;
                           AudioFX.play('cash');
-                          logEvent(`🏷️ دفع ${player.avatar} ${rent}$ إيجار إلى ${Game.players[tile.owner].name} (${getTileDisplayName(tile)}).`);
+                          logEvent(`🏷️ دفع ${player.avatar} ${rent}$ إيجار إلى ${Game.players[tile.owner].avatar} (${Game.lang==='ar'?tile.nameAr:tile.nameEn}).`);
                           if (checkBankruptcy(player)) return;
                           updateUI();
                       } else {
-                          logEvent(`العقار (${getTileDisplayName(tile)}) مَرْهُون، معفى من الإيجار.`);
+                          logEvent(`العقار (${Game.lang==='ar'?tile.nameAr:tile.nameEn}) مَرْهُون، معفى من الإيجار.`);
                       }
                       finishTurn(isDbl); return;
                   } else {
@@ -2201,19 +1412,48 @@ jobs:
               finishTurn(isDbl);
           }
 
-          // شروط السفر السريع: لا يتم إلا إذا تم شراء كافة المحطات الأربع، ويكون مجانياً (0$) لصاحب المحطات
+          function checkBankruptcy(player) {
+              if (player.money >= 0) return false;
+              const unmortgaged = player.props.filter(id => !BOARD_TILES[id].mortgaged);
+              for (const propId of unmortgaged) {
+                  if (player.money >= 0) break;
+                  const t = BOARD_TILES[propId];
+                  t.mortgaged = true;
+                  const val = Math.floor(t.price * 0.5);
+                  player.money += val;
+                  logEvent(`🏦 تم رهن (${Game.lang==='ar'?t.nameAr:t.nameEn}) تلقائياً لدفع المستحقات.`);
+              }
+              updateUI();
+              if (player.money < 0) {
+                  const winnerId = (player.id === 0) ? 1 : 0;
+                  triggerGameOver(winnerId);
+                  return true;
+              }
+              return false;
+          }
+
+          function triggerGameOver(winnerId) {
+              Game.isGameOver = true;
+              localStorage.removeItem(SAVE_KEY);
+              const winner = Game.players[winnerId];
+              document.getElementById("goTrophy").innerText = winner.avatar;
+              document.getElementById("goWinnerText").innerText = Game.lang === 'ar' ? `فاز ${winner.nameAr} باللعبة! 🏆` : `${winner.nameEn} Won the Game! 🏆`;
+              document.getElementById("goDetails").innerText = Game.lang === 'ar' ? "أفلس الخصم ولم يعد يملك أموالاً أو عقارات لتغطية التكاليف." : "The opponent went bankrupt with no cash or assets remaining.";
+              document.getElementById("gameOverModal").classList.add("show");
+          }
+
           function promptRailroadFastTravel(player, currentTile, isDbl) {
-              const allRails = BOARD_TILES.filter(t => t.type === "railroad");
-              const allPurchased = allRails.every(t => t.owner !== undefined);
-              if (!allPurchased) { finishTurn(isDbl); return; }
+              const otherRails = BOARD_TILES.filter(t => t.type === "railroad" && t.id !== currentTile.id && t.owner === player.id);
+              if (otherRails.length === 0 || player.money < 200) { finishTurn(isDbl); return; }
 
-              const otherRails = allRails.filter(t => t.id !== currentTile.id && t.owner === player.id);
-              if (otherRails.length === 0) { finishTurn(isDbl); return; }
-
-              const dest = otherRails[0];
-              Game.fastTravelData = { player, dest, isDbl };
-              document.getElementById("fastTravelDestName").innerText = `${dest.icon} ${getTileDisplayName(dest)}`;
-              document.getElementById("fastTravelModal").classList.add("show");
+              if (player.id === 0) {
+                  const dest = otherRails[0];
+                  Game.fastTravelData = { player, dest, isDbl };
+                  document.getElementById("fastTravelDestName").innerText = `${dest.icon} ${Game.lang==='ar'?dest.nameAr:dest.nameEn}`;
+                  document.getElementById("fastTravelModal").classList.add("show");
+              } else {
+                  finishTurn(isDbl);
+              }
           }
 
           function confirmFastTravel() {
@@ -2222,11 +1462,15 @@ jobs:
               Game.fastTravelData = null;
               document.getElementById("fastTravelModal").classList.remove("show");
 
-              player.pos = dest.id;
-              AudioFX.play('step');
-              updatePawns(player.id);
-              updateUI();
-              logEvent(`🚄 سافر ${player.avatar} مجاناً إلى (${getTileDisplayName(dest)})!`);
+              if (player.money >= 200) {
+                  player.money -= 200;
+                  player.pos = dest.id;
+                  AudioFX.play('cash');
+                  AudioFX.play('step');
+                  updatePawns(player.id);
+                  updateUI();
+                  logEvent(`🚂 سافر الملك سريعاً إلى (${Game.lang==='ar'?dest.nameAr:dest.nameEn}) مقابل 200$.`);
+              }
               finishTurn(isDbl);
           }
 
@@ -2238,7 +1482,7 @@ jobs:
               finishTurn(isDbl);
           }
 
-          // حساب الإيجار والبناء: كل طابق يزيد الإيجار بنسبة 50% من تكلفة الطابق
+          // حساب الإيجار: 20% أساسي و 40% عند احتكار المجموعة
           function calculateRent(tile) {
               if (tile.type === "railroad") {
                   const cnt = BOARD_TILES.filter(t => t.type === "railroad" && t.owner === tile.owner).length;
@@ -2250,67 +1494,23 @@ jobs:
               }
               const groupTiles = BOARD_TILES.filter(t => t.group === tile.group);
               const hasMonopoly = groupTiles.every(t => t.owner === tile.owner);
-              const baseRent = hasMonopoly ? Math.round(tile.price * 0.40) : Math.round(tile.price * 0.20);
-
-              if (tile.buildings > 0) {
-                  const floorCost = Math.round(tile.price * 0.33);
-                  const floorBonus = Math.round(floorCost * 0.50);
-                  return baseRent + (tile.buildings * floorBonus);
-              }
-              return baseRent;
-          }
-
-          function canBuildOnProp(playerId, tile) {
-              if (tile.type !== "property" || tile.owner !== playerId || tile.mortgaged) return false;
-              if (tile.buildings >= 5) return false; // الحد النهائي برج إيفل
-              const groupTiles = BOARD_TILES.filter(t => t.group === tile.group);
-              const ownsAll = groupTiles.every(t => t.owner === playerId && !t.mortgaged);
-              if (!ownsAll) return false;
-
-              // قاعدة البناء المتساوي: لا يمكن بناء الطابق التالي إلا بعد بناء الحالي في بقية عقارات المجموعة
-              const minBldInGroup = Math.min(...groupTiles.map(t => t.buildings));
-              if (tile.buildings > minBldInGroup) return false;
-
-              const floorCost = Math.round(tile.price * 0.33);
-              return Game.players[playerId].money >= floorCost;
-          }
-
-          function buildFloor(tileId) {
-              const t = BOARD_TILES[tileId];
-              const p = Game.players[t.owner];
-              const floorCost = Math.round(t.price * 0.33);
-
-              if (canBuildOnProp(p.id, t)) {
-                  p.money -= floorCost;
-                  t.buildings++;
-                  AudioFX.play('build');
-                  updateUI();
-                  if (t.buildings === 5) {
-                      logEvent(`🗼 اكتمل بناء برج إيفل الذهبي في (${getTileDisplayName(t)})!`);
-                  } else {
-                      logEvent(`🧱 بنى ${p.avatar} طابقاً ليمونياً ثلاثي الأبعاد (${t.buildings}) في (${getTileDisplayName(t)}).`);
-                  }
-                  openPropsModal(p.id);
-              }
+              return hasMonopoly ? Math.round(tile.price * 0.40) : Math.round(tile.price * 0.20);
           }
 
           function promptBuyProperty(tile, isDbl) {
               Game.pendingTile = { tile, isDbl };
               const baseRent = Math.round(tile.price * 0.20);
               const monoRent = Math.round(tile.price * 0.40);
-              const floorCost = Math.round(tile.price * 0.33);
-
-              document.getElementById("deedTitle").innerText = `${tile.icon||""} ${getTileDisplayName(tile)}`;
+              document.getElementById("deedTitle").innerText = `${tile.icon||""} ${Game.lang==='ar'?tile.nameAr:tile.nameEn}`;
               document.getElementById("deedBody").innerHTML = `
                   <div style="text-align:center; margin-bottom:8px;">
                       <span style="display:inline-block; width:14px; height:14px; background:${tile.color}; border-radius:50%; vertical-align:middle;"></span>
                       <strong style="font-size:1.15rem; color:var(--gold); margin:0 6px;">${tile.price}$</strong>
                   </div>
                   <div style="font-size:0.82rem; color:var(--text); text-align:center;">إيجار العقار الأساسي (20%): <strong style="color:var(--gold);">${baseRent}$</strong></div>
-                  <div style="font-size:0.75rem; color:var(--dim); text-align:center; margin-top:3px;">إيجار الاحتكار (40%): <strong style="color:var(--gold);">${monoRent}$</strong></div>
-                  ${tile.type === 'property' ? `<div style="font-size:0.75rem; color:var(--lime); text-align:center; margin-top:3px;">تكلفة الطابق (33%): <strong>${floorCost}$</strong> | الحد النهائي: برج إيفل 🗼</div>` : ''}
+                  <div style="font-size:0.75rem; color:var(--dim); text-align:center; margin-top:4px;">(عند احتكار كامل المجموعة يرتفع الإيجار إلى 40%: <strong style="color:var(--gold);">${monoRent}$</strong>)</div>
               `;
-              const canAfford = Game.players[Game.turn].money >= tile.price;
+              const canAfford = Game.players[0].money >= tile.price;
               document.getElementById("btnBuyProp").disabled = !canAfford;
               document.getElementById("deedModal").classList.add("show");
           }
@@ -2326,7 +1526,7 @@ jobs:
 
           function confirmBuyProp() {
               if (!Game.pendingTile) return;
-              const cur = Game.players[Game.turn];
+              const cur = Game.players[0];
               const t = Game.pendingTile.tile;
               if (cur.money >= t.price) {
                   buyProp(cur, t, t.price);
@@ -2337,6 +1537,7 @@ jobs:
               }
           }
 
+          // نظام المزاد العلني مع مؤقت 5 ثوانٍ وإظهار السعر الأساسي
           let aucTimerInterval = null;
           let aucSecondsLeft = 5;
 
@@ -2349,6 +1550,7 @@ jobs:
               aucTimerInterval = setInterval(() => {
                   aucSecondsLeft--;
                   if (timerEl) timerEl.innerText = aucSecondsLeft;
+
                   if (aucSecondsLeft <= 0) {
                       stopAuctionTimer();
                       handleAuctionTimeout();
@@ -2366,7 +1568,7 @@ jobs:
           function handleAuctionTimeout() {
               const a = Game.auction;
               if (!a) return;
-              logEvent(`⏱️ انتهت المهلة للاعب ${Game.players[a.bidTurn].avatar}!`);
+              logEvent(`⏱️ انتهت مهلة الـ 5 ثوانٍ للاعب ${Game.players[a.bidTurn].avatar}!`);
               if (a.highestBidder !== null) {
                   concludeAuction();
               } else {
@@ -2385,18 +1587,19 @@ jobs:
               document.getElementById("auctionModal").classList.add("show");
               updateAuctionUI();
               startAuctionTimer();
-              if (Game.turn === 1 && Game.mode === 'ai') setTimeout(handleAIAuction, 900);
+              if (Game.turn === 1) setTimeout(handleAIAuction, 1000);
           }
 
           function updateAuctionUI() {
-              const a = Game.auction; if (!a) return;
-              document.getElementById("aucPropDetails").innerText = `${a.tile.icon || "🏙️"} ${getTileDisplayName(a.tile)}`;
+              const a = Game.auction;
+              if (!a) return;
+              document.getElementById("aucPropDetails").innerText = `${a.tile.icon || "🏙️"} ${Game.lang==='ar'?a.tile.nameAr:a.tile.nameEn}`;
               document.getElementById("aucBasePriceVal").innerText = a.tile.price + "$";
               document.getElementById("aucCurrentBid").innerText = a.currentBid + "$";
-              document.getElementById("aucHighestBidder").innerText = a.highestBidder !== null ? `${Game.players[a.highestBidder].avatar} (${Game.players[a.highestBidder].money}$)` : "لا يوجد مزايد";
+              document.getElementById("aucHighestBidder").innerText = a.highestBidder !== null ? `${Game.players[a.highestBidder].avatar} (${Game.players[a.highestBidder].money}$)` : (Game.lang==='ar'?"لا يوجد مزايد بعد":"No bids yet");
               const cur = Game.players[a.bidTurn];
-              document.getElementById("aucTurnPrompt").innerText = `دور المزايدة: ${cur.avatar} ${cur.name}`;
-              document.getElementById("aucControls").style.display = (a.bidTurn === 0 || Game.mode !== 'ai') ? "flex" : "none";
+              document.getElementById("aucTurnPrompt").innerText = `دور: ${cur.avatar} ${Game.lang==='ar'?cur.nameAr:cur.nameEn}`;
+              document.getElementById("aucControls").style.display = (a.bidTurn === 0) ? "flex" : "none";
           }
 
           function placeAuctionBid(inc) {
@@ -2408,7 +1611,7 @@ jobs:
               if (p.money >= nextBid) {
                   a.currentBid = nextBid;
                   a.highestBidder = bidder;
-                  logEvent(`🔨 رفع ${p.avatar} المزاد إلى ${a.currentBid}$!`);
+                  logEvent(`🔨 زاد ${p.avatar} المزاد إلى ${a.currentBid}$!`);
                   nextAuctionTurn();
               } else {
                   startAuctionTimer();
@@ -2435,7 +1638,7 @@ jobs:
               a.bidTurn = (a.bidTurn === 0) ? 1 : 0;
               updateAuctionUI();
               startAuctionTimer();
-              if (a.bidTurn === 1 && a.active.includes(1) && Game.mode === 'ai') setTimeout(handleAIAuction, 900);
+              if (a.bidTurn === 1 && a.active.includes(1)) setTimeout(handleAIAuction, 1000);
           }
 
           function concludeAuction() {
@@ -2443,7 +1646,7 @@ jobs:
               stopAuctionTimer();
               document.getElementById("auctionModal").classList.remove("show");
               const winner = Game.players[a.highestBidder];
-              logEvent(`🏆 فاز ${winner.avatar} بمزاد (${getTileDisplayName(a.tile)}) بمبلغ ${a.currentBid}$!`);
+              logEvent(`🏆 فاز ${winner.avatar} بمزاد (${Game.lang==='ar'?a.tile.nameAr:a.tile.nameEn}) بمبلغ ${a.currentBid}$!`);
               buyProp(winner, a.tile, a.currentBid);
               const isDbl = a.isDbl; Game.auction = null; finishTurn(isDbl);
           }
@@ -2451,19 +1654,15 @@ jobs:
           function handleAIAuction() {
               const a = Game.auction; if (!a || a.bidTurn !== 1) return;
               const ai = Game.players[1];
-              let mult = Game.difficulty === 'hard' ? 1.4 : (Game.difficulty === 'easy' ? 0.7 : 1.0);
-              let val = a.tile.price * mult;
-              if (checkMonopolyPot(1, a.tile.group)) val *= 1.3;
-
+              let val = a.tile.price * 0.9;
+              if (checkMonopolyPot(1, a.tile.group)) val = a.tile.price * 1.35;
               if (a.currentBid + 15 <= val && ai.money >= a.currentBid + 40) placeAuctionBid(15);
               else foldAuctionBid();
           }
 
           function handleAIBuyDecision(player, tile, isDbl) {
-              const threshold = Game.difficulty === 'hard' ? 50 : (Game.difficulty === 'easy' ? 250 : 120);
-              const hasCash = player.money >= tile.price + threshold;
+              const hasCash = player.money >= tile.price + 100;
               const pot = checkMonopolyPot(1, tile.group);
-
               if (hasCash || pot) {
                   buyProp(player, tile, tile.price);
                   finishTurn(isDbl);
@@ -2476,7 +1675,8 @@ jobs:
           function checkMonopolyPot(playerId, group) {
               if (!group) return false;
               const groupTiles = BOARD_TILES.filter(t => t.group === group);
-              return groupTiles.some(t => t.owner === playerId);
+              const owned = groupTiles.filter(t => t.owner === playerId).length;
+              return owned > 0;
           }
 
           function buyProp(player, tile, price) {
@@ -2484,19 +1684,19 @@ jobs:
               tile.owner = player.id;
               player.props.push(tile.id);
               AudioFX.play('cash');
-              logEvent(`🎉 اشترى ${player.avatar} (${getTileDisplayName(tile)}) مقابل ${price}$.`);
+              logEvent(`🎉 اشترى ${player.avatar} (${Game.lang==='ar'?tile.nameAr:tile.nameEn}) مقابل ${price}$.`);
               updateUI();
           }
 
           function handleCard(player, type, isDbl) {
               const cards = [
-                  { text:"ربحت جائزة حظ استثمارية! استلم 100$", action:"cash", val:100 },
-                  { text:"رسوم خدمات بلدية مفاجئة! ادفع 50$", action:"cash", val:-50 },
-                  { text:"تقدم فوراً إلى خانة انطلق واربح 200$", action:"go" },
-                  { text:"مخالفة مرورية! تم إرسالك إلى السجن.", action:"jail" }
+                  { textAr:"ربحت في مسابقة الحظ الملكية! استلم 100$", textEn:"Won royal lottery! Collect 100$", action:"cash", val:100 },
+                  { textAr:"غرامة مخالفة سرعة! ادفع 50$", textEn:"Speeding fine! Pay 50$", action:"cash", val:-50 },
+                  { textAr:"تقدم مباشرة إلى خانة انطلق واربح 200$", textEn:"Advance to GO, collect 200$", action:"go" },
+                  { textAr:"أُرسلت مباشرة إلى السجن!", textEn:"Go directly to jail!", action:"jail" }
               ];
               const c = cards[Math.floor(Math.random() * cards.length)];
-              logEvent(`📜 ${c.text}`);
+              logEvent(`📜 ${Game.lang==='ar'?c.textAr:c.textEn}`);
               if (c.action === "cash") {
                   player.money += c.val;
                   if (checkBankruptcy(player)) return;
@@ -2515,17 +1715,25 @@ jobs:
               logEvent(`🚔 دَخَل ${p.avatar} السجن!`);
           }
 
-          function openJailModal() { document.getElementById("jailModal").classList.add("show"); }
+          function openJailModal() {
+              document.getElementById("jailModal").classList.add("show");
+          }
 
           function payJailFine() {
               const cur = Game.players[Game.turn];
               if (cur.money >= 50) {
-                  cur.money -= 50; cur.inJail = false; cur.jailTurns = 0;
+                  cur.money -= 50;
+                  cur.inJail = false;
+                  cur.jailTurns = 0;
                   document.getElementById("jailModal").classList.remove("show");
-                  AudioFX.play('cash'); updateUI();
-                  logEvent("دُفعت كفالة 50$ وخرجت من السجن.");
-                  if (Game.turn === 1 && Game.mode === 'ai') setTimeout(rollDice, 500);
-                  else document.getElementById("btnRoll").disabled = false;
+                  AudioFX.play('cash');
+                  updateUI();
+                  logEvent(I18N[Game.lang].finePaid);
+                  if (Game.turn === 1 && Game.mode === 'ai') {
+                      setTimeout(rollDice, 550);
+                  } else {
+                      document.getElementById("btnRoll").disabled = false;
+                  }
               } else {
                   rollForJail();
               }
@@ -2539,18 +1747,22 @@ jobs:
               setDieFace(document.getElementById("die1"), v1);
               const cur = Game.players[Game.turn];
               if (v0 === v1) {
-                  cur.inJail = false; cur.jailTurns = 0;
-                  logEvent("نرد متطابق! خرجت من السجن بحرية.");
-                  updateUI(); moveSteps(cur, v0 + v1, false);
+                  cur.inJail = false;
+                  cur.jailTurns = 0;
+                  logEvent(I18N[Game.lang].doublesJail);
+                  updateUI();
+                  moveSteps(cur, v0 + v1, false);
               } else {
                   cur.jailTurns--;
                   if (cur.jailTurns <= 0) {
                       cur.money = Math.max(0, cur.money - 50);
-                      cur.inJail = false; cur.jailTurns = 0;
-                      logEvent("انتهت مدة السجن ودُفعت كفالة إجبارية.");
-                      updateUI(); moveSteps(cur, v0 + v1, false);
+                      cur.inJail = false;
+                      cur.jailTurns = 0;
+                      logEvent(Game.lang==='ar' ? "انتهت مدة السجن وتم دفع 50$ كفالة إجبارية." : "Jail sentence finished; paid 50$ fine.");
+                      updateUI();
+                      moveSteps(cur, v0 + v1, false);
                   } else {
-                      logEvent(`لم يتطابق النرد (${v0}+${v1})! بقي في السجن.`);
+                      logEvent(Game.lang==='ar' ? `لم يتطابق النرد (${v0}+${v1})! بقي في السجن.` : `No doubles (${v0}+${v1})! Still in Jail.`);
                       finishTurn(false);
                   }
               }
@@ -2574,76 +1786,165 @@ jobs:
               if (Game.isGameOver) return;
               updateUI();
               const cur = Game.players[Game.turn];
-
-              // AI automatic house construction
-              if (Game.turn === 1 && Game.mode === 'ai') {
-                  const buildable = cur.props.map(id => BOARD_TILES[id]).filter(t => canBuildOnProp(1, t));
-                  if (buildable.length > 0) {
-                      buildFloor(buildable[0].id);
-                  }
-              }
-
-              if (Game.turn === 0 || Game.mode !== 'ai') {
+              if (Game.turn === 0) {
                   document.getElementById("btnRoll").disabled = false;
               } else {
                   document.getElementById("btnRoll").disabled = true;
-                  setTimeout(() => {
-                      if (Game.isGameOver || Game.turn !== 1) return;
-                      if (cur.inJail) {
-                          if (cur.money >= 300) payJailFine();
-                          else rollForJail();
-                      } else {
-                          rollDice();
-                      }
-                  }, 700);
+                  if (Game.mode === 'ai') {
+                      setTimeout(() => {
+                          if (Game.isGameOver || Game.turn !== 1) return;
+                          if (cur.inJail) {
+                              if (cur.money >= 300) payJailFine();
+                              else rollForJail();
+                          } else {
+                              rollDice();
+                          }
+                      }, 750);
+                  } else {
+                      document.getElementById("btnRoll").disabled = false;
+                  }
               }
           }
 
-          function checkBankruptcy(player) {
-              if (player.money >= 0) return false;
-              const unmortgaged = player.props.filter(id => !BOARD_TILES[id].mortgaged);
-              for (const propId of unmortgaged) {
-                  if (player.money >= 0) break;
-                  const t = BOARD_TILES[propId];
-                  t.mortgaged = true;
-                  player.money += Math.floor(t.price * 0.5);
-                  logEvent(`🏦 تم رهن (${getTileDisplayName(t)}) لتغطية المبالغ المطلوبة.`);
+          function openTileInfoModal(index) {
+              const t = BOARD_TILES[index];
+              const isAr = (Game.lang === 'ar');
+              const titleEl = document.getElementById("tileInfoTitle");
+              const bodyEl = document.getElementById("tileInfoBody");
+
+              if (t.type === "property") {
+                  titleEl.innerText = `${t.icon||"🏙️"} ${isAr?t.nameAr:t.nameEn}`;
+                  const ownerTxt = t.owner !== undefined ? `${Game.players[t.owner].avatar} ${isAr?Game.players[t.owner].nameAr:Game.players[t.owner].nameEn}` : (isAr?"متاح للبيع من البنك":"Available for Sale");
+                  const statusTxt = t.mortgaged ? (isAr?"مَرْهُون ⚠️":"MORTGAGED ⚠️") : (isAr?"نشط وفعال ✓":"Active ✓");
+                  const mortVal = Math.floor(t.price * 0.5);
+                  const unmortVal = Math.floor(mortVal * 1.1);
+                  const baseRent = Math.round(t.price * 0.20);
+                  const monoRent = Math.round(t.price * 0.40);
+
+                  bodyEl.innerHTML = `
+                      <div style="text-align:center; margin-bottom:10px;">
+                          <span class="info-badge" style="background:${t.color}33; border-color:${t.color}; color:#FFF;">${isAr?"عقار استثماري":"Real Estate Property"}</span>
+                          <div style="font-size:1.15rem; font-weight:900; color:var(--gold);">${t.price}$</div>
+                      </div>
+                      <div class="info-rule-box">
+                          <div class="info-rule-item"><strong>${isAr?"الإيجار الأساسي (20%):":"Base Rent (20%):"}</strong> <span>${baseRent}$</span></div>
+                          <div class="info-rule-item"><strong>${isAr?"إيجار الاحتكار (40% للمجموعة):":"Monopoly Rent (40%):"}</strong> <span style="color:var(--gold); font-weight:bold;">${monoRent}$</span></div>
+                          <div class="info-rule-item"><strong>${isAr?"قيمة الرهن:":"Mortgage Value:"}</strong> <span>${mortVal}$</span></div>
+                          <div class="info-rule-item"><strong>${isAr?"تكلفة فك الرهن:":"Unmortgage Cost:"}</strong> <span>${unmortVal}$</span></div>
+                          <div class="info-rule-item"><strong>${isAr?"المالك الحالي:":"Current Owner:"}</strong> <span>${ownerTxt}</span></div>
+                          <div class="info-rule-item"><strong>${isAr?"الحالة:":"Status:"}</strong> <span>${statusTxt}</span></div>
+                      </div>
+                  `;
+              } else {
+                  const info = SERVICE_INFO[t.type] || SERVICE_INFO['go'];
+                  titleEl.innerText = `${t.icon||"ℹ️"} ${isAr ? t.nameAr : t.nameEn}`;
+
+                  let rulesHtml = "";
+                  const rulesList = isAr ? info.rulesAr : info.rulesEn;
+                  rulesList.forEach(r => {
+                      rulesHtml += `<div class="info-rule-item"><span>•</span><div>${r}</div></div>`;
+                  });
+
+                  let ownershipExtra = "";
+                  if (t.type === "railroad" || t.type === "utility") {
+                      const ownerTxt = t.owner !== undefined ? `${Game.players[t.owner].avatar} ${isAr?Game.players[t.owner].nameAr:Game.players[t.owner].nameEn}` : (isAr?"متاح للشراء":"Available for purchase");
+                      ownershipExtra = `
+                          <div style="background:rgba(255,255,255,0.05); border-radius:6px; padding:6px 10px; margin-top:8px; display:flex; justify-content:space-between; font-size:0.78rem;">
+                              <span>${isAr?"المالك الحالي:":"Owner:"} <strong>${ownerTxt}</strong></span>
+                              <span>${isAr?"السعر:":"Price:"} <strong style="color:var(--gold);">${t.price}$</strong></span>
+                          </div>
+                      `;
+                  }
+
+                  bodyEl.innerHTML = `
+                      <div style="text-align:center; margin-bottom:8px;">
+                          <span class="info-badge">${isAr ? info.badgeAr : info.badgeEn}</span>
+                          <div style="font-size:0.86rem; color:var(--text); margin:4px 0 8px 0; font-weight:600;">
+                              ${isAr ? info.descAr : info.descEn}
+                          </div>
+                      </div>
+                      <div class="info-rule-box">
+                          <div style="font-size:0.75rem; font-weight:bold; color:var(--gold); margin-bottom:6px;">
+                              ${isAr ? "📋 تعليمات وقواعد الخانة:" : "📋 Tile Rules & Info:"}
+                          </div>
+                          ${rulesHtml}
+                      </div>
+                      ${ownershipExtra}
+                  `;
               }
-              updateUI();
-              if (player.money < 0) {
-                  const winnerId = (player.id === 0) ? 1 : 0;
-                  Game.isGameOver = true;
-                  localStorage.removeItem(SAVE_KEY);
-                  const winner = Game.players[winnerId];
-                  document.getElementById("goTrophy").innerText = winner.avatar;
-                  document.getElementById("goWinnerText").innerText = `فاز ${winner.name} باللعبة! 🏆`;
-                  document.getElementById("gameOverModal").classList.add("show");
-                  return true;
-              }
-              return false;
+
+              document.getElementById("tileInfoModal").classList.add("show");
           }
 
-          // نظام المقايضة: عند رفض الخصم يُعاد فتح النافذة فوراً لنفس العقار لزيادة السعر أو الخروج
-          function openTradeModal(prefillPropId = null, prefillCash = null) {
+          function closeTileInfoModal() {
+              document.getElementById("tileInfoModal").classList.remove("show");
+          }
+
+          window.handleAndroidBack = function() {
+              const openModals = Array.from(document.querySelectorAll('.modal-overlay.show'));
+              if (openModals.length > 0) {
+                  const exitModal = document.getElementById("exitModal");
+                  if (exitModal && exitModal.classList.contains("show")) {
+                      closeExitModal();
+                      return;
+                  }
+                  const lastModal = openModals[openModals.length - 1];
+                  lastModal.classList.remove("show");
+                  if (lastModal.id === "deedModal" && Game.pendingTile) {
+                      const isDbl = Game.pendingTile.isDbl;
+                      Game.pendingTile = null;
+                      finishTurn(isDbl);
+                  }
+                  if (lastModal.id === "fastTravelModal" && Game.fastTravelData) {
+                      const isDbl = Game.fastTravelData.isDbl;
+                      Game.fastTravelData = null;
+                      finishTurn(isDbl);
+                  }
+                  if (lastModal.id === "auctionModal" && Game.auction) {
+                      stopAuctionTimer();
+                      const isDbl = Game.auction.isDbl;
+                      Game.auction = null;
+                      finishTurn(isDbl);
+                  }
+                  return;
+              }
+              openExitModal();
+          };
+
+          function openExitModal() {
+              document.getElementById("exitModal").classList.add("show");
+          }
+          function closeExitModal() {
+              document.getElementById("exitModal").classList.remove("show");
+          }
+          function confirmExitWithSave() {
+              saveCurrentGame();
+              confirmExitGame();
+          }
+          function confirmExitWithoutSave() {
+              confirmExitGame();
+          }
+          function confirmExitGame() {
+              if (window.Android && window.Android.exitApp) {
+                  window.Android.exitApp();
+              } else {
+                  window.close();
+              }
+          }
+
+          function openTradeModal() {
               const sel = document.getElementById("tradeTargetProp");
               sel.innerHTML = "";
-              const targetOwner = Game.turn === 0 ? 1 : 0;
-              const oppProps = BOARD_TILES.filter(t => t.owner === targetOwner && !t.mortgaged);
-
+              const oppProps = BOARD_TILES.filter(t => t.owner === 1 && !t.mortgaged);
               if (oppProps.length === 0) {
-                  sel.innerHTML = "<option>لا يملك الخصم عقارات قابلة للمقايضة</option>";
+                  sel.innerHTML = "<option>لا يملك الخصم عقارات متاحة</option>";
               } else {
                   oppProps.forEach(t => {
                       const opt = document.createElement("option");
                       opt.value = t.id;
-                      opt.innerText = `${t.icon||""} ${getTileDisplayName(t)} (${t.price}$)`;
-                      if (prefillPropId !== null && t.id === prefillPropId) opt.selected = true;
+                      opt.innerText = `${t.icon||""} ${Game.lang==='ar'?t.nameAr:t.nameEn} (${t.price}$)`;
                       sel.appendChild(opt);
                   });
-              }
-
-              if (prefillCash !== null) {
-                  document.getElementById("tradeOfferCash").value = prefillCash;
               }
               document.getElementById("tradeNotice").style.display = "none";
               document.getElementById("tradeModal").classList.add("show");
@@ -2654,94 +1955,65 @@ jobs:
               const offerCash = parseInt(document.getElementById("tradeOfferCash").value);
               const notice = document.getElementById("tradeNotice");
               if (isNaN(propId) || isNaN(offerCash) || offerCash <= 0) return;
-
-              const buyer = Game.players[Game.turn];
-              if (buyer.money < offerCash) {
-                  notice.innerText = "رصيدك المالي لا يكفي للمبلغ المعروض!";
+              if (Game.players[0].money < offerCash) {
+                  notice.innerText = Game.lang === 'ar' ? "رصيدك المالي لا يكفي للمبلغ المعروض!" : "Insufficient funds for this offer!";
                   notice.style.display = "block";
                   return;
               }
-
               const targetTile = BOARD_TILES[propId];
-              const sellerId = targetTile.owner;
               closeTradeModal();
 
-              const td = { buyerId: buyer.id, sellerId, tile: targetTile, offer: offerCash };
-              evaluateTrade(td);
+              const td = { buyerId:0, sellerId:1, tile:targetTile, offer:offerCash };
+              Game.tradeData = td;
+              evaluateAITrade(td);
           }
 
-          function evaluateTrade(td) {
-              const seller = Game.players[td.sellerId];
-              let accepted = false;
-
-              if (Game.mode === 'ai' && td.sellerId === 1) {
-                  let factor = Game.difficulty === 'hard' ? 1.7 : (Game.difficulty === 'easy' ? 1.15 : 1.35);
-                  if (checkMonopolyPot(1, td.tile.group)) factor += 0.3;
-                  if (td.offer >= td.tile.price * factor) accepted = true;
+          function evaluateAITrade(td) {
+              const ai = Game.players[1];
+              let ok = false;
+              if (td.offer >= td.tile.price * 1.35) ok = true;
+              if (checkMonopolyPot(1, td.tile.group) && td.offer >= td.tile.price * 1.5) ok = true;
+              if (ok) {
+                  execTrade(td);
+                  logEvent(`🤝 وافق الصقر على بيع (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}) مقابل ${td.offer}$.`);
               } else {
-                  accepted = td.offer >= td.tile.price * 1.25;
-              }
-
-              if (accepted) {
-                  const b = Game.players[td.buyerId], s = Game.players[td.sellerId], t = td.tile;
-                  b.money -= td.offer; s.money += td.offer;
-                  s.props = s.props.filter(id => id !== t.id); b.props.push(t.id); t.owner = b.id;
-                  AudioFX.play('cash'); updateUI();
-                  logEvent(`🤝 تمت المقايضة! اشترى ${b.avatar} (${getTileDisplayName(t)}) مقابل ${td.offer}$.`);
-              } else {
-                  logEvent(`❌ رفض ${seller.name} عرض المقايضة لعقار (${getTileDisplayName(td.tile)}).`);
-                  setTimeout(() => {
-                      openTradeModal(td.tile.id, td.offer + 50);
-                      const n = document.getElementById("tradeNotice");
-                      n.innerText = `تم رفض العرض السابق (${td.offer}$). يمكنك زيادة السعر أو الخروج.`;
-                      n.style.display = "block";
-                  }, 400);
+                  logEvent(`❌ رفض الصقر عرض المقايضة لعقار (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}).`);
               }
           }
 
-          function closeTradeModal() {
-              document.getElementById("tradeModal").classList.remove("show");
+          function execTrade(td) {
+              const b = Game.players[td.buyerId], s = Game.players[td.sellerId], t = td.tile;
+              b.money -= td.offer; s.money += td.offer;
+              s.props = s.props.filter(id => id !== t.id); b.props.push(t.id); t.owner = b.id;
+              AudioFX.play('cash'); updateUI();
           }
+          function closeTradeModal() { document.getElementById("tradeModal").classList.remove("show"); Game.tradeData = null; }
 
           function openPropsModal(pId) {
               const p = Game.players[pId];
-              document.getElementById("propsModalTitle").innerText = `${p.avatar} ${p.name} (${p.money}$)`;
+              document.getElementById("propsModalTitle").innerText = `${p.avatar} ${Game.lang==='ar'?p.nameAr:p.nameEn} (${p.money}$)`;
               const b = document.getElementById("propsModalBody");
               b.innerHTML = "";
-
               if (p.props.length === 0) {
                   b.innerHTML = `<div style="text-align:center; color:var(--dim); padding:16px;">لا توجد أي عقارات مملوكة حالياً.</div>`;
               } else {
                   p.props.forEach(propId => {
                       const t = BOARD_TILES[propId];
                       const d = document.createElement("div");
-                      d.style = "background:#0F172A; border-radius:12px; padding:10px 12px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; border:1px solid #334155; box-shadow:0 3px 6px rgba(0,0,0,0.3);";
+                      d.style = "background:#0F172A; border-radius:8px; padding:8px 12px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; border:1px solid #334155;";
                       const mortVal = Math.floor(t.price * 0.5);
                       const unmortVal = Math.floor(mortVal * 1.1);
-                      const floorCost = Math.round(t.price * 0.33);
-                      const canBuild = canBuildOnProp(pId, t);
-
-                      let bldActionHtml = "";
-                      if (t.type === "property" && !t.mortgaged) {
-                          if (t.buildings >= 5) {
-                              bldActionHtml = `<span style="color:var(--gold); font-size:0.80rem; font-weight:900;">🗼 مكتمل (إيفل)</span>`;
-                          } else if (canBuild) {
-                              bldActionHtml = `<button class="btn btn-gold" style="font-size:0.74rem; padding:5px 10px;" onclick="buildFloor(${t.id})">بناء طابق (${floorCost}$)</button>`;
-                          }
-                      }
-
                       d.innerHTML = `
                           <div>
-                              <strong style="color:${t.color||'var(--gold)'}; font-size:0.90rem;">${t.icon||""} ${getTileDisplayName(t)}</strong>
-                              <div style="font-size:0.74rem; color:var(--dim);">القيمة: ${t.price}$ | طوابق: ${t.buildings===5?'🗼 برج إيفل الذهبي':t.buildings}</div>
+                              <strong style="color:${t.color||'var(--gold)'};">${t.icon||""} ${Game.lang==='ar'?t.nameAr:t.nameEn}</strong>
+                              <div style="font-size:0.75rem; color:var(--dim);">القيمة: ${t.price}$ | الرهن: ${mortVal}$</div>
                           </div>
-                          <div style="display:flex; gap:6px; align-items:center;">
-                              ${bldActionHtml}
+                          <div>
                               ${pId === 0 ? (
                                   t.mortgaged ?
-                                  `<button class="btn btn-gold" style="font-size:0.72rem; padding:4px 8px;" onclick="unmortgageProp(${t.id})">فك (${unmortVal}$)</button>` :
-                                  (t.buildings === 0 ? `<button class="btn btn-red" style="font-size:0.72rem; padding:4px 8px;" onclick="mortgageProp(${t.id})">رهن (+${mortVal}$)</button>` : '')
-                              ) : (t.mortgaged ? `<span style="color:#EF4444; font-size:0.72rem; font-weight:800;">مَرْهُون</span>` : '')}
+                                  `<button class="btn btn-gold" style="font-size:0.72rem; padding:4px 8px;" onclick="unmortgageProp(${t.id})">فك الرهن (${unmortVal}$)</button>` :
+                                  `<button class="btn btn-red" style="font-size:0.72rem; padding:4px 8px;" onclick="mortgageProp(${t.id})">رهن (+${mortVal}$)</button>`
+                              ) : (t.mortgaged ? `<span style="color:#EF4444; font-size:0.75rem;">مَرْهُون</span>` : '')}
                           </div>
                       `;
                       b.appendChild(d);
@@ -2749,90 +2021,37 @@ jobs:
               }
               document.getElementById("propsModal").classList.add("show");
           }
-
           function closePropsModal() { document.getElementById("propsModal").classList.remove("show"); }
 
           function mortgageProp(id) {
               const t = BOARD_TILES[id], p = Game.players[0];
-              if (t.owner === 0 && !t.mortgaged && t.buildings === 0) {
+              if (t.owner === 0 && !t.mortgaged) {
                   t.mortgaged = true; p.money += Math.floor(t.price * 0.5);
                   AudioFX.play('cash'); updateUI(); openPropsModal(0);
-                  logEvent(`🏦 رهن (${getTileDisplayName(t)}) واستلم ${Math.floor(t.price * 0.5)}$.`);
+                  logEvent(`🏦 رهن الملك (${Game.lang==='ar'?t.nameAr:t.nameEn}) واستلم ${Math.floor(t.price * 0.5)}$.`);
               }
           }
-
           function unmortgageProp(id) {
               const t = BOARD_TILES[id], p = Game.players[0];
               const cost = Math.floor(t.price * 0.5 * 1.1);
               if (t.owner === 0 && t.mortgaged && p.money >= cost) {
                   t.mortgaged = false; p.money -= cost;
                   AudioFX.play('cash'); updateUI(); openPropsModal(0);
-                  logEvent(`🔓 فك رهن (${getTileDisplayName(t)}) مقابل ${cost}$.`);
+                  logEvent(`🔓 فك الملك رهن (${Game.lang==='ar'?t.nameAr:t.nameEn}) مقابل ${cost}$.`);
               }
           }
-
-          function openTileInfoModal(index) {
-              const t = BOARD_TILES[index];
-              const titleEl = document.getElementById("tileInfoTitle");
-              const bodyEl = document.getElementById("tileInfoBody");
-              titleEl.innerText = `${t.icon||"🏙️"} ${getTileDisplayName(t)}`;
-
-              if (t.type === "property") {
-                  const ownerTxt = t.owner !== undefined ? `${Game.players[t.owner].avatar} ${Game.players[t.owner].name}` : "متاح للبيع";
-                  const baseRent = Math.round(t.price * 0.20);
-                  const monoRent = Math.round(t.price * 0.40);
-                  const floorCost = Math.round(t.price * 0.33);
-
-                  bodyEl.innerHTML = `
-                      <div style="text-align:center; margin-bottom:10px;">
-                          <span class="info-badge" style="background:${t.color}33; border-color:${t.color}; color:#FFF;">عقار استثماري</span>
-                          <div style="font-size:1.25rem; font-weight:900; color:var(--gold);">${t.price}$</div>
-                      </div>
-                      <div class="info-rule-box">
-                          <div class="info-rule-item"><strong>الإيجار الأساسي (20%):</strong> <span>${baseRent}$</span></div>
-                          <div class="info-rule-item"><strong>إيجار الاحتكار (40%):</strong> <span>${monoRent}$</span></div>
-                          <div class="info-rule-item"><strong>تكلفة بناء الطابق (33%):</strong> <span>${floorCost}$</span></div>
-                          <div class="info-rule-item"><strong>عدد الطوابق الحالية:</strong> <span>${t.buildings===5?'🗼 برج إيفل الذهبي':t.buildings}</span></div>
-                          <div class="info-rule-item"><strong>المالك:</strong> <span>${ownerTxt}</span></div>
-                      </div>
-                  `;
-              } else {
-                  bodyEl.innerHTML = `
-                      <div style="text-align:center; margin-bottom:10px;">
-                          <span class="info-badge">خانة خاصة</span>
-                          <div style="font-size:1.15rem; font-weight:900; color:var(--gold);">${t.price > 0 ? t.price + '$' : ''}</div>
-                      </div>
-                      <div class="info-rule-box">
-                          <div class="info-rule-item"><strong>النوع:</strong> <span>${t.type}</span></div>
-                          <div class="info-rule-item"><span>تخضع لقواعد اللعبة الرسمية لمحطات القطار، الخدمات والضرائب والسجن.</span></div>
-                      </div>
-                  `;
-              }
-              document.getElementById("tileInfoModal").classList.add("show");
-          }
-
-          function closeTileInfoModal() { document.getElementById("tileInfoModal").classList.remove("show"); }
 
           function setLanguage(l) {
               Game.lang = l;
-              document.documentElement.dir = (l === 'ar' || l === 'fa') ? 'rtl' : 'ltr';
-              const sel = document.getElementById("selGameLanguage");
-              if (sel && sel.value !== l) sel.value = l;
-
-              const dict = I18N[l] || I18N.ar;
-              document.getElementById("txtAppTitle").innerText = dict.app;
-              document.getElementById("txtBtnRoll").innerText = dict.roll;
-              document.getElementById("txtBtnP0Props").innerText = dict.myProps;
-              document.getElementById("txtBtnTrade").innerText = dict.trade;
-
-              if (Game.mode === 'ai') {
-                  Game.players[1].name = dict.robot || "روبوت";
-              }
-
-              // Update tile names dynamically according to region / language
+              document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+              document.getElementById("btnLangAr").className = "btn-pill" + (l==='ar'?" active":"");
+              document.getElementById("btnLangEn").className = "btn-pill" + (l==='en'?" active":"");
+              document.getElementById("txtAppTitle").innerText = I18N[l].app;
+              document.getElementById("txtMode").innerText = Game.mode === 'ai' ? I18N[l].ai : I18N[l].pvp;
+              document.getElementById("txtBtnRoll").innerText = I18N[l].roll;
               BOARD_TILES.forEach(t => {
                   const el = document.getElementById("tName-" + t.id);
-                  if (el) el.innerText = getTileDisplayName(t);
+                  if (el) el.innerText = l === 'ar' ? t.nameAr : t.nameEn;
               });
               updateUI();
           }
@@ -2840,16 +2059,23 @@ jobs:
           function setPropStyle(s) {
               Game.propStyle = s;
               ["glow","tint","border","badge"].forEach(id => {
-                  const b = document.getElementById("btnPropStyle" + id.charAt(0).toUpperCase() + id.slice(1));
-                  if (b) b.className = "btn-pill" + (s === id ? " active" : "");
+                  document.getElementById("btnPropStyle" + id.charAt(0).toUpperCase() + id.slice(1)).className = "btn-pill" + (s === id ? " active" : "");
               });
               updateBoardVisual();
           }
 
           function setDiceSpeed(sp) {
               Game.diceSpeed = sp;
-              ["slow","normal","fast"].forEach(id => {
+              ["v_slow","slow","normal","fast","v_fast"].forEach(id => {
                   const el = document.getElementById("btnDiceSpeed_" + id);
+                  if (el) el.className = "btn-pill" + (sp === id ? " active" : "");
+              });
+          }
+
+          function setMoveSpeed(sp) {
+              Game.moveSpeed = sp;
+              ["v_slow","slow","normal","fast","v_fast"].forEach(id => {
+                  const el = document.getElementById("btnMoveSpeed_" + id);
                   if (el) el.className = "btn-pill" + (sp === id ? " active" : "");
               });
           }
@@ -2862,34 +2088,19 @@ jobs:
 
           function openSettingsModal() { document.getElementById("settingsModal").classList.add("show"); }
           function closeSettingsModal() { document.getElementById("settingsModal").classList.remove("show"); }
-          function openExitModal() { document.getElementById("exitModal").classList.add("show"); }
-          function closeExitModal() { document.getElementById("exitModal").classList.remove("show"); }
-
-          function confirmExitWithSave() {
-              saveCurrentGame();
-              confirmExitGame();
+          function openAboutModal() { document.getElementById("aboutModal").classList.add("show"); }
+          function closeAboutModal() { document.getElementById("aboutModal").classList.remove("show"); }
+          function toggleMode() {
+              Game.mode = Game.mode === 'ai' ? 'pvp' : 'ai';
+              if (Game.mode === 'ai') { Game.players[1].nameAr = "الصقر (الذكاء)"; Game.players[1].nameEn = "Falcon (AI)"; }
+              else { Game.players[1].nameAr = "اللاعب 2 (الصقر)"; Game.players[1].nameEn = "Player 2 (Falcon)"; }
+              document.getElementById("txtMode").innerText = Game.mode === 'ai' ? I18N[Game.lang].ai : I18N[Game.lang].pvp;
+              logEvent(`🎮 نمط اللعب: ${document.getElementById("txtMode").innerText}`); updateUI();
           }
-          function confirmExitWithoutSave() { confirmExitGame(); }
-          function confirmExitGame() {
-              if (window.Android && window.Android.exitApp) window.Android.exitApp();
-              else window.close();
+          function restartGame() {
+              localStorage.removeItem(SAVE_KEY);
+              location.reload();
           }
-
-          window.handleAndroidBack = function() {
-              const openModals = Array.from(document.querySelectorAll('.modal-overlay.show'));
-              if (openModals.length > 0) {
-                  const lastModal = openModals[openModals.length - 1];
-                  lastModal.classList.remove("show");
-                  if (lastModal.id === "deedModal" && Game.pendingTile) {
-                      const isDbl = Game.pendingTile.isDbl; Game.pendingTile = null; finishTurn(isDbl);
-                  }
-                  if (lastModal.id === "fastTravelModal" && Game.fastTravelData) {
-                      const isDbl = Game.fastTravelData.isDbl; Game.fastTravelData = null; finishTurn(isDbl);
-                  }
-                  return;
-              }
-              openExitModal();
-          };
 
           window.addEventListener("DOMContentLoaded", () => {
               renderBoard();
@@ -2908,7 +2119,7 @@ jobs:
               with open(path, "w", encoding="utf-8") as f:
                   f.write(content)
 
-          print("✅ All MONOPOLY PRO files generated successfully!")
+          print("✅ All project files created successfully with all fixes!")
           PYEOF
 
       - name: 🔨 إعطاء صلاحيات التشغيل لـ Gradle Wrapper
@@ -2923,7 +2134,7 @@ jobs:
       - name: 📤 رفع ملف APK كعنصر قابل للتحميل (Artifact)
         uses: actions/upload-artifact@v4
         with:
-          name: MonopolyPro-APK
+          name: MonopolyArabia-APK
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
@@ -2932,9 +2143,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: app/build/outputs/apk/debug/app-debug.apk
-          tag_name: v2.5.0
-          name: "MONOPOLY PRO - الإصدار 2.5.0 (Isometric & Low-Poly 3D)"
-          body: "🎲 النسخة الرسمية الاحترافية للعبة MONOPOLY PRO بنمط Isometric و Top-Down 3D، وتصميم Low-Poly / Skeuomorphic الواقعي للوحة والمجسمات والنرد، وواجهة Casual Game UI المتكاملة."
+          tag_name: v1.0.0
+          name: "مونوبولي العرب - الإصدار 1.0.0"
+          body: "🎲 النسخة الرسمية لتطبيق لعبة مونوبولي العرب بنك الحظ الملكي (APK جاهز للتثبيت المباشر على الأندرويد). برمجة وتصميم عمار الهلالي."
           draft: false
           prerelease: false
         env:
