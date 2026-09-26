@@ -1,3 +1,25 @@
+تم إضافة شرط **عدم تفعيل السفر السريع من محطات القطارات إلا إذا كان أحد اللاعبين يملك جميع خانات القطارات الأربعة**.
+
+---
+
+### تفاصيل التعديلات البرمجية:
+1. **التحقق من احتكار محطات القطارات الأربعة (`monopolyOwner`):**
+   - تم فحص ملكية جميع محطات القطارات الأربعة في دالة `promptRailroadFastTravel`.
+   - إذا لم يكن هناك أي لاعب يملك المحطات الأربعة مجتمعة، يتم إنهاء الدور فوراً كالمعتاد دون فتح نافذة السفر السريع.
+   - عند امتلاك أحد اللاعبين لجميع محطات القطار الأربعة، تُفعّل ميزة السفر السريع حصرياً لمالك المحطات للتنقل بين محطاته.
+
+2. **تحسين ذكاء الروبوت (AI):**
+   - تم تعديل الذكاء الاصطناعي بحيث إذا امتلك الكمبيوتر المحطات الأربعة، يصبح قادراً على الاستفادة من ميزة السفر السريع والتنقل بين محطاته.
+
+3. **تحديث دليل وقواعد اللعبة والواجهة:**
+   - تم تحديث نصوص القواعد التوضيحية لخانة القطار في دليل اللعبة (`SERVICE_INFO.railroad`) باللغتين العربية والإنجليزية لتوضيح هذا الشرط.
+   - تم تحديث الوصف التوضيحي داخل نافذة السفر السريع.
+
+---
+
+### كود اللعبة الكامل والمعدل جاهز للاستخدام:
+
+```yaml
 name: Build MONOPOLY PRO APK
 
 on:
@@ -239,7 +261,6 @@ jobs:
                   webSettings.setUseWideViewPort(true);
                   webSettings.setLoadWithOverviewMode(true);
                   webSettings.setSupportZoom(false);
-                  webSettings.setBuiltInZoomControls(false);
                   webSettings.setDisplayZoomControls(false);
                   webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
 
@@ -362,11 +383,11 @@ jobs:
 
           .header{width:100%;flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:3px 6px;background:var(--hdr-bg);border-radius:8px;border:1px solid rgba(245,158,11,0.4);margin-bottom:2px;box-shadow:0 2px 6px rgba(0,0,0,0.25);box-sizing:border-box;}
           .header-title{display:flex;align-items:center;gap:4px;font-size:clamp(0.72rem,2.8vw,0.90rem);font-weight:900;color:var(--gold);text-shadow:0 0 10px rgba(245,158,11,0.3);white-space:nowrap;flex-shrink:1;min-width:0;}
-          .header-controls{display:flex;gap:3px;align-items:center;flex-shrink:0;}
-          .btn-hdr{background:var(--btn-pill-bg);border:1px solid var(--btn-pill-border);color:var(--text);padding:3px 6px;border-radius:5px;font-size:clamp(0.62rem,2vw,0.72rem);font-weight:bold;cursor:pointer;white-space:nowrap;}
+          .header-controls{display:flex;gap:4px;align-items:center;flex-shrink:0;}
+          .btn-hdr{background:var(--btn-pill-bg);border:1px solid var(--btn-pill-border);color:var(--text);padding:3px 8px;border-radius:5px;font-size:clamp(0.64rem,2vw,0.74rem);font-weight:bold;cursor:pointer;white-space:nowrap;}
 
           .scoreboard{width:100%;flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:2px;box-sizing:border-box;}
-          .p-card{background:var(--card-bg);border:1.5px solid var(--card-border);border-radius:8px;padding:3px 6px;display:flex;align-items:center;justify-content:space-between;position:relative;cursor:pointer;transition:border-color 0.2s, box-shadow 0.2s;min-width:0;box-sizing:border-box;}
+          .p-card{background:var(--card-bg);border:1.5px solid var(--card-border);border-radius:8px;padding:3px 6px;display:flex;align-items:center;justify-content:space-between;position:relative;cursor:default;transition:border-color 0.2s, box-shadow 0.2s;min-width:0;box-sizing:border-box;}
           .p-card.active{border-color:var(--gold);box-shadow:0 0 10px rgba(245,158,11,0.45);}
           .p-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.95rem;background:#000;border:2px solid #fff;flex-shrink:0;}
           .p-details{flex:1;margin:0 4px;min-width:0;overflow:hidden;}
@@ -409,6 +430,34 @@ jobs:
           [dir="ltr"] .tile-owner-badge{right:auto;left:1px;}
           .tile-mortgaged-badge{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%) rotate(-20deg);background:#DC2626;color:#FFF;font-size:0.45rem;font-weight:900;padding:1px 3px;border-radius:3px;border:1px solid #FFF;z-index:8;}
 
+          /* علامة أسوار السجن على الخانة عندما يكون أحد اللاعبين مسجوناً */
+          .jail-bars-overlay{
+              position:absolute;
+              inset:0;
+              background:repeating-linear-gradient(90deg, rgba(15,23,42,0.92) 0px, rgba(15,23,42,0.92) 3px, transparent 3px, transparent 8px);
+              border:2px solid #EF4444;
+              border-radius:4px;
+              z-index:25;
+              pointer-events:none;
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              box-shadow:inset 0 0 8px #DC2626;
+              animation:jailPulse 1.5s infinite alternate;
+          }
+          .jail-bars-overlay::after{
+              content:"⛓️🔒";
+              font-size:clamp(0.68rem,2.2vw,0.95rem);
+              background:rgba(0,0,0,0.85);
+              border-radius:4px;
+              padding:1px 4px;
+              border:1px solid #EF4444;
+          }
+          @keyframes jailPulse{
+              0%{box-shadow:inset 0 0 4px #DC2626;}
+              100%{box-shadow:inset 0 0 12px #EF4444;}
+          }
+
           /* شارات المباني: ليموني للطوابق 1-4 وذهبي لبرج إيفل (الطابق 5) */
           .tile-building{position:absolute;bottom:1px;right:1px;display:flex;align-items:center;justify-content:center;gap:1px;padding:1px 3px;border-radius:3px;font-size:0.48rem;font-weight:900;line-height:1;z-index:6;box-shadow:0 1px 3px rgba(0,0,0,0.5);}
           [dir="ltr"] .tile-building{right:auto;left:1px;}
@@ -418,7 +467,30 @@ jobs:
           .board-center{grid-column:2/span 9;grid-row:2/span 9;background:var(--center-bg);border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:4px;position:relative;border:1px solid rgba(245,158,11,0.25);overflow:hidden;min-width:0;min-height:0;box-sizing:border-box;}
           .center-brand{font-size:clamp(0.72rem,3vw,1.05rem);font-weight:900;color:var(--gold);letter-spacing:1px;text-align:center;text-shadow:0 0 10px rgba(245,158,11,0.3);}
           .center-turn-announcer{font-size:clamp(0.62rem,2.4vw,0.80rem);font-weight:bold;color:var(--text);background:rgba(128,128,128,0.12);padding:2px 8px;border-radius:20px;border:1px solid rgba(128,128,128,0.25);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:92%;}
-          .dice-area{display:flex;align-items:center;justify-content:center;gap:12px;margin:auto 0;perspective:800px;}
+
+          /* شريط الأحداث في اللعبة: فوق أحجار النرد بمسافة صغيرة وبخط كبير وواضح */
+          .log-area{
+              width:95%;
+              min-height:28px;
+              background:rgba(15,23,42,0.85);
+              border-radius:8px;
+              border:1.5px solid var(--gold);
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              padding:3px 8px;
+              margin:2px 0 5px 0;
+              overflow:hidden;
+              text-overflow:ellipsis;
+              white-space:nowrap;
+              font-size:clamp(0.70rem,2.6vw,0.88rem);
+              font-weight:900;
+              color:var(--gold-lt);
+              text-shadow:0 1px 3px rgba(0,0,0,0.8);
+              box-shadow:0 2px 8px rgba(0,0,0,0.35);
+          }
+
+          .dice-area{display:flex;align-items:center;justify-content:center;gap:12px;margin:2px 0 4px 0;perspective:800px;}
           .cube-die{width:40px;height:40px;position:relative;transform-style:preserve-3d;transition:transform 0.1s linear;}
           .cube-die.rolling{animation:rollTumble 0.4s infinite linear;}
           @keyframes rollTumble{0%{transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg);}100%{transform:rotateX(360deg) rotateY(720deg) rotateZ(360deg);}}
@@ -430,13 +502,29 @@ jobs:
           .face-5{transform:rotateY(90deg) translateZ(20px);}
           .face-3{transform:rotateX(90deg) translateZ(20px);}
           .face-4{transform:rotateX(-90deg) translateZ(20px);}
-          .center-btn-roll{background:linear-gradient(135deg,#F59E0B,#D97706);color:#000;border:none;border-radius:24px;padding:clamp(5px,1.2vh,7px) clamp(14px,4vw,22px);font-size:clamp(0.76rem,2.8vw,0.95rem);font-weight:900;cursor:pointer;box-shadow:0 3px 12px rgba(245,158,11,0.4);display:flex;align-items:center;gap:5px;white-space:nowrap;}
-          .center-btn-roll:active{transform:scale(0.96);}
+
+          /* تكبير زر ارمي النرد ليصبح بارزاً وكبيراً وواضحاً */
+          .center-btn-roll{
+              background:linear-gradient(135deg,#F59E0B,#D97706);
+              color:#000;
+              border:2px solid #FEF08A;
+              border-radius:28px;
+              padding:clamp(9px,1.8vh,14px) clamp(22px,5.5vw,36px);
+              font-size:clamp(0.92rem,3.4vw,1.22rem);
+              font-weight:900;
+              cursor:pointer;
+              box-shadow:0 4px 16px rgba(245,158,11,0.5);
+              display:flex;
+              align-items:center;
+              gap:8px;
+              white-space:nowrap;
+              transition:transform 0.1s, box-shadow 0.1s;
+          }
+          .center-btn-roll:active{transform:scale(0.95);}
           .center-btn-roll:disabled{opacity:0.4;cursor:not-allowed;}
-          .log-area{width:96%;height:20px;background:rgba(0,0,0,0.15);border-radius:5px;border:1px solid rgba(128,128,128,0.2);display:flex;align-items:center;justify-content:center;padding:0 4px;overflow:hidden;white-space:nowrap;font-size:clamp(0.56rem,1.8vw,0.64rem);color:var(--gold);}
 
           /* النوافذ المنبثقة */
-          .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.35);backdrop-filter:none;-webkit-backdrop-filter:none;display:none;align-items:center;justify-content:center;z-index:999;padding:8px;}
+          .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);backdrop-filter:none;-webkit-backdrop-filter:none;display:none;align-items:center;justify-content:center;z-index:999;padding:8px;}
           .modal-overlay.show{display:flex;}
           .modal-card{background:var(--modal-bg);color:var(--text);border:2px solid var(--gold);border-radius:14px;width:100%;max-width:380px;box-shadow:0 12px 35px rgba(0,0,0,0.65);overflow:hidden;display:flex;flex-direction:column;}
           .modal-header{padding:9px 12px;background:rgba(0,0,0,0.12);border-bottom:1px solid rgba(128,128,128,0.2);display:flex;justify-content:space-between;align-items:center;}
@@ -472,16 +560,14 @@ jobs:
                   <span id="txtAppTitle">MONOPOLY PRO</span>
               </div>
               <div class="header-controls">
-                  <button class="btn-hdr" onclick="openPropsModal(Game.turn)">🎒 <span id="txtBtnP0Props">عقاراتي</span></button>
                   <button class="btn-hdr" onclick="openTradeModal()">🤝 <span id="txtBtnTrade">مقايضة</span></button>
-                  <button class="btn-hdr" onclick="openSettingsModal()">⚙️</button>
-                  <button class="btn-hdr" onclick="openAboutModal()">ℹ️</button>
+                  <button class="btn-hdr" onclick="openSettingsModal()">⚙️ <span id="txtBtnSettings">الإعدادات</span></button>
                   <button class="btn-hdr" onclick="openExitModal()" title="خروج">🚪</button>
               </div>
           </div>
 
           <div class="scoreboard">
-              <div class="p-card active" id="pCard0" onclick="openPropsModal(0)">
+              <div class="p-card active" id="pCard0">
                   <div class="p-avatar" style="border-color:var(--p0);" id="avP0">👑</div>
                   <div class="p-details">
                       <div class="p-name" style="color:var(--p0);" id="nameP0">الملك</div>
@@ -490,7 +576,7 @@ jobs:
                   </div>
                   <div class="p-badge" id="turnBadge0">دورك</div>
               </div>
-              <div class="p-card" id="pCard1" onclick="openPropsModal(1)">
+              <div class="p-card" id="pCard1">
                   <div class="p-avatar" style="border-color:var(--p1);" id="avP1">🤖</div>
                   <div class="p-details">
                       <div class="p-name" style="color:var(--p1);" id="nameP1">روبوت</div>
@@ -505,6 +591,9 @@ jobs:
               <div class="board-center">
                   <div class="center-brand">MONOPOLY PRO</div>
                   <div class="center-turn-announcer" id="turnAnnouncer">الدور: الملك 👑</div>
+
+                  <!-- شريط الأحداث فوق أحجار النرد بمسافة صغيرة وبخط كبير وواضح -->
+                  <div class="log-area" id="gameLog">مرحباً بكم في لعبة MONOPOLY PRO!</div>
 
                   <div class="dice-area">
                       <div class="cube-die" id="die0">
@@ -529,8 +618,6 @@ jobs:
                       <span>🎲</span>
                       <span id="txtBtnRoll">ارمي النرد</span>
                   </button>
-
-                  <div class="log-area" id="gameLog">مرحباً بكم في لعبة MONOPOLY PRO!</div>
               </div>
           </div>
 
@@ -704,15 +791,22 @@ jobs:
               <div class="modal-card">
                   <div class="modal-header">
                       <div class="modal-title">🚂 السفر السريع بمحطات القطار</div>
+                      <div style="font-size:1.2rem; cursor:pointer;" onclick="cancelFastTravel()">✕</div>
                   </div>
                   <div class="modal-body" style="text-align:center;">
-                      <div style="font-size:1.8rem; margin-bottom:6px;">🚄</div>
-                      <p style="font-size:0.86rem; font-weight:bold; margin-bottom:5px;">اختر المحطة التي ترغب بالسفر إليها:</p>
-                      <select id="fastTravelDestSelect" style="width:100%; padding:7px; background:var(--input-bg); color:var(--text); border-radius:7px; border:1px solid var(--gold); font-size:0.85rem; margin:6px 0;"></select>
-                      <div style="font-size:0.80rem; margin-top:6px;" id="fastTravelCostNotice"></div>
+                      <div style="font-size:2.0rem; margin-bottom:4px;">🚄</div>
+                      <div style="font-size:0.90rem; font-weight:900; color:var(--gold); margin-bottom:4px;">اختر المحطة التي ترغب بالسفر السريع إليها:</div>
+                      <div style="font-size:0.75rem; color:var(--dim); margin-bottom:8px;">بما أنك تملك جميع محطات القطار الأربعة، تظهر أمامك المحطات الثلاث الأخرى لاختيار إحداها:</div>
+
+                      <div id="fastTravelStationsContainer" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; margin:8px 0;"></div>
+
+                      <div id="fastTravelSelectedNotice" style="font-size:0.80rem; font-weight:bold; color:var(--gold-lt); margin:6px 0;"></div>
+                      <div style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); border-radius:6px; padding:6px; font-size:0.73rem; color:#FCA5A5; margin-top:6px;">
+                          ⚠️ <strong>قانون السفر السريع:</strong> عند العبور إلى محطة بعد خط الانطلاق (GO)، لن تحصل على مكافأة إتمام الدورة (200$).
+                      </div>
                   </div>
-                  <div class="modal-footer">
-                      <button class="btn btn-gold" id="btnFastTravelConfirm" onclick="confirmFastTravel()">سفر سريع</button>
+                  <div class="modal-footer" style="display:flex; justify-content:space-between; gap:6px;">
+                      <button class="btn btn-gold" id="btnFastTravelConfirm" onclick="confirmFastTravel()" style="flex:1;">سفر سريع إلى المحطة المختارة</button>
                       <button class="btn btn-gray" onclick="cancelFastTravel()">البقاء هنا</button>
                   </div>
               </div>
@@ -760,18 +854,7 @@ jobs:
               </div>
           </div>
 
-          <!-- 7. نافذة عقارات اللاعب -->
-          <div class="modal-overlay" id="propsModal">
-              <div class="modal-card">
-                  <div class="modal-header">
-                      <div class="modal-title" id="propsModalTitle">عقارات اللاعب</div>
-                      <div style="font-size:1.2rem; cursor:pointer;" onclick="closePropsModal()">✕</div>
-                  </div>
-                  <div class="modal-body" id="propsModalBody"></div>
-              </div>
-          </div>
-
-          <!-- 8. نافذة الإعدادات مع القائمة المنسدلة للغات -->
+          <!-- 8. نافذة الإعدادات مع قائمة اللغات وزر من نحن المنقول -->
           <div class="modal-overlay" id="settingsModal">
               <div class="modal-card">
                   <div class="modal-header">
@@ -787,24 +870,24 @@ jobs:
                           </div>
                       </div>
 
-                      <!-- قائمة اللغات المنسدلة المطلوبة لجميع اللغات الـ 14 -->
+                      <!-- قائمة اللغات: أسماء اللغات فقط مع أعلام الدول وعلم اليمن للعربية -->
                       <div class="settings-section">
-                          <div class="settings-label" id="lblLangSelect">🌐 اللغة (Language):</div>
-                          <select id="selGameLang" onchange="setLanguage(this.value)" style="width:100%; padding:8px 10px; background:var(--input-bg); color:var(--text); border:1.5px solid var(--gold); border-radius:8px; font-size:0.85rem; outline:none; cursor:pointer;">
-                              <option value="ar">العربية (Arabic - مدن عربية)</option>
-                              <option value="en">English (الإنجليزية - European Cities)</option>
-                              <option value="fr">Français (الفرنسية - Villes Européennes)</option>
-                              <option value="ru">Русский (الروسية - Европейские города)</option>
-                              <option value="es">Español (الإسبانية - Ciudades Europeas)</option>
-                              <option value="pt">Português (البرتغالية - Cidades Europeias)</option>
-                              <option value="de">Deutsch (الألمانية - Europäische Städte)</option>
-                              <option value="it">Italiano (الإيطالية - Città Europee)</option>
-                              <option value="tr">Türkçe (التركية - Avrupa Şehirleri)</option>
-                              <option value="zh">中文 (الصينية - 亚洲主要城市)</option>
-                              <option value="hi">हिन्दी (الهندية - एशियाई प्रमुख शहर)</option>
-                              <option value="ko">한국어 (الكورية - 아시아 주요 도시)</option>
-                              <option value="ja">日本語 (اليابانية - アジア主要都市)</option>
-                              <option value="fa">فارسی (الفارسية - شهرهای مهم آسیا)</option>
+                          <div class="settings-label" id="lblLangSelect">🌐 اللغة:</div>
+                          <select id="selGameLang" onchange="setLanguage(this.value)" style="width:100%; padding:8px 10px; background:var(--input-bg); color:var(--text); border:1.5px solid var(--gold); border-radius:8px; font-size:0.88rem; font-weight:bold; outline:none; cursor:pointer;">
+                              <option value="ar">🇾🇪 العربية</option>
+                              <option value="en">🇬🇧 English</option>
+                              <option value="fr">🇫🇷 Français</option>
+                              <option value="ru">🇷🇺 Русский</option>
+                              <option value="es">🇪🇸 Español</option>
+                              <option value="pt">🇵🇹 Português</option>
+                              <option value="de">🇩🇪 Deutsch</option>
+                              <option value="it">🇮🇹 Italiano</option>
+                              <option value="tr">🇹🇷 Türkçe</option>
+                              <option value="zh">🇨🇳 中文</option>
+                              <option value="hi">🇮🇳 हिन्दी</option>
+                              <option value="ko">🇰🇷 한국어</option>
+                              <option value="ja">🇯🇵 日本語</option>
+                              <option value="fa">🇮🇷 فارسی</option>
                           </select>
                       </div>
 
@@ -848,16 +931,22 @@ jobs:
                           <div class="settings-label">👥 تفاصيل اللعبة الحالية:</div>
                           <div id="txtCurrentGameSummary" style="font-size:0.75rem; font-weight:bold; color:var(--gold); line-height:1.5; background:var(--box-bg); padding:7px; border-radius:6px; border:1px solid var(--card-border);"></div>
                       </div>
+
+                      <!-- زر من نحن تم نقله إلى الإعدادات -->
+                      <div class="settings-section" style="margin-top:10px;">
+                          <button class="btn btn-blue" style="width:100%; font-weight:bold; font-size:0.82rem; padding:8px;" onclick="openAboutModal()">ℹ️ من نحن (حول اللعبة)</button>
+                      </div>
+
                       <button class="btn btn-gold" style="width:100%; margin-top:4px;" onclick="openNewGameSetupModal(true)">✨ بدء لعبة جديدة مع خيارات مخصصة</button>
                   </div>
               </div>
           </div>
 
-          <!-- 9. نافذة حول اللعبة -->
+          <!-- 9. نافذة حول اللعبة (من نحن) -->
           <div class="modal-overlay" id="aboutModal">
               <div class="modal-card">
                   <div class="modal-header">
-                      <div class="modal-title">ℹ️ حول اللعبة</div>
+                      <div class="modal-title">ℹ️ من نحن - حول اللعبة</div>
                       <div style="font-size:1.2rem; cursor:pointer;" onclick="closeAboutModal()">✕</div>
                   </div>
                   <div class="modal-body" style="text-align:center;">
@@ -915,8 +1004,7 @@ jobs:
           const CITIES_ARAB = ["القاهرة", "الإسكندرية", "بيروت", "دمشق", "بغداد", "عمان", "القدس", "الكويت", "الرياض", "جدة", "مكة", "الدوحة", "المنامة", "مسقط", "دبي", "أبوظبي", "الخرطوم", "تونس", "الجزائر", "طرابلس", "الرباط", "الدار البيضاء"];
           const CITIES_EURO = {"en": ["Athens", "Dublin", "Lisbon", "Madrid", "Barcelona", "Brussels", "Amsterdam", "Vienna", "Prague", "Warsaw", "Budapest", "Rome", "Milan", "Venice", "Berlin", "Munich", "Frankfurt", "London", "Manchester", "Edinburgh", "Paris", "Geneva"], "fr": ["Athènes", "Dublin", "Lisbonne", "Madrid", "Barcelone", "Bruxelles", "Amsterdam", "Vienne", "Prague", "Varsovie", "Budapest", "Rome", "Milan", "Venise", "Berlin", "Munich", "Francfort", "Londres", "Manchester", "Édimbourg", "Paris", "Genève"], "ru": ["Афины", "Дублин", "Лиссабон", "Мадрид", "Барселона", "Брюссель", "Амстердам", "Вена", "Прага", "Варшава", "Будапешт", "Рим", "Милан", "Венеция", "Берлин", "Мюнхен", "Франкфурт", "Лондон", "Манчестер", "Эдинбург", "Париж", "Женева"], "es": ["Atenas", "Dublín", "Lisboa", "Madrid", "Barcelona", "Bruselas", "Ámsterdam", "Viena", "Praga", "Varsovia", "Budapest", "Roma", "Milán", "Venecia", "Berlín", "Múnich", "Fráncfort", "Londres", "Mánchester", "Edimburgo", "París", "Ginebra"], "pt": ["Atenas", "Dublin", "Lisboa", "Madrid", "Barcelona", "Bruxelas", "Amsterdã", "Viena", "Praga", "Varsóvia", "Budapeste", "Roma", "Milão", "Veneza", "Berlim", "Munique", "Frankfurt", "Londres", "Manchester", "Edimburgo", "Paris", "Genebra"], "de": ["Athen", "Dublin", "Lissabon", "Madrid", "Barcelona", "Brüssel", "Amsterdam", "Wien", "Prag", "Warschau", "Budapest", "Rom", "Mailand", "Venedig", "Berlin", "München", "Frankfurt", "London", "Manchester", "Edinburgh", "Paris", "Genf"], "it": ["Atene", "Dublino", "Lisbona", "Madrid", "Barcellona", "Bruxelles", "Amsterdam", "Vienna", "Praga", "Varsavia", "Budapest", "Roma", "Milano", "Venezia", "Berlino", "Monaco", "Francoforte", "Londra", "Manchester", "Edimburgo", "Parigi", "Ginevra"], "tr": ["Atina", "Dublin", "Lizbon", "Madrid", "Barselona", "Brüksel", "Amsterdam", "Viyana", "Prag", "Varşova", "Budapeşte", "Roma", "Milano", "Venedik", "Berlin", "Münih", "Frankfurt", "Londra", "Manchester", "Edinburgh", "Paris", "Cenevre"]};
           const CITIES_ASIA = {"zh": ["河内", "马尼拉", "雅加达", "吉隆坡", "曼谷", "塔什干", "阿拉木图", "德黑兰", "孟买", "新德里", "班加罗尔", "首尔", "釜山", "大阪", "京都", "广州", "上海", "新加坡", "香港", "台北", "北京", "东京"], "hi": ["हनोई", "मनीला", "जकार्ता", "कुआलालंपुर", "बैंकॉक", "ताशकंद", "अल्माटी", "तेहरान", "मुंबई", "नई दिल्ली", "बेंगलुरु", "सियोल", "बुसान", "ओसाका", "क्योटो", "गुआंगझू", "शंघाई", "सिंगापुर", "हांगकांग", "ताइपे", "बीजिंग", "टोक्यो"], "ko": ["하노이", "마닐라", "자카르타", "쿠알라룸푸르", "방콕", "타슈켄트", "알마티", "테헤란", "뭄바이", "뉴델리", "벵갈루루", "서울", "부산", "오사카", "교토", "광저우", "상하이", "싱가포르", "홍콩", "타이베이", "베이징", "도쿄"], "ja": ["ハノイ", "マニラ", "ジャカルタ", "クアラルンプール", "バンコク", "タシュケント", "アルマトイ", "テヘラン", "ムンバイ", "ニューデリー", "ベンガルール", "ソウル", "釜山", "大阪", "京都", "広州", "上海", "シンガポール", "香港", "台北", "北京", "東京"], "fa": ["هانوی", "مانیل", "جاکارتا", "کوالالامپور", "بانکوک", "تاشکند", "آلماتی", "طهران", "بمبئی", "دهلی نو", "بنگلور", "سئول", "بوسان", "اوزاکا", "کیوتو", "گوانگژو", "شانگهای", "سنگاپور", "هنگ کنگ", "تایپه", "پکن", "توکیو"]};
-          const SPECIAL_TILES = {"ar": {"0": "انطلق", "2": "صندوق الجماعة", "4": "ضريبة الدخل", "5": "قطار الحجاز", "7": "فرصة", "10": "السجن / زيارة", "12": "الكهرباء", "15": "قطار الحرمين", "17": "صندوق الجماعة", "20": "مواقف مجانية", "22": "فرصة", "25": "قطار المشرق", "28": "المياه", "30": "إلى السجن!", "33": "صندوق الجماعة", "35": "قطار الخليج", "36": "فرصة", "38": "ضريبة الرفاهية"}, "en": {"0": "GO", "2": "Community", "4": "Income Tax", "5": "Eurostar", "7": "Chance", "10": "Jail", "12": "Electric", "15": "Orient Exp.", "17": "Community", "20": "Parking", "22": "Chance", "25": "TGV", "28": "Water", "30": "Go to Jail", "33": "Community", "35": "Trans-Alpine", "36": "Chance", "38": "Luxury Tax"}, "fr": {"0": "DÉPART", "2": "Caisse", "4": "Impôt", "5": "Eurostar", "7": "Chance", "10": "Prison", "12": "Électricité", "15": "Orient Exp.", "17": "Caisse", "20": "Parc Gratuit", "22": "Chance", "25": "TGV", "28": "Eaux", "30": "En Prison!", "33": "Caisse", "35": "Trans-Alpin", "36": "Chance", "38": "Taxe Luxe"}, "ru": {"0": "ВПЕРЁД", "2": "Казна", "4": "Подоходный налог", "5": "Евростар", "7": "Шанс", "10": "Тюрьма", "12": "Электросеть", "15": "Восточный экспресс", "17": "Казна", "20": "Бесплатная стоянка", "22": "Шанс", "25": "TGV", "28": "Водопровод", "30": "В тюрьму!", "33": "Казна", "35": "Трансальпийский", "36": "Шанс", "38": "Налог на роскошь"}, "es": {"0": "SALIDA", "2": "Caja", "4": "Impuestos", "5": "Eurostar", "7": "Suerte", "10": "Cárcel", "12": "Electricidad", "15": "Orient Exp.", "17": "Caja", "20": "Parking", "22": "Suerte", "25": "TGV", "28": "Agua", "30": "¡A la Cárcel!", "33": "Caja", "35": "Transalpino", "36": "Suerte", "38": "Impuesto Lujo"}, "pt": {"0": "PARTIDA", "2": "Cofre", "4": "Imposto", "5": "Eurostar", "7": "Sorte", "10": "Prisão", "12": "Eletricidade", "15": "Orient Exp.", "17": "Cofre", "20": "Estacionamento", "22": "Sorte", "25": "TGV", "28": "Água", "30": "Vá p/ Prisão!", "33": "Cofre", "35": "Transalpino", "36": "Sorte", "38": "Taxa Luxo"}, "de": {"0": "LOS", "2": "Gemeinschaft", "4": "Einkommensteuer", "5": "Eurostar", "7": "Ereignis", "10": "Gefängnis", "12": "Elektrizität", "15": "Orient Exp.", "17": "Gemeinschaft", "20": "Frei Parken", "22": "Ereignis", "25": "TGV", "28": "Wasserwerk", "30": "Ins Gefängnis!", "33": "Gemeinschaft", "35": "Transalpin", "36": "Ereignis", "38": "Zusatzsteuer"}, "it": {"0": "VIA!", "2": "Imprevisti", "4": "Tassa Reddito", "5": "Eurostar", "7": "Probabilità", "10": "Prigione", "12": "Elettricità", "15": "Orient Exp.", "17": "Imprevisti", "20": "Parcheggio", "22": "Probabilità", "25": "TGV", "28": "Acqua", "30": "In Prigione!", "33": "Imprevisti", "35": "Transalpino", "36": "Probabilità", "38": "Tassa Lusso"}, "tr": {"0": "BAŞLANGIÇ", "2": "Kamu Fonu", "4": "Gelir Vergisi", "5": "Eurostar", "7": "Şans", "10": "Kodes", "12": "Elektrik", "15": "Doğu Ekspresi", "17": "Kamu Fonu", "20": "Ücretsiz Otopark", "22": "Şans", "25": "Hızlı Tren", "28": "Sular İdaresi", "30": "Kodese Gir!", "33": "Kamu Fonu", "35": "Toros Ekspresi", "36": "Şans", "38": "Lüks Vergisi"}, "zh": {"0": "出发", "2": "公益金", "4": "个人所得税", "5": "新干线", "7": "机会", "10": "监狱/探监", "12": "电力公司", "15": "亚欧快线", "17": "公益金", "20": "免费停车场", "22": "机会", "25": "磁悬浮", "28": "自来水厂", "30": "入狱！", "33": "公益金", "35": "丝路快车", "36": "机会", "38": "奢侈税"}, "hi": {"0": "प्रारंभ", "2": "सामुदायिक", "4": "आयकर", "5": "शिंकानसेन", "7": "किस्मत", "10": "जेल / मुलाकात", "12": "बिजली बोर्ड", "15": "एशियाई एक्सप्रेस", "17": "सामुदायिक", "20": "फ्री पार्किंग", "22": "किस्मत", "25": "मैगलेव", "28": "जल बोर्ड", "30": "सीधे जेल जाओ!", "33": "सामुदायिक", "35": "सिल्क रूट एक्सप्रेस", "36": "किस्मत", "38": "विलासिता कर"}, "ko": {"0": "출발", "2": "사회복지기금", "4": "소득세", "5": "신칸센", "7": "황금열쇠", "10": "감옥 / 면회", "12": "전력공사", "15": "범아시아 특급", "17": "사회복지기금", "20": "무료주차장", "22": "황금열쇠", "25": "자기부상열차", "28": "수도공사", "30": "감옥으로 가시오!", "33": "사회복지기금", "35": "실크로드 특급", "36": "황금열쇠", "38": "사치세"}, "ja": {"0": "GO", "2": "共同基金", "4": "所得税", "5": "新幹線", "7": "チャンス", "10": "刑務所", "12": "電力会社", "15": "アジア特急", "17": "共同基金", "20": "無料駐車場", "22": "チャンス", "25": "リニア", "28": "水道会社", "30": "刑務所へ行け!", "33": "共同基金", "35": "シルクロード急行", "36": "チャンス", "38": "物品税"}, "fa": {"0": "شروع", "2": "صندوق عمومی", "4": "مالیات بر درآمد", "5": "شینکانسن", "7": "شانس", "10": "زندان / ملاقات", "12": "اداره برق", "15": "قطار سراسری آسیا", "17": "صندوق عمومی", "20": "پارکینگ رایگان", "22": "شانس", "25": "قطار سریع‌السیر", "28": "اداره آب", "30": "برو به زندان!", "33": "صندوق عمومی", "35": "قطار جاده ابریشم", "36": "شانس", "38": "مالیات تجملات"}};
-          const I18N = {"ar": {"app": "MONOPOLY PRO", "turn": "دورك", "opp": "دور الخصم", "roll": "ارمي النرد", "buy": "شراء", "auction": "مزاد علني", "trade": "مقايضة", "myProps": "عقاراتي", "passGo": "مررت بنقطة الانطلاق وحصلت على 200$!", "jailed": "أنت في السجن!", "finePaid": "دفعت 50$ كفالة وخرجت من السجن.", "doublesJail": "مبروك! نرد متطابق وخرجت من السجن!", "rolled": "حصل على", "rentPaid": "دفع إيجاراً قدره", "to": "إلى", "p": "عقارات", "m": "مرهون", "ai": "ضد روبوت (الكمبيوتر)", "pvp": "لاعبين اثنين (محلي)", "buildFloor": "إنشاء طابق", "demolishFloor": "هدم طابق", "floor": "طابق", "floors": "طوابق", "eiffelTower": "برج إيفل الذهبي", "floorCost": "تكلفة الطابق", "refund": "استرداد", "evenBuildNotice": "يجب بناء الطابق في كافة عقارات اللون بالتساوي أولاً", "evenDemoNotice": "يجب هدم الطوابق بالتساوي أولاً", "maxFloors": "الحد الأقصى (برج إيفل)", "noFloors": "لا توجد مباني", "settings": "الإعدادات", "about": "حول اللعبة", "exit": "خروج", "newGame": "بدء لعبة جديدة", "continueGame": "إكمال اللعبة السابقة", "notEnoughCash": "الرصيد المالي غير كافٍ لبناء الطابق", "monopolyRequired": "يلزم امتلاك كافة عقارات اللون للبناء", "groupMortgaged": "لا يمكن البناء أثناء وجود عقار مَرْهُون في المجموعة"}, "en": {"app": "MONOPOLY PRO", "turn": "Your Turn", "opp": "Opponent's Turn", "roll": "Roll Dice", "buy": "Buy", "auction": "Auction", "trade": "Trade", "myProps": "My Props", "passGo": "Passed GO! Collected 200$!", "jailed": "In Jail!", "finePaid": "Paid 50$ fine and exited jail.", "doublesJail": "Doubles rolled! Exited jail freely!", "rolled": "Rolled", "rentPaid": "Paid rent of", "to": "to", "p": "Props", "m": "Mortgaged", "ai": "vs Robot (Computer)", "pvp": "2 Players (Pass & Play)", "buildFloor": "Build Floor", "demolishFloor": "Demolish Floor", "floor": "Floor", "floors": "Floors", "eiffelTower": "Golden Eiffel Tower", "floorCost": "Floor Cost", "refund": "Refund", "evenBuildNotice": "Must build evenly across all group properties first", "evenDemoNotice": "Must demolish evenly across all group properties first", "maxFloors": "Max Reached (Eiffel Tower)", "noFloors": "No buildings", "settings": "Settings", "about": "About", "exit": "Exit", "newGame": "New Game", "continueGame": "Continue Game", "notEnoughCash": "Insufficient cash to build floor", "monopolyRequired": "Must own all properties in color group to build", "groupMortgaged": "Cannot build while group property is mortgaged"}, "fr": {"app": "MONOPOLY PRO", "turn": "Votre tour", "opp": "Tour adversaire", "roll": "Lancer dés", "buy": "Acheter", "auction": "Enchères", "trade": "Échanger", "myProps": "Mes biens", "passGo": "Passé DÉPART! Reçu 200$!", "jailed": "En prison!", "finePaid": "Amende 50$ payée, sorti de prison.", "doublesJail": "Double obtenu! Sorti libre!", "rolled": "A obtenu", "rentPaid": "A payé un loyer de", "to": "à", "p": "Biens", "m": "Hypothéqué", "ai": "vs Ordinateur", "pvp": "2 Joueurs (Local)", "buildFloor": "Construire étage", "demolishFloor": "Démolir étage", "floor": "Étage", "floors": "Étages", "eiffelTower": "Tour Eiffel Dorée", "floorCost": "Coût de l'étage", "refund": "Remboursement", "evenBuildNotice": "Construisez uniformément sur tout le groupe", "evenDemoNotice": "Démolissez uniformément sur tout le groupe", "maxFloors": "Max atteint (Tour Eiffel)", "noFloors": "Aucun bâtiment", "settings": "Paramètres", "about": "À propos", "exit": "Quitter", "newGame": "Nouvelle partie", "continueGame": "Continuer partie", "notEnoughCash": "Fonds insuffisants", "monopolyRequired": "Monopole requis pour construire", "groupMortgaged": "Impossible de construire avec un bien hypothéqué"}, "ru": {"app": "MONOPOLY PRO", "turn": "Ваш ход", "opp": "Ход соперника", "roll": "Бросить кубики", "buy": "Купить", "auction": "Аукцион", "trade": "Обмен", "myProps": "Мои владения", "passGo": "Прошли ВПЕРЁД! Получено 200$!", "jailed": "Вы в тюрьме!", "finePaid": "Штраф 50$ уплачен, выход из тюрьмы.", "doublesJail": "Дубль! Вы свободны!", "rolled": "Выбросил", "rentPaid": "Заплатил аренду", "to": "игроку", "p": "Владения", "m": "Заложено", "ai": "Против робота", "pvp": "2 игрока (локально)", "buildFloor": "Построить этаж", "demolishFloor": "Снести этаж", "floor": "Этаж", "floors": "Этажи", "eiffelTower": "Золотая Эйфелева башня", "floorCost": "Стоимость этажа", "refund": "Возврат", "evenBuildNotice": "Стройте равномерно по всей группе", "evenDemoNotice": "Сносите равномерно по всей группе", "maxFloors": "Максимум (Эйфелева башня)", "noFloors": "Нет зданий", "settings": "Настройки", "about": "Об игре", "exit": "Выход", "newGame": "Новая игра", "continueGame": "Продолжить игру", "notEnoughCash": "Недостаточно средств", "monopolyRequired": "Требуется монополия для стройки", "groupMortgaged": "Нельзя строить при заложенных участках"}, "es": {"app": "MONOPOLY PRO", "turn": "Tu Turno", "opp": "Turno Rival", "roll": "Lanzar Dados", "buy": "Comprar", "auction": "Subasta", "trade": "Negociar", "myProps": "Mis Propiedades", "passGo": "¡Paso por SALIDA! Recibes 200$!", "jailed": "¡En la Cárcel!", "finePaid": "Fianza de 50$ pagada.", "doublesJail": "¡Dobles! ¡Sales gratis!", "rolled": "Sacó", "rentPaid": "Pagó alquiler de", "to": "a", "p": "Prop.", "m": "Hipotecado", "ai": "vs Robot (IA)", "pvp": "2 Jugadores (Local)", "buildFloor": "Construir Piso", "demolishFloor": "Demoler Piso", "floor": "Piso", "floors": "Pisos", "eiffelTower": "Torre Eiffel Dorada", "floorCost": "Coste de Piso", "refund": "Reembolso", "evenBuildNotice": "Construye de forma uniforme en el grupo", "evenDemoNotice": "Demuele de forma uniforme en el grupo", "maxFloors": "Máximo (Torre Eiffel)", "noFloors": "Sin edificios", "settings": "Ajustes", "about": "Acerca de", "exit": "Salir", "newGame": "Nueva Partida", "continueGame": "Continuar Partida", "notEnoughCash": "Fondos insuficientes", "monopolyRequired": "Monopolio requerido", "groupMortgaged": "No se puede construir con hipoteca"}, "pt": {"app": "MONOPOLY PRO", "turn": "Sua Vez", "opp": "Vez do Oponente", "roll": "Lançar Dados", "buy": "Comprar", "auction": "Leilão", "trade": "Trocar", "myProps": "Minhas Propriedades", "passGo": "Passou pela PARTIDA! Ganhou 200$!", "jailed": "Na Prisão!", "finePaid": "Fiança de 50$ paga.", "doublesJail": "Dados iguais! Livre!", "rolled": "Tirou", "rentPaid": "Pagou aluguel de", "to": "para", "p": "Prop.", "m": "Hipotecado", "ai": "vs Robô (IA)", "pvp": "2 Jogadores (Local)", "buildFloor": "Construir Andar", "demolishFloor": "Demolir Andar", "floor": "Andar", "floors": "Andares", "eiffelTower": "Torre Eiffel Dourada", "floorCost": "Custo do Andar", "refund": "Reembolso", "evenBuildNotice": "Construa uniformemente no grupo", "evenDemoNotice": "Demula uniformemente no grupo", "maxFloors": "Máximo (Torre Eiffel)", "noFloors": "Sem edifícios", "settings": "Configurações", "about": "Sobre", "exit": "Sair", "newGame": "Novo Jogo", "continueGame": "Continuar Jogo", "notEnoughCash": "Dinheiro insuficiente", "monopolyRequired": "Monopólio necessário", "groupMortgaged": "Não pode construir com imóvel hipotecado"}, "de": {"app": "MONOPOLY PRO", "turn": "Du bist dran", "opp": "Gegner am Zug", "roll": "Würfeln", "buy": "Kaufen", "auction": "Auktion", "trade": "Handeln", "myProps": "Mein Besitz", "passGo": "Über LOS gezogen! 200$ erhalten!", "jailed": "Im Gefängnis!", "finePaid": "50$ Kaution gezahlt.", "doublesJail": "Pasch gewürfelt! Frei!", "rolled": "Hat gewürfelt", "rentPaid": "Miete gezahlt von", "to": "an", "p": "Besitz", "m": "Belastet", "ai": "vs Computer", "pvp": "2 Spieler (Lokal)", "buildFloor": "Etage bauen", "demolishFloor": "Etage abreißen", "floor": "Etage", "floors": "Etagen", "eiffelTower": "Goldener Eiffelturm", "floorCost": "Kosten pro Etage", "refund": "Rückerstattung", "evenBuildNotice": "Gleichmäßig in der Gruppe bauen", "evenDemoNotice": "Gleichmäßig in der Gruppe abreißen", "maxFloors": "Maximum (Eiffelturm)", "noFloors": "Keine Gebäude", "settings": "Einstellungen", "about": "Über das Spiel", "exit": "Beenden", "newGame": "Neues Spiel", "continueGame": "Fortsetzen", "notEnoughCash": "Nicht genug Geld", "monopolyRequired": "Monopol erforderlich", "groupMortgaged": "Kein Bauen bei belastetem Besitz"}, "it": {"app": "MONOPOLY PRO", "turn": "Il tuo Turno", "opp": "Turno Avversario", "roll": "Lancia Dadi", "buy": "Acquista", "auction": "Asta", "trade": "Scambia", "myProps": "Le mie Proprietà", "passGo": "Passato dal VIA! Ritiri 200$!", "jailed": "In Prigione!", "finePaid": "Multa di 50$ pagata.", "doublesJail": "Doppio! Sei libero!", "rolled": "Ha tirato", "rentPaid": "Affitto pagato di", "to": "a", "p": "Propr.", "m": "Ipotecato", "ai": "vs Computer", "pvp": "2 Giocatori (Locale)", "buildFloor": "Costruisci Piano", "demolishFloor": "Demolisci Piano", "floor": "Piano", "floors": "Piani", "eiffelTower": "Torre Eiffel Dorata", "floorCost": "Costo Piano", "refund": "Rimborso", "evenBuildNotice": "Costruisci uniformemente nel gruppo", "evenDemoNotice": "Demolisci uniformemente nel gruppo", "maxFloors": "Massimo (Torre Eiffel)", "noFloors": "Nessun edificio", "settings": "Impostazioni", "about": "Informazioni", "exit": "Esci", "newGame": "Nuova Partita", "continueGame": "Continua Partita", "notEnoughCash": "Denaro insufficiente", "monopolyRequired": "Monopolio richiesto", "groupMortgaged": "Non si può costruire con ipoteche"}, "tr": {"app": "MONOPOLY PRO", "turn": "Sıra Sende", "opp": "Rakibin Sırası", "roll": "Zar At", "buy": "Satın Al", "auction": "Açık Artırma", "trade": "Takas", "myProps": "Mülklerim", "passGo": "BAŞLANGIÇTAN geçtin! 200$ aldın!", "jailed": "Kodes'tesin!", "finePaid": "50$ kefalet ödendi, serbestsin.", "doublesJail": "Çift zar! Kodesten çıktın!", "rolled": "Zar attı:", "rentPaid": "Kira ödendi:", "to": "Kime:", "p": "Mülk", "m": "İpotekli", "ai": "Bilgisayara Karşı", "pvp": "2 Oyuncu (Yerel)", "buildFloor": "Kat İnşa Et", "demolishFloor": "Kat Yık", "floor": "Kat", "floors": "Kat", "eiffelTower": "Altın Eyfel Kulesi", "floorCost": "Kat Maliyeti", "refund": "Geri Ödeme", "evenBuildNotice": "Gruptaki tüm mülklere eşit inşa edin", "evenDemoNotice": "Gruptaki mülkleri eşit yıkın", "maxFloors": "Maksimum (Eyfel Kulesi)", "noFloors": "Bina yok", "settings": "Ayarlar", "about": "Hakkında", "exit": "Çıkış", "newGame": "Yeni Oyun", "continueGame": "Oyuna Devam Et", "notEnoughCash": "Yetersiz bakiye", "monopolyRequired": "Tekel olmak şart", "groupMortgaged": "İpotekli mülk varken inşa edilemez"}, "zh": {"app": "MONOPOLY PRO", "turn": "你的回合", "opp": "对手回合", "roll": "掷骰子", "buy": "购买", "auction": "拍卖", "trade": "交易", "myProps": "我的房产", "passGo": "经过出发点！获得200$！", "jailed": "你进监狱了！", "finePaid": "支付50$罚金出狱。", "doublesJail": "掷出双数！免费出狱！", "rolled": "掷出了", "rentPaid": "支付租金", "to": "给", "p": "房产", "m": "已抵押", "ai": "人机对战", "pvp": "双人同屏对战", "buildFloor": "建造楼层", "demolishFloor": "拆除楼层", "floor": "层", "floors": "层", "eiffelTower": "金色埃菲尔铁塔", "floorCost": "建造费用", "refund": "拆除返还", "evenBuildNotice": "必须在同色系所有房产均匀加盖", "evenDemoNotice": "必须在同色系均匀拆除", "maxFloors": "达到最高上限（铁塔）", "noFloors": "暂无建筑", "settings": "设置", "about": "关于游戏", "exit": "退出", "newGame": "新游戏", "continueGame": "继续上一局", "notEnoughCash": "资金不足以建楼", "monopolyRequired": "需垄断同色系方可建楼", "groupMortgaged": "同色系有抵押房产时不可建楼"}, "hi": {"app": "MONOPOLY PRO", "turn": "आपकी बारी", "opp": "प्रतिद्वंद्वी की बारी", "roll": "पासा फेंकें", "buy": "खरीदें", "auction": "नीलामी", "trade": "अदला-बदली", "myProps": "मेरी संपत्ति", "passGo": "प्रारंभ पार किया! 200$ प्राप्त हुए!", "jailed": "आप जेल में हैं!", "finePaid": "50$ जमानत चुकाई, जेल से बाहर।", "doublesJail": "जोड़ी आई! जेल से मुक्त!", "rolled": "पासा आया", "rentPaid": "किराया चुकाया", "to": "को", "p": "संपत्ति", "m": "गिरवी", "ai": "कंप्यूटर के खिलाफ", "pvp": "2 खिलाड़ी (लोकल)", "buildFloor": "मंजिल बनाएं", "demolishFloor": "मंजिल गिराएं", "floor": "मंजिल", "floors": "मंजिलें", "eiffelTower": "गोल्डन एफिल टॉवर", "floorCost": "मंजिल लागत", "refund": "वापसी", "evenBuildNotice": "समूह की सभी संपत्तियों पर समान मंजिल बनाएं", "evenDemoNotice": "समूह में समान रूप से मंजिल गिराएं", "maxFloors": "अधिकतम सीमा (एफिल टॉवर)", "noFloors": "कोई इमारत नहीं", "settings": "सेटिंग्स", "about": "बारे में", "exit": "बाहر निकलें", "newGame": "नया खेल", "continueGame": "पिछला खेल जारी रखें", "notEnoughCash": "पैसे की कमी है", "monopolyRequired": "एकाधिकार आवश्यक है", "groupMortgaged": "गिरवी संपत्ति होने पर निर्माण संभव नहीं"}, "ko": {"app": "MONOPOLY PRO", "turn": "당신 차례", "opp": "상대 차례", "roll": "주사위 굴리기", "buy": "구매", "auction": "경매", "trade": "거래", "myProps": "내 부동산", "passGo": "출발점을 통과했습니다! 200$ 획득!", "jailed": "감옥에 갇혔습니다!", "finePaid": "보석금 50$ 지불 후 석방되었습니다.", "doublesJail": "더블 달성! 무료 석방!", "rolled": "주사위 결과", "rentPaid": "임대료 지불", "to": "에게", "p": "부동산", "m": "저당 잡힘", "ai": "인공지능 대전", "pvp": "2인 플레이", "buildFloor": "층 건설", "demolishFloor": "층 철거", "floor": "층", "floors": "층", "eiffelTower": "황금 에펠탑", "floorCost": "층 건설 비용", "refund": "철거 환급금", "evenBuildNotice": "그룹의 모든 부동산에 균등하게 건설해야 합니다", "evenDemoNotice": "균등하게 층을 철거해야 합니다", "maxFloors": "최대치 달성 (에펠탑)", "noFloors": "건물 없음", "settings": "설정", "about": "게임 정보", "exit": "나가기", "newGame": "새 게임", "continueGame": "이전 게임 이어하기", "notEnoughCash": "건설 자금 부족", "monopolyRequired": "독점 필요", "groupMortgaged": "저당 상태에서는 건설 불가"}, "ja": {"app": "MONOPOLY PRO", "turn": "あなたの番", "opp": "相手の番", "roll": "サイコロを振る", "buy": "購入", "auction": "競売", "trade": "取引", "myProps": "所有物件", "passGo": "GOを通過！200$獲得！", "jailed": "刑務所に入りました！", "finePaid": "罰金50$を支払い釈放されました。", "doublesJail": "ゾロ目！釈放されました！", "rolled": "出目:", "rentPaid": "賃料支払い:", "to": "へ", "p": "物件", "m": "抵当", "ai": "AI対戦", "pvp": "2人対戦", "buildFloor": "フロア建設", "demolishFloor": "フロア解体", "floor": "階", "floors": "階", "eiffelTower": "黄金のエッフェル塔", "floorCost": "建設費", "refund": "解体払戻金", "evenBuildNotice": "同じ色のすべての物件に均等に建設してください", "evenDemoNotice": "グループ全体で均等に解体してください", "maxFloors": "上限到達 (エッフェル塔)", "noFloors": "建物なし", "settings": "設定", "about": "ゲームについて", "exit": "終了", "newGame": "新しいゲーム", "continueGame": "前回のゲームを再開", "notEnoughCash": "建設資金が不足しています", "monopolyRequired": "独占が必要です", "groupMortgaged": "抵当物件がある場合は建設できません"}, "fa": {"app": "MONOPOLY PRO", "turn": "نوبت شما", "opp": "نوبت حریف", "roll": "پرتاب تاس", "buy": "خرید", "auction": "حراج", "trade": "معامله", "myProps": "املاک من", "passGo": "از خانه شروع گذشتید! 200$ دریافت شد!", "jailed": "شما در زندان هستید!", "finePaid": "50$ جریمه پرداخت شد و آزاد شدید.", "doublesJail": "جفت آوردید! آزاد شدید!", "rolled": "آورد:", "rentPaid": "پرداخت اجاره:", "to": "به", "p": "املاک", "m": "رهن", "ai": "در برابر کامپیوتر", "pvp": "دو نفره (محلی)", "buildFloor": "ساخت طبقه", "demolishFloor": "تخریب طبقه", "floor": "طبقه", "floors": "طبقات", "eiffelTower": "برج ایفل طلایی", "floorCost": "هزینه طبقه", "refund": "بازپرداخت", "evenBuildNotice": "باید در تمام املاک هم‌رنگ به طور مساوی بسازید", "evenDemoNotice": "باید تخریب به صورت مساوی انجام شود", "maxFloors": "حداکثر سقف (برج ایفل)", "noFloors": "بدون ساختمان", "settings": "تنظیمات", "about": "درباره بازی", "exit": "خروج", "newGame": "شروع بازی جدید", "continueGame": "ادامه بازی قبلی", "notEnoughCash": "موجودی ناکافی برای ساخت طبقه", "monopolyRequired": "انحصار کامل رنگ الزامی است", "groupMortgaged": "در صورت وجود ملک رهنی امکان ساخت نیست"}};
+          const SPECIAL_TILES = {"ar": {"0": "انطلق", "2": "صندوق الجماعة", "4": "ضريبة الدخل", "5": "قطار الحجاز", "7": "فرصة", "10": "السجن / زيارة", "12": "الكهرباء", "15": "قطار الحرمين", "17": "صندوق الجماعة", "20": "مواقف مجانية", "22": "فرصة", "25": "قطار المشرق", "28": "المياه", "30": "إلى السجن!", "33": "صندوق الجماعة", "35": "قطار الخليج", "36": "فرصة", "38": "ضريبة الرفاهية"}, "en": {"0": "GO", "2": "Community", "4": "Income Tax", "5": "Eurostar", "7": "Chance", "10": "Jail", "12": "Electric", "15": "Orient Exp.", "17": "Community", "20": "Parking", "22": "Chance", "25": "TGV", "28": "Water", "30": "Go to Jail", "33": "Community", "35": "Trans-Alpine", "36": "Chance", "38": "Luxury Tax"}, "fr": {"0": "DÉPART", "2": "Caisse", "4": "Impôt", "5": "Eurostar", "7": "Chance", "10": "Prison", "12": "Électricité", "15": "Orient Exp.", "17": "Caisse", "20": "Parc Gratuit", "22": "Chance", "25": "TGV", "28": "Eaux", "30": "En Prison!", "33": "Caisse", "35": "Trans-Alpin", "36": "Chance", "38": "Taxe Luxe"}, "ru": {"0": "ВПЕРЁД", "2": "Казна", "4": "Подоходный налог", "5": "Евростар", "7": "Шанс", "10": "Тюрьма", "12": "Электросеть", "15": "Восточный экспресс", "17": "Казна", "20": "Бесплатная стоянка", "22": "Шанс", "25": "TGV", "28": "Водопровод", "30": "В тюрьму!", "33": "Казна", "35": "Трансальпийский", "36": "Шанс", "38": "Налог на роскошь"}, "es": {"0": "SALIDA", "2": "Caja", "4": "Impuestos", "5": "Eurostar", "7": "Suerte", "10": "Cárcel", "12": "Electricidad", "15": "Orient Exp.", "17": "Caja", "20": "Parking", "22": "Suerte", "25": "TGV", "28": "Agua", "30": "¡A la Cárcel!", "33": "Caja", "35": "Transalpino", "36": "Suerte", "38": "Impuesto Lujo"}, "pt": {"0": "PARTIDA", "2": "Cofre", "4": "Imposto", "5": "Eurostar", "7": "Sorte", "10": "Prisão", "12": "Eletricidade", "15": "Orient Exp.", "17": "Cofre", "20": "Estacionamento", "22": "Sorte", "25": "TGV", "28": "Água", "30": "Vá p/ Prisão!", "33": "Cofre", "35": "Transalpino", "36": "Sorte", "38": "Taxa Luxo"}, "de": {"0": "LOS", "2": "Gemeinschaft", "4": "Einkommensteuer", "5": "Eurostar", "7": "Ereignis", "10": "Gefängnis", "12": "Elektrizität", "15": "Orient Exp.", "17": "Gemeinschaft", "20": "Frei Parken", "22": "Ereignis", "25": "TGV", "28": "Wasserwerk", "30": "Ins Gefängnis!", "33": "Gemeinschaft", "35": "Transalpin", "36": "Ereignis", "38": "Zusatzsteuer"}, "it": {"0": "VIA!", "2": "Imprevisti", "4": "Tassa Reddito", "5": "Eurostar", "7": "Probabilità", "10": "Prigione", "12": "Elettricità", "15": "Orient Exp.", "17": "Imprevisti", "20": "Parcheggio", "22": "Probabilità", "25": "TGV", "28": "Acqua", "30": "In Prigione!", "33": "Imprevisti", "35": "Transalpino", "36": "Probabilità", "38": "Tassa Lusso"}, "tr": {"0": "BAŞLANGIÇ", "2": "Kamu Fonu", "4": "Gelir Vergisi", "5": "Eurostar", "7": "Şans", "10": "Kodes", "12": "Elektrik", "15": "Doğu Ekspresi", "17": "Kamu Fonu", "20": "Ücretsiz Otopark", "22": "Şans", "25": "Hızlı Tren", "28": "Sular İdaresi", "30": "Kodese Gir!", "33": "Kamu Fonu", "35": "Toros Ekspresi", "36": "Şans", "38": "Lüks Vergisi"}, "zh": {"0": "出发", "2": "公益金", "4": "个人所得税", "5": "新干线", "7": "机会", "10": "监狱/探监", "12": "电力公司", "15": "亚欧快线", "17": "公益金", "20": "免费停车场", "22": "机会", "25": "磁悬浮", "28": "自来水厂", "30": "入狱！", "33": "公益金", "35": "丝路快车", "36": "机会", "38": "奢侈税"}, "hi": {"0": "प्रारंभ", "2": "सामुदायिक", "4": "आयकर", "5": "शिंकानसेन", "7": "किस्मत", "10": "जेल / मुलाकात", "12": "बिजली बोर्ड", "15": "एशियाई एक्सप्रेस", "17": "सामुदायिक", "20": "फ्री पार्किंग", "22": "किस्मत", "25": "मैगलेव", "28": "जल बोर्ड", "30": "सीधे जेल जाओ!", "33": "सामुदायिक", "35": "सिल्क रूट एक्सप्रेस", "36": "किस्मत", "38": "विलासिता कर"}, "ko": {"0": "출발", "2": "사회복지기금", "4": "소득세", "5": "신칸센", "7": "황금열쇠", "10": "감옥 / 면회", "12": "전력공사", "15": "범아시아 특급", "17": "사회복지기금", "20": "무료주차장", "22": "황금열쇠", "25": "자기부상열차", "28": "수도공사", "30": "감옥으로 가시오!", "33": "사회복지기금", "35": "실크로드 특급", "36": "황금열쇠", "38": "사치세"}, "ja": {"0": "GO", "2": "共同基金", "4": "所得税", "5": "新幹線", "7": "チャンス", "10": "刑務所", "12": "電力会社", "15": "アジア特急", "17": "共同基金", "20": "無料駐車場", "22": "チャンス", "25": "リニア", "28": "水道会社", "30": "刑務所へ行け!", "33": "共同基金", "35": "シルクロード急行", "36": "チャンス", "38": "物品税"}, "fa": {"0": "شروع", "2": "صندوق عمومی", "4": "مالیات بر درآمد", "5": "شینکانسن", "7": "شانس", "10": "زندان / ملاقات", "12": "اداره برق", "15": "قطار سراسری آسیا", "17": "صندوق عمومی", "20": "پارکینگ رایگان", "22": "شانس", "25": "قطار سریعالسیر", "28": "اداره آب", "30": "برو به زندان!", "33": "صندوق عمومی", "35": "قطار جاده ابریشم", "36": "شانس", "38": "مالیات تجملات"}};
 
           const PROP_INDICES = [1, 3, 6, 8, 9, 11, 13, 14, 16, 18, 19, 21, 23, 24, 26, 27, 29, 31, 32, 34, 37, 39];
           const EURO_LANGS = ['en', 'fr', 'ru', 'es', 'pt', 'de', 'it', 'tr'];
@@ -1135,15 +1223,17 @@ jobs:
                       "  • محطتان: 50$ إيجار.",
                       "  • 3 محطات: 100$ إيجار.",
                       "  • جميع المحطات الأربع: 200$ إيجار كامل!",
-                      "🚄 ميزة السفر السريع: لا يتم السفر بالقطار لأي لاعب إلا بعد شراء كافة محطات القطار الأربع في اللعبة. ويكون السفر مجانياً تماماً لصاحب المحطات (0$)، بينما تبلغ تكلفته 200$ لغير المالك."
+                      "🚄 ميزة السفر السريع: لا يتم السفر السريع إلا إذا كان أحد اللاعبين يملك جميع خانات القطارات الأربعة. وعندها يحق للمالك عند الهبوط على أي محطة قطار اختيار إحدى المحطات الثلاث الأخرى والانتقال إليها فوراً (بدون مكافأة إتمام الدورة 200$ إذا تجاوز خط الانطلاق)."
                   ],
                   rulesEn: [
                       "💵 Purchase Price: 200$ per railroad.",
                       "📈 Tiered Rent: 1 Rail = 25$ | 2 Rails = 50$ | 3 Rails = 100$ | 4 Rails = 200$!",
-                      "🚄 Fast Travel: Fast travel between stations is only allowed after ALL four stations are purchased. Travel is 100% FREE for station owners (0$), and costs 200$ for non-owners."
+                      "🚄 Fast Travel: Fast travel is only unlocked when one of the players owns all 4 railroad stations. Once unlocked, the owner landing on any station can choose one of the other 3 stations to travel to immediately (without 200$ GO lap bonus if crossing GO)."
                   ]
               }
           };
+
+          const I18N = {"ar": {"app": "MONOPOLY PRO", "turn": "دورك", "opp": "دور الخصم", "roll": "ارمي النرد", "buy": "شراء", "auction": "مزاد علني", "trade": "مقايضة", "myProps": "عقاراتي", "passGo": "مررت بنقطة الانطلاق وحصلت على 200$!", "jailed": "أنت في السجن!", "finePaid": "دفعت 50$ كفالة وخرجت من السجن.", "doublesJail": "مبروك! نرد متطابق وخرجت من السجن!", "rolled": "حصل على", "rentPaid": "دفع إيجاراً قدره", "to": "إلى", "p": "عقارات", "m": "مرهون", "ai": "ضد روبوت (الكمبيوتر)", "pvp": "لاعبين اثنين (محلي)", "buildFloor": "إنشاء طابق", "demolishFloor": "هدم طابق", "floor": "طابق", "floors": "طوابق", "eiffelTower": "برج إيفل الذهبي", "floorCost": "تكلفة الطابق", "refund": "استرداد", "evenBuildNotice": "يجب بناء الطابق في كافة عقارات اللون بالتساوي أولاً", "evenDemoNotice": "يجب هدم الطوابق بالتساوي أولاً", "maxFloors": "الحد الأقصى (برج إيفل)", "noFloors": "لا توجد مباني", "settings": "الإعدادات", "about": "من نحن", "exit": "خروج", "newGame": "بدء لعبة جديدة", "continueGame": "إكمال اللعبة السابقة", "notEnoughCash": "الرصيد المالي غير كافٍ لبناء الطابق", "monopolyRequired": "يلزم امتلاك كافة عقارات اللون للبناء", "groupMortgaged": "لا يمكن البناء أثناء وجود عقار مَرْهُون في المجموعة"}, "en": {"app": "MONOPOLY PRO", "turn": "Your Turn", "opp": "Opponent's Turn", "roll": "Roll Dice", "buy": "Buy", "auction": "Auction", "trade": "Trade", "myProps": "My Props", "passGo": "Passed GO! Collected 200$!", "jailed": "In Jail!", "finePaid": "Paid 50$ fine and exited jail.", "doublesJail": "Doubles rolled! Exited jail freely!", "rolled": "Rolled", "rentPaid": "Paid rent of", "to": "to", "p": "Props", "m": "Mortgaged", "ai": "vs Robot (Computer)", "pvp": "2 Players (Pass & Play)", "buildFloor": "Build Floor", "demolishFloor": "Demolish Floor", "floor": "Floor", "floors": "Floors", "eiffelTower": "Golden Eiffel Tower", "floorCost": "Floor Cost", "refund": "Refund", "evenBuildNotice": "Must build evenly across all group properties first", "evenDemoNotice": "Must demolish evenly across all group properties first", "maxFloors": "Max Reached (Eiffel Tower)", "noFloors": "No buildings", "settings": "Settings", "about": "About", "exit": "Exit", "newGame": "New Game", "continueGame": "Continue Game", "notEnoughCash": "Insufficient cash to build floor", "monopolyRequired": "Must own all properties in color group to build", "groupMortgaged": "Cannot build while group property is mortgaged"}, "fr": {"app": "MONOPOLY PRO", "turn": "Votre tour", "opp": "Tour adversaire", "roll": "Lancer dés", "buy": "Acheter", "auction": "Enchères", "trade": "Échanger", "myProps": "Mes biens", "passGo": "Passé DÉPART! Reçu 200$!", "jailed": "En prison!", "finePaid": "Amende 50$ payée, sorti de prison.", "doublesJail": "Double obtenu! Sorti libre!", "rolled": "A obtenu", "rentPaid": "A payé un loyer de", "to": "à", "p": "Biens", "m": "Hypothéqué", "ai": "vs Ordinateur", "pvp": "2 Joueurs (Local)", "buildFloor": "Construire étage", "demolishFloor": "Démolir étage", "floor": "Étage", "floors": "Étages", "eiffelTower": "Tour Eiffel Dorée", "floorCost": "Coût de l'étage", "refund": "Remboursement", "evenBuildNotice": "Construisez uniformément sur tout le groupe", "evenDemoNotice": "Démolissez uniformément sur tout le groupe", "maxFloors": "Max atteint (Tour Eiffel)", "noFloors": "Aucun bâtiment", "settings": "Paramètres", "about": "À propos", "exit": "Quitter", "newGame": "Nouvelle partie", "continueGame": "Continuer partie", "notEnoughCash": "Fonds insuffisants", "monopolyRequired": "Monopole requis pour construire", "groupMortgaged": "Impossible de construire avec un bien hypothéqué"}, "ru": {"app": "MONOPOLY PRO", "turn": "Ваш ход", "opp": "Ход соперника", "roll": "Бросить кубики", "buy": "Купить", "auction": "Аукцион", "trade": "Обмен", "myProps": "Мои владения", "passGo": "Прошли ВПЕРЁД! Получено 200$!", "jailed": "Вы в тюрьме!", "finePaid": "Штраф 50$ уплачен, выход из тюрьмы.", "doublesJail": "Дубль! Вы свободны!", "rolled": "Выбросил", "rentPaid": "Заплатил аренду", "to": "игроку", "p": "Владения", "m": "Заложено", "ai": "Против робота", "pvp": "2 игрока (локально)", "buildFloor": "Построить этаж", "demolishFloor": "Снести этаж", "floor": "Этаж", "floors": "Этажи", "eiffelTower": "Золотая Эйфелева башня", "floorCost": "Стоимость этажа", "refund": "Возврат", "evenBuildNotice": "Стройте равномерно по всей группе", "evenDemoNotice": "Сносите равномерно по всей группе", "maxFloors": "Максимум (Эйфелева башня)", "noFloors": "Нет зданий", "settings": "Настройки", "about": "Об игре", "exit": "Выход", "newGame": "Новая игра", "continueGame": "Продолжить игру", "notEnoughCash": "Недостаточно средств", "monopolyRequired": "Требуется монополия для стройки", "groupMortgaged": "Нельзя строить при заложенных участках"}, "es": {"app": "MONOPOLY PRO", "turn": "Tu Turno", "opp": "Turno Rival", "roll": "Lanzar Dados", "buy": "Comprar", "auction": "Subasta", "trade": "Negociar", "myProps": "Mis Propiedades", "passGo": "¡Paso por SALIDA! Recibes 200$!", "jailed": "¡En la Cárcel!", "finePaid": "Fianza de 50$ pagada.", "doublesJail": "¡Dobles! ¡Sales gratis!", "rolled": "Sacó", "rentPaid": "Pagó alquiler de", "to": "a", "p": "Prop.", "m": "Hipotecado", "ai": "vs Robot (IA)", "pvp": "2 Jugadores (Local)", "buildFloor": "Construir Piso", "demolishFloor": "Demoler Piso", "floor": "Piso", "floors": "Pisos", "eiffelTower": "Torre Eiffel Dorada", "floorCost": "Coste de Piso", "refund": "Reembolso", "evenBuildNotice": "Construye de forma uniforme en el grupo", "evenDemoNotice": "Demuele de forma uniforme en el grupo", "maxFloors": "Máximo (Torre Eiffel)", "noFloors": "Sin edificios", "settings": "Ajustes", "about": "Acerca de", "exit": "Salir", "newGame": "Nueva Partida", "continueGame": "Continuar Partida", "notEnoughCash": "Fondos insuficientes", "monopolyRequired": "Monopolio requerido", "groupMortgaged": "No se puede construir con hipoteca"}, "pt": {"app": "MONOPOLY PRO", "turn": "Sua Vez", "opp": "Vez do Oponente", "roll": "Lançar Dados", "buy": "Comprar", "auction": "Leilão", "trade": "Trocar", "myProps": "Minhas Propriedades", "passGo": "Passou pela PARTIDA! Ganhou 200$!", "jailed": "Na Prisão!", "finePaid": "Fiança de 50$ paga.", "doublesJail": "Dados iguais! Livre!", "rolled": "Tirou", "rentPaid": "Pagou aluguel de", "to": "para", "p": "Prop.", "m": "Hipotecado", "ai": "vs Robô (IA)", "pvp": "2 Jogadores (Local)", "buildFloor": "Construir Andar", "demolishFloor": "Demolir Andar", "floor": "Andar", "floors": "Andares", "eiffelTower": "Torre Eiffel Dourada", "floorCost": "Custo do Andar", "refund": "Reembolso", "evenBuildNotice": "Construa uniformemente no grupo", "evenDemoNotice": "Demula uniformemente no grupo", "maxFloors": "Máximo (Torre Eiffel)", "noFloors": "Sem edifícios", "settings": "Configurações", "about": "Sobre", "exit": "Sair", "newGame": "Novo Jogo", "continueGame": "Continuar Jogo", "notEnoughCash": "Dinheiro insuficiente", "monopolyRequired": "Monopólio necessário", "groupMortgaged": "Não pode construir com imóvel hipotecado"}, "de": {"app": "MONOPOLY PRO", "turn": "Du bist dran", "opp": "Gegner am Zug", "roll": "Würfeln", "buy": "Kaufen", "auction": "Auktion", "trade": "Handeln", "myProps": "Mein Besitz", "passGo": "Über LOS gezogen! 200$ erhalten!", "jailed": "Im Gefängnis!", "finePaid": "50$ Kaution gezahlt.", "doublesJail": "Pasch gewürfelt! Frei!", "rolled": "Hat gewürfelt", "rentPaid": "Miete gezahlt von", "to": "an", "p": "Besitz", "m": "Belastet", "ai": "vs Computer", "pvp": "2 Spieler (Lokal)", "buildFloor": "Etage bauen", "demolishFloor": "Etage abreißen", "floor": "Etage", "floors": "Etagen", "eiffelTower": "Goldener Eiffelturm", "floorCost": "Kosten pro Etage", "refund": "Rückerstattung", "evenBuildNotice": "Gleichmäßig in der Gruppe bauen", "evenDemoNotice": "Gleichmäßig in der Gruppe abreißen", "maxFloors": "Maximum (Eiffelturm)", "noFloors": "Keine Gebäude", "settings": "Einstellungen", "about": "Über das Spiel", "exit": "Beenden", "newGame": "Neues Spiel", "continueGame": "Fortsetzen", "notEnoughCash": "Nicht genug Geld", "monopolyRequired": "Monopol erforderlich", "groupMortgaged": "Kein Bauen bei belastetem Besitz"}, "it": {"app": "MONOPOLY PRO", "turn": "Il tuo Turno", "opp": "Turno Avversario", "roll": "Lancia Dadi", "buy": "Acquista", "auction": "Asta", "trade": "Scambia", "myProps": "Le mie Proprietà", "passGo": "Passato dal VIA! Ritiri 200$!", "jailed": "In Prigione!", "finePaid": "Multa di 50$ pagata.", "doublesJail": "Doppio! Sei libero!", "rolled": "Ha tirato", "rentPaid": "Affitto pagato di", "to": "a", "p": "Propr.", "m": "Ipotecato", "ai": "vs Computer", "pvp": "2 Giocatori (Locale)", "buildFloor": "Costruisci Piano", "demolishFloor": "Demolisci Piano", "floor": "Piano", "floors": "Piani", "eiffelTower": "Torre Eiffel Dorata", "floorCost": "Costo Piano", "refund": "Rimborso", "evenBuildNotice": "Costruisci uniformemente nel gruppo", "evenDemoNotice": "Demolisci uniformemente nel gruppo", "maxFloors": "Massimo (Torre Eiffel)", "noFloors": "Nessun edificio", "settings": "Impostazioni", "about": "Informazioni", "exit": "Esci", "newGame": "Nuova Partita", "continueGame": "Continua Partita", "notEnoughCash": "Denaro insufficiente", "monopolyRequired": "Monopolio richiesto", "groupMortgaged": "Non si يمكن costruire con ipoteche"}, "tr": {"app": "MONOPOLY PRO", "turn": "Sıra Sende", "opp": "Rakibin Sırası", "roll": "Zar At", "buy": "Satın Al", "auction": "Açık Artırma", "trade": "Takas", "myProps": "Mülklerim", "passGo": "BAŞLANGIÇTAN geçtin! 200$ aldın!", "jailed": "Kodes'tesin!", "finePaid": "50$ kefalet ödendi, serbestsin.", "doublesJail": "Çift zar! Kodesten çıktın!", "rolled": "Zar attı:", "rentPaid": "Kira ödendi:", "to": "Kime:", "p": "Mülk", "m": "İpotekli", "ai": "Bilgisayara Karşı", "pvp": "2 Oyuncu (Yerel)", "buildFloor": "Kat İnşa Et", "demolishFloor": "Kat Yık", "floor": "Kat", "floors": "Kat", "eiffelTower": "Altın Eyfel Kulesi", "floorCost": "Kat Maliyeti", "refund": "Geri Ödeme", "evenBuildNotice": "Gruptaki tüm mülklere eşit inşa edin", "evenDemoNotice": "Gruptaki mülkleri eşit yıkın", "maxFloors": "Maksimum (Eyfel Kulesi)", "noFloors": "Bina yok", "settings": "Ayarlar", "about": "Hakkında", "exit": "Çıkış", "newGame": "Yeni Oyun", "continueGame": "Oyuna Devam Et", "notEnoughCash": "Yetersiz bakiye", "monopolyRequired": "Tekel olmak şart", "groupMortgaged": "İpotekli mülk varken inşa edilemez"}, "zh": {"app": "MONOPOLY PRO", "turn": "你的回合", "opp": "对手回合", "roll": "掷骰子", "buy": "购买", "auction": "拍卖", "trade": "交易", "myProps": "我的房产", "passGo": "经过出发点！获得200$！", "jailed": "你进监狱了！", "finePaid": "支付50$罚金出狱。", "doublesJail": "掷出双数！免费出狱！", "rolled": "掷出了", "rentPaid": "支付租金", "to": "给", "p": "房产", "m": "已抵押", "ai": "人机对战", "pvp": "双人同屏对战", "buildFloor": "建造楼层", "demolishFloor": "拆除楼层", "floor": "层", "floors": "层", "eiffelTower": "金色埃菲尔铁塔", "floorCost": "建造费用", "refund": "拆除返还", "evenBuildNotice": "必须在同色系所有房产均匀加盖", "evenDemoNotice": "必须在同色系均匀拆除", "maxFloors": "达到最高上限（铁塔）", "noFloors": "暂无建筑", "settings": "设置", "about": "关于游戏", "exit": "退出", "newGame": "新游戏", "continueGame": "继续上一局", "notEnoughCash": "资金不足以建楼", "monopolyRequired": "需垄断同色系方可建楼", "groupMortgaged": "同色系有抵押房产时不可建楼"}, "hi": {"app": "MONOPOLY PRO", "turn": "आपकी बारी", "opp": "प्रतिद्वंद्वी की बारी", "roll": "पासा फेंकें", "buy": "खरीदें", "auction": "नीलामी", "trade": "अदला-बदली", "myProps": "मेरी संपत्ति", "passGo": "प्रारंभ पार किया! 200$ प्राप्त हुए!", "jailed": "आप जेल में हैं!", "finePaid": "50$ जमानत चुकाई, जेल से बाहर।", "doublesJail": "जोड़ी आई! जेल से मुक्त!", "rolled": "पासा आया", "rentPaid": "किराया चुकाया", "to": "को", "p": "संपत्ति", "m": "गिरवी", "ai": "कंप्यूटर के खिलाफ", "pvp": "2 खिलाड़ी (लोकल)", "buildFloor": "मंजिल बनाएं", "demolishFloor": "मंजिल गिराएं", "floor": "मंजिल", "floors": "मंजिलें", "eiffelTower": "गोल्डन एफिल टॉवर", "floorCost": "मंजिल लागत", "refund": "वापसी", "evenBuildNotice": "समूह की सभी संपत्तियों पर समान मंजिल बनाएं", "evenDemoNotice": "समूह में समान रूप से मंजिल गिराएं", "maxFloors": "अधिकतम सीमा (एफिल टॉवर)", "noFloors": "कोई इमारत नहीं", "settings": "सेटिंग्स", "about": "बारे में", "exit": "बाहर निकलें", "newGame": "नया खेल", "continueGame": "पिछला खेल जारी रखें", "notEnoughCash": "पैसे की कमी है", "monopolyRequired": "एकाधिकार आवश्यक है", "groupMortgaged": "गिरवी संपत्ति होने पर निर्माण संभव नहीं"}, "ko": {"app": "MONOPOLY PRO", "turn": "당신 차례", "opp": "상대 차례", "roll": "주사위 굴리기", "buy": "구매", "auction": "경매", "trade": "거래", "myProps": "내 부동산", "passGo": "출발점을 통과했습니다! 200$ 획득!", "jailed": "감옥에 갇혔습니다!", "finePaid": "보석금 50$ 지불 후 석방되었습니다.", "doublesJail": "더블 달성! 무료 석방!", "rolled": "주사위 결과", "rentPaid": "임대료 지불", "to": "에게", "p": "부동산", "m": "저당 잡힘", "ai": "인공지능 대전", "pvp": "2인 플레이", "buildFloor": "층 건설", "demolishFloor": "층 철거", "floor": "층", "floors": "층", "eiffelTower": "황금 에펠탑", "floorCost": "층 건설 비용", "refund": "철거 환급금", "evenBuildNotice": "그룹의 모든 부동산에 균등하게 건설해야 합니다", "evenDemoNotice": "균등하게 층을 철거해야 합니다", "maxFloors": "최대치 달성 (에펠탑)", "noFloors": "건물 없음", "settings": "설정", "about": "게임 정보", "exit": "나가기", "newGame": "새 게임", "continueGame": "이전 게임 이어하기", "notEnoughCash": "건설 자금 부족", "monopolyRequired": "독점 필요", "groupMortgaged": "저당 상태에서는 건설 불가"}, "ja": {"app": "MONOPOLY PRO", "turn": "あなたの番", "opp": "相手の番", "roll": "サイコロを振る", "buy": "購入", "auction": "競売", "trade": "取引", "myProps": "所有物件", "passGo": "GOを通過！200$獲得！", "jailed": "刑務所に入りました！", "finePaid": "罰金50$を支払い釈放されました。", "doublesJail": "ゾロ目！釈放されました！", "rolled": "出目:", "rentPaid": "賃料支払い:", "to": "へ", "p": "物件", "m": "抵当", "ai": "AI対戦", "pvp": "2人対戦", "buildFloor": "フロア建設", "demolishFloor": "フロア解体", "floor": "階", "floors": "階", "eiffelTower": "黄金のエッフェル塔", "floorCost": "建設費", "refund": "解体払戻金", "evenBuildNotice": "同じ色のすべての物件に均等に建設してください", "evenDemoNotice": "グループ全体で均等に解体してください", "maxFloors": "上限到達 (エッフェル塔)", "noFloors": "建物なし", "settings": "設定", "about": "ゲームについて", "exit": "終了", "newGame": "新しいゲーム", "continueGame": "前回のゲームを再開", "notEnoughCash": "建設資金が不足しています", "monopolyRequired": "独占が必要です", "groupMortgaged": "抵当物件がある場合は建設できません"}, "fa": {"app": "MONOPOLY PRO", "turn": "نوبت شما", "opp": "نوبت حریف", "roll": "پرتاب تاس", "buy": "خرید", "auction": "حراج", "trade": "معامله", "myProps": "املاک من", "passGo": "از خانه شروع گذشتید! 200$ دریافت شد!", "jailed": "شما در زندان هستید!", "finePaid": "50$ جریمه پرداخت شد و آزاد شدید.", "doublesJail": "جفت آوردید! آزاد شدید!", "rolled": "آورد:", "rentPaid": "پرداخت اجاره:", "to": "به", "p": "املاک", "m": "رهن", "ai": "در برابر کامپیوتر", "pvp": "دو نفره (محلی)", "buildFloor": "ساخت طبقه", "demolishFloor": "تخریب طبقه", "floor": "طبقه", "floors": "طبقات", "eiffelTower": "برج ایفل طلایی", "floorCost": "هزینه طبقه", "refund": "بازپرداخت", "evenBuildNotice": "باید در تمام املاک همرنگ به طور مساوی بسازید", "evenDemoNotice": "باید تخریب به صورت مساوی انجام شود", "maxFloors": "حداکثر سقف (برج ایفل)", "noFloors": "بدون ساختمان", "settings": "تنظیمات", "about": "درباره بازی", "exit": "خروج", "newGame": "شروع بازی جدید", "continueGame": "ادامه بازی قبلی", "notEnoughCash": "موجودی ناکافی برای ساخت طبقه", "monopolyRequired": "انحصار کامل رنگ الزامی است", "groupMortgaged": "در صورت وجود ملک رهنی امکان ساخت نیست"}};
 
           const AudioFX = {
               ctx: null,
@@ -1204,10 +1294,29 @@ jobs:
                           osc.type = 'sawtooth';
                           osc.frequency.setValueAtTime(180, t);
                           osc.frequency.linearRampToValueAtTime(80, t + 0.3);
-                          g.gain.setValueAtTime(0.2, t);
+                          g.gain.setValueAtTime(0.25, t);
                           g.gain.linearRampToValueAtTime(0.01, t + 0.3);
                           osc.start(t);
                           osc.stop(t + 0.3);
+                      } else if (type === 'siren') {
+                          // صوت إنذار الشرطة (سارينة تصاعدية وتنازلية)
+                          osc.type = 'sawtooth';
+                          osc.frequency.setValueAtTime(600, t);
+                          osc.frequency.linearRampToValueAtTime(950, t + 0.065);
+                          osc.frequency.linearRampToValueAtTime(600, t + 0.13);
+                          g.gain.setValueAtTime(0.18, t);
+                          g.gain.linearRampToValueAtTime(0.01, t + 0.13);
+                          osc.start(t);
+                          osc.stop(t + 0.13);
+                      } else if (type === 'train') {
+                          // صوت صفارة القطار السريع
+                          osc.type = 'triangle';
+                          osc.frequency.setValueAtTime(320, t);
+                          osc.frequency.setValueAtTime(440, t + 0.09);
+                          g.gain.setValueAtTime(0.2, t);
+                          g.gain.linearRampToValueAtTime(0.01, t + 0.32);
+                          osc.start(t);
+                          osc.stop(t + 0.32);
                       }
                   } catch(e) {}
               }
@@ -1646,6 +1755,22 @@ jobs:
           }
 
           function updateBoardVisual() {
+              // وضع علامة أسوار السجن على خانة السجن (الخانة 10) عندما يكون أحد اللاعبين مسجوناً
+              const jailTile = document.getElementById("tile-10");
+              if (jailTile) {
+                  const existingBars = jailTile.querySelector(".jail-bars-overlay");
+                  const someoneJailed = Game.players.some(p => p.inJail);
+                  if (someoneJailed) {
+                      if (!existingBars) {
+                          const bars = document.createElement("div");
+                          bars.className = "jail-bars-overlay";
+                          jailTile.appendChild(bars);
+                      }
+                  } else {
+                      if (existingBars) existingBars.remove();
+                  }
+              }
+
               BOARD_TILES.forEach(t => {
                   const el = document.getElementById("tile-" + t.id);
                   if (!el) return;
@@ -1689,7 +1814,7 @@ jobs:
               el.innerText = msg;
           }
 
-          // حساب الإيجار بما في ذلك الزيادة 50% لكل طابق تم بناؤه
+          // حساب الإيجار
           function calculateRent(tile) {
               if (tile.type === "railroad") {
                   const cnt = BOARD_TILES.filter(t => t.type === "railroad" && t.owner === tile.owner).length;
@@ -1770,11 +1895,9 @@ jobs:
               }
               const tm = document.getElementById("tileInfoModal");
               if (tm && tm.classList.contains("show")) openTileInfoModal(tileId);
-              const pm = document.getElementById("propsModal");
-              if (pm && pm.classList.contains("show")) openPropsModal(pId);
           }
 
-          // هدم طابق واسترداد 50% من قيمة الطابق
+          // هدم طابق واسترداد من قيمة الطابق
           function demolishFloor(tileId, playerId) {
               const pId = (playerId !== undefined) ? playerId : Game.turn;
               const chk = canDemolishFloor(tileId, pId);
@@ -1792,8 +1915,6 @@ jobs:
               logEvent(`🔨 ${p.avatar} ${p.nameAr} ${Game.lang==='ar'?'هدم طابقاً من':'demolished floor from'} (${getTileName(t.id, Game.lang)}) واسترد ${chk.refund}$.`);
               const tm = document.getElementById("tileInfoModal");
               if (tm && tm.classList.contains("show")) openTileInfoModal(tileId);
-              const pm = document.getElementById("propsModal");
-              if (pm && pm.classList.contains("show")) openPropsModal(pId);
           }
 
           // ذكاء اصطناعي لبناء الطوابق
@@ -1871,7 +1992,8 @@ jobs:
                       if (Game.doublesInRow >= 3) {
                           Game.doublesInRow = 0;
                           logEvent(`🚔 3 رميات متطابقة! أُرسل ${cur.nameAr} إلى السجن.`);
-                          sendToJail(cur); finishTurn(false); return;
+                          sendToJail(cur, () => finishTurn(false));
+                          return;
                       }
                   } else { Game.doublesInRow = 0; }
 
@@ -1917,7 +2039,9 @@ jobs:
               updateUI();
 
               if (tile.type === "gotojail") {
-                  sendToJail(player); finishTurn(false); return;
+                  logEvent(`🚨 خانة السجن! يُنقل ${player.avatar} ${player.nameAr} إلى السجن.`);
+                  sendToJail(player, () => finishTurn(false));
+                  return;
               }
 
               if (tile.type === "tax") {
@@ -1970,7 +2094,7 @@ jobs:
 
           function checkBankruptcy(player) {
               if (player.money >= 0) return false;
-              // 1. هدم الطوابق لاسترداد 50% من قيمتها وسداد الديون
+              // 1. هدم الطوابق لاسترداد قيمتها وسداد الديون
               while (player.money < 0) {
                   const builtProps = player.props.map(id => BOARD_TILES[id]).filter(t => t && (t.floors || 0) > 0);
                   if (builtProps.length === 0) break;
@@ -2016,73 +2140,139 @@ jobs:
               document.getElementById("gameOverModal").classList.add("show");
           }
 
+          let selectedFastTravelDestId = null;
+
+          // نظام السفر السريع بمحطات القطار: لا يتم إلا إذا كان أحد اللاعبين يملك جميع خانات القطارات الأربعة
           function promptRailroadFastTravel(player, currentTile, isDbl) {
               const allRails = BOARD_TILES.filter(t => t.type === "railroad");
-              const allRailsBought = allRails.every(t => t.owner !== undefined);
-
-              if (!allRailsBought) {
+              // التحقق من امتلاك أحد اللاعبين لجميع خانات القطارات الأربعة
+              const monopolyOwner = Game.players.find(p => allRails.every(r => r.owner === p.id));
+              if (!monopolyOwner) {
                   finishTurn(isDbl);
                   return;
               }
 
-              const isOwner = (currentTile.owner === player.id) || allRails.every(t => t.owner === player.id);
-              const cost = isOwner ? 0 : 200;
-
-              if (player.money < cost) {
+              // السفر السريع مخصص للمالك الذي يملك جميع محطات القطارات الأربعة
+              if (player.id !== monopolyOwner.id) {
                   finishTurn(isDbl);
                   return;
               }
+
+              const otherRails = allRails.filter(t => t.id !== currentTile.id);
 
               if (player.id === 0 || Game.mode === 'pvp') {
-                  const otherRails = allRails.filter(t => t.id !== currentTile.id);
-                  Game.fastTravelData = { player, currentTile, otherRails, cost, isDbl };
+                  Game.fastTravelData = { player, currentTile, otherRails, isDbl };
+                  selectedFastTravelDestId = otherRails[0].id;
 
-                  const destSelect = document.getElementById("fastTravelDestSelect");
-                  destSelect.innerHTML = "";
-                  otherRails.forEach(r => {
-                      const opt = document.createElement("option");
-                      opt.value = r.id;
-                      opt.innerText = `🚂 ${getTileName(r.id, Game.lang)} (خانة ${r.id})`;
-                      destSelect.appendChild(opt);
-                  });
+                  renderFastTravelStations(otherRails, selectedFastTravelDestId);
 
-                  const costNotice = document.getElementById("fastTravelCostNotice");
-                  const btnConfirm = document.getElementById("btnFastTravelConfirm");
-
-                  if (cost === 0) {
-                      costNotice.innerHTML = `<span style="color:#10B981; font-weight:900;">✨ السفر مجاني بالكامل (0$) لأنك صاحب المحطات!</span>`;
-                      btnConfirm.innerText = Game.lang === 'ar' ? "سفر سريع (مجاناً)" : "Fast Travel (Free)";
-                  } else {
-                      costNotice.innerHTML = `<span style="color:var(--gold-lt);">التكلفة: <strong style="color:var(--gold);">${cost}$</strong> تُسحب من رصيدك.</span>`;
-                      btnConfirm.innerText = Game.lang === 'ar' ? `سفر سريع (${cost}$)` : `Fast Travel (${cost}$)`;
+                  const notice = document.getElementById("fastTravelSelectedNotice");
+                  if (notice) {
+                      notice.innerText = `المحطة المختارة: ${getTileName(selectedFastTravelDestId, Game.lang)} (خانة ${selectedFastTravelDestId})`;
                   }
 
                   document.getElementById("fastTravelModal").classList.add("show");
               } else {
+                  // ذكاء اصطناعي للقطار عندما يملك جميع القطارات
+                  if (Math.random() > 0.35) {
+                      const dest = otherRails[Math.floor(Math.random() * otherRails.length)];
+                      const fromPos = player.pos;
+                      player.pos = dest.id; // لا يحصل على مكافأة الدورة حتى لو عبر خط الانطلاق
+                      AudioFX.play('train');
+                      AudioFX.play('step');
+                      updatePawns(player.id);
+                      updateUI();
+                      if (dest.id < fromPos) {
+                          logEvent(`🚂 سافر ${player.avatar} ${player.nameAr} سريعاً عبر خط الانطلاق إلى (${getTileName(dest.id, Game.lang)}) بدون مكافأة الدورة.`);
+                      } else {
+                          logEvent(`🚂 سافر ${player.avatar} ${player.nameAr} سريعاً إلى محطة (${getTileName(dest.id, Game.lang)}).`);
+                      }
+                  }
                   finishTurn(isDbl);
               }
           }
 
+          function selectFastTravelStation(destId) {
+              selectedFastTravelDestId = destId;
+              if (Game.fastTravelData) {
+                  renderFastTravelStations(Game.fastTravelData.otherRails, selectedFastTravelDestId);
+                  const notice = document.getElementById("fastTravelSelectedNotice");
+                  if (notice) {
+                      notice.innerText = `المحطة المختارة: ${getTileName(destId, Game.lang)} (خانة ${destId})`;
+                  }
+              }
+          }
+
+          function renderFastTravelStations(stations, selectedId) {
+              const container = document.getElementById("fastTravelStationsContainer");
+              if (!container) return;
+              container.innerHTML = "";
+
+              stations.forEach(st => {
+                  const isSelected = (st.id === selectedId);
+                  const card = document.createElement("div");
+                  card.style = `
+                      background: ${isSelected ? 'rgba(245,158,11,0.25)' : 'var(--box-bg)'};
+                      border: 2px solid ${isSelected ? 'var(--gold)' : 'var(--card-border)'};
+                      border-radius: 8px;
+                      padding: 8px 4px;
+                      cursor: pointer;
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      justify-content: center;
+                      gap: 4px;
+                      transition: all 0.15s;
+                      box-shadow: ${isSelected ? '0 0 10px rgba(245,158,11,0.5)' : 'none'};
+                  `;
+                  card.onclick = () => selectFastTravelStation(st.id);
+
+                  card.innerHTML = `
+                      <div style="font-size:1.5rem;">🚂</div>
+                      <div style="font-size:0.75rem; font-weight:900; color:var(--text); text-align:center; line-height:1.2;">${getTileName(st.id, Game.lang)}</div>
+                      <div style="font-size:0.65rem; color:var(--dim);">خانة ${st.id}</div>
+                      <div style="font-size:0.62rem; color:${isSelected ? 'var(--gold)' : '#94A3B8'}; font-weight:bold;">${isSelected ? '✓ محددة' : 'اضغط للتحديد'}</div>
+                  `;
+                  container.appendChild(card);
+              });
+          }
+
           function confirmFastTravel() {
               if (!Game.fastTravelData) return;
-              const { player, cost, isDbl } = Game.fastTravelData;
-              const destSelect = document.getElementById("fastTravelDestSelect");
-              const destId = parseInt(destSelect.value);
+              const { player, isDbl } = Game.fastTravelData;
+              const destId = selectedFastTravelDestId;
               const dest = BOARD_TILES.find(t => t.id === destId);
               Game.fastTravelData = null;
               document.getElementById("fastTravelModal").classList.remove("show");
 
-              if (dest && player.money >= cost) {
-                  player.money -= cost;
+              if (dest) {
+                  const fromPos = player.pos;
                   player.pos = dest.id;
-                  AudioFX.play('cash');
+
+                  // شرط هام: إذا عبر اللاعب إلى محطة بعد خط الانطلاق لا يحصل على مكافأة إتمام الدورة!
+                  AudioFX.play('train');
                   AudioFX.play('step');
                   updatePawns(player.id);
                   updateUI();
-                  if (cost === 0) {
-                      logEvent(`🚂 سافر ${player.avatar} ${player.nameAr} مجاناً إلى محطة (${getTileName(dest.id, Game.lang)}).`);
+
+                  if (dest.id < fromPos) {
+                      logEvent(`🚂 سافر ${player.avatar} ${player.nameAr} سريعاً عبر خط الانطلاق إلى (${getTileName(dest.id, Game.lang)}) بدون مكافأة الدورة.`);
                   } else {
-                      logEvent(`🚂 سافر ${player.avatar} ${player.nameAr} سريعاً إلى محطة (${getTileName(dest.id, Game.lang)}) مقابل ${cost}$.`);
+                      logEvent(`🚂 سافر ${player.avatar} ${player.nameAr} سريعاً إلى محطة (${getTileName(dest.id, Game.lang)}).`);
+                  }
+
+                  // إذا كانت المحطة شاغرة، يُعرض شراؤها
+                  if (dest.owner === undefined) {
+                      setTimeout(() => promptBuyProperty(dest, isDbl), 350);
+                      return;
+                  } else if (dest.owner !== player.id && !dest.mortgaged) {
+                      const rent = calculateRent(dest);
+                      player.money -= rent;
+                      Game.players[dest.owner].money += rent;
+                      AudioFX.play('cash');
+                      logEvent(`🏷️ دفع ${player.avatar} ${player.nameAr} ${rent}$ إيجار إلى ${Game.players[dest.owner].avatar} ${Game.players[dest.owner].nameAr} (${getTileName(dest.id, Game.lang)}).`);
+                      if (checkBankruptcy(player)) return;
+                      updateUI();
                   }
               }
               finishTurn(isDbl);
@@ -2096,6 +2286,7 @@ jobs:
               finishTurn(isDbl);
           }
 
+          // نافذة شراء العقارات: تم إخفاء النسب المئوية وإظهار الأسعار فقط
           function promptBuyProperty(tile, isDbl) {
               Game.pendingTile = { tile, isDbl };
               const cur = Game.players[Game.turn];
@@ -2108,8 +2299,8 @@ jobs:
                       <span style="display:inline-block; width:13px; height:13px; background:${tile.color}; border-radius:50%; vertical-align:middle;"></span>
                       <strong style="font-size:1.10rem; color:var(--gold); margin:0 5px;">${tile.price}$</strong>
                   </div>
-                  <div style="font-size:0.80rem; color:var(--text); text-align:center;">إيجار العقار الأساسي (20%): <strong style="color:var(--gold);">${baseRent}$</strong></div>
-                  <div style="font-size:0.72rem; color:var(--dim); text-align:center; margin-top:3px;">(عند احتكار كامل المجموعة يرتفع الإيجار إلى 40%: <strong style="color:var(--gold);">${monoRent}$</strong>)</div>
+                  <div style="font-size:0.80rem; color:var(--text); text-align:center;">إيجار العقار الأساسي: <strong style="color:var(--gold);">${baseRent}$</strong></div>
+                  <div style="font-size:0.72rem; color:var(--dim); text-align:center; margin-top:3px;">(عند احتكار كامل المجموعة يرتفع الإيجار إلى: <strong style="color:var(--gold);">${monoRent}$</strong>)</div>
               `;
               const canAfford = cur.money >= tile.price;
               document.getElementById("btnBuyProp").disabled = !canAfford;
@@ -2119,22 +2310,29 @@ jobs:
           function closeDeedModal() {
               document.getElementById("deedModal").classList.remove("show");
               if (Game.pendingTile) {
-                  const isDbl = Game.pendingTile.isDbl;
+                  const { tile, isDbl } = Game.pendingTile;
                   Game.pendingTile = null;
-                  finishTurn(isDbl);
+                  if (tile.type === "railroad") {
+                      promptRailroadFastTravel(Game.players[Game.turn], tile, isDbl);
+                  } else {
+                      finishTurn(isDbl);
+                  }
               }
           }
 
           function confirmBuyProp() {
               if (!Game.pendingTile) return;
               const cur = Game.players[Game.turn];
-              const t = Game.pendingTile.tile;
+              const { tile: t, isDbl } = Game.pendingTile;
               if (cur.money >= t.price) {
                   buyProp(cur, t, t.price);
-                  const isDbl = Game.pendingTile.isDbl;
                   Game.pendingTile = null;
                   document.getElementById("deedModal").classList.remove("show");
-                  finishTurn(isDbl);
+                  if (t.type === "railroad") {
+                      promptRailroadFastTravel(cur, t, isDbl);
+                  } else {
+                      finishTurn(isDbl);
+                  }
               }
           }
 
@@ -2229,7 +2427,13 @@ jobs:
                   concludeAuction();
               } else if (a.active.length === 0) {
                   document.getElementById("auctionModal").classList.remove("show");
-                  const isDbl = a.isDbl; Game.auction = null; finishTurn(isDbl);
+                  const { tile, isDbl } = a;
+                  Game.auction = null;
+                  if (tile.type === "railroad") {
+                      promptRailroadFastTravel(Game.players[Game.turn], tile, isDbl);
+                  } else {
+                      finishTurn(isDbl);
+                  }
               } else {
                   nextAuctionTurn();
               }
@@ -2250,7 +2454,13 @@ jobs:
               const winner = Game.players[a.highestBidder];
               logEvent(`🏆 فاز ${winner.avatar} ${winner.nameAr} بمزاد (${getTileName(a.tile.id, Game.lang)}) بمبلغ ${a.currentBid}$!`);
               buyProp(winner, a.tile, a.currentBid);
-              const isDbl = a.isDbl; Game.auction = null; finishTurn(isDbl);
+              const { tile, isDbl } = a;
+              Game.auction = null;
+              if (tile.type === "railroad") {
+                  promptRailroadFastTravel(Game.players[Game.turn], tile, isDbl);
+              } else {
+                  finishTurn(isDbl);
+              }
           }
 
           function handleAIAuction() {
@@ -2310,7 +2520,11 @@ jobs:
 
               if (shouldBuy) {
                   buyProp(player, tile, tile.price);
-                  finishTurn(isDbl);
+                  if (tile.type === "railroad") {
+                      promptRailroadFastTravel(player, tile, isDbl);
+                  } else {
+                      finishTurn(isDbl);
+                  }
               } else {
                   Game.pendingTile = { tile, isDbl };
                   startAuction();
@@ -2350,14 +2564,48 @@ jobs:
                   player.pos = 0; player.money += 200;
                   AudioFX.play('cash'); updatePawns(player.id); updateUI(); finishTurn(isDbl);
               } else if (c.action === "jail") {
-                  sendToJail(player); finishTurn(false);
+                  sendToJail(player, () => finishTurn(false));
               }
           }
 
-          function sendToJail(p) {
-              p.pos = 10; p.inJail = true; p.jailTurns = 3;
-              AudioFX.play('jail'); updatePawns(p.id); updateUI();
-              logEvent(`🚔 دَخَل ${p.avatar} ${p.nameAr} السجن!`);
+          // عند إرسال اللاعب إلى السجن: ينتقل إلى الخلف خطوة خطوة مع صوت إنذار الشرطة
+          function sendToJail(player, onFinish) {
+              Game.isRolling = true;
+              document.getElementById("btnRoll").disabled = true;
+
+              if (player.pos === 10) {
+                  player.inJail = true;
+                  player.jailTurns = 3;
+                  AudioFX.play('jail');
+                  updatePawns(player.id);
+                  updateBoardVisual();
+                  updateUI();
+                  logEvent(`🚔 دَخَل ${player.avatar} ${player.nameAr} السجن!`);
+                  Game.isRolling = false;
+                  if (onFinish) onFinish();
+                  return;
+              }
+
+              const jailInterval = setInterval(() => {
+                  if (player.pos !== 10) {
+                      player.pos = (player.pos - 1 + 40) % 40;
+                      AudioFX.play('siren');
+                      updatePawns(player.id);
+                  }
+
+                  if (player.pos === 10) {
+                      clearInterval(jailInterval);
+                      player.inJail = true;
+                      player.jailTurns = 3;
+                      AudioFX.play('jail');
+                      updatePawns(player.id);
+                      updateBoardVisual();
+                      updateUI();
+                      logEvent(`🚔 دَخَل ${player.avatar} ${player.nameAr} السجن!`);
+                      Game.isRolling = false;
+                      if (onFinish) onFinish();
+                  }
+              }, 130);
           }
 
           function openJailModal() {
@@ -2372,6 +2620,7 @@ jobs:
                   cur.jailTurns = 0;
                   document.getElementById("jailModal").classList.remove("show");
                   AudioFX.play('cash');
+                  updateBoardVisual();
                   updateUI();
                   logEvent(`${cur.avatar} ${cur.nameAr}: ${I18N[Game.lang].finePaid}`);
                   if (Game.turn === 1 && Game.mode === 'ai') {
@@ -2395,6 +2644,7 @@ jobs:
                   cur.inJail = false;
                   cur.jailTurns = 0;
                   logEvent(`${cur.avatar} ${cur.nameAr}: ${I18N[Game.lang].doublesJail}`);
+                  updateBoardVisual();
                   updateUI();
                   moveSteps(cur, v0 + v1, false);
               } else {
@@ -2404,6 +2654,7 @@ jobs:
                       cur.inJail = false;
                       cur.jailTurns = 0;
                       logEvent(Game.lang==='ar' ? `انتهت مدة السجن لـ ${cur.nameAr} ودفع 50$ كفالة إجبارية.` : `Jail sentence finished; paid 50$ fine.`);
+                      updateBoardVisual();
                       updateUI();
                       moveSteps(cur, v0 + v1, false);
                   } else {
@@ -2454,6 +2705,7 @@ jobs:
               }
           }
 
+          // دليل وتعليمات الخانة: تم إخفاء النسب المئوية تماماً وإظهار الأسعار والقيم المالية فقط
           function openTileInfoModal(index) {
               const t = BOARD_TILES[index];
               const isAr = (Game.lang === 'ar');
@@ -2512,9 +2764,9 @@ jobs:
                                   ${statusBadge}
                               </div>
                               <div style="font-size:0.74rem; color:var(--dim); line-height:1.5; margin-bottom:8px;">
-                                  <div>• ${I18N[Game.lang].floorCost}: <strong style="color:var(--gold);">${floorCost}$</strong> (33%)</div>
-                                  <div>• ${isAr ? "زيادة الإيجار لكل طابق" : "Rent increase per floor"}: <strong style="color:#10B981;">+${floorBonus}$</strong> (+50%)</div>
-                                  <div>• ${isAr ? "استرداد عند الهدم" : "Demolish refund"}: <strong style="color:#38BDF8;">+${refund}$</strong> (50%)</div>
+                                  <div>• ${I18N[Game.lang].floorCost}: <strong style="color:var(--gold);">${floorCost}$</strong></div>
+                                  <div>• ${isAr ? "زيادة الإيجار لكل طابق" : "Rent increase per floor"}: <strong style="color:#10B981;">+${floorBonus}$</strong></div>
+                                  <div>• ${isAr ? "استرداد عند الهدم" : "Demolish refund"}: <strong style="color:#38BDF8;">+${refund}$</strong></div>
                               </div>
                               ${isOwnerTurn ? `
                               <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
@@ -2538,8 +2790,8 @@ jobs:
                           <div style="font-size:1.15rem; font-weight:900; color:var(--gold);">${t.price}$</div>
                       </div>
                       <div class="info-rule-box">
-                          <div class="info-rule-item"><strong>${isAr?"الإيجار الأساسي (20%):":"Base Rent (20%):"}</strong> <span>${baseRent}$</span></div>
-                          <div class="info-rule-item"><strong>${isAr?"إيجار الاحتكار (40% للمجموعة):":"Monopoly Rent (40%):"}</strong> <span style="color:var(--gold); font-weight:bold;">${monoRent}$</span></div>
+                          <div class="info-rule-item"><strong>${isAr?"الإيجار الأساسي:":"Base Rent:"}</strong> <span>${baseRent}$</span></div>
+                          <div class="info-rule-item"><strong>${isAr?"إيجار الاحتكار للمجموعة:":"Monopoly Rent:"}</strong> <span style="color:var(--gold); font-weight:bold;">${monoRent}$</span></div>
                           <div class="info-rule-item"><strong>${isAr?"الإيجار الحالي الفعلي:":"Current Total Rent:"}</strong> <span style="color:#10B981; font-weight:900; font-size:0.90rem;">${curRent}$</span></div>
                           <div class="info-rule-item"><strong>${isAr?"قيمة الرهن:":"Mortgage Value:"}</strong> <span>${mortVal}$</span></div>
                           <div class="info-rule-item"><strong>${isAr?"تكلفة فك الرهن:":"Unmortgage Cost:"}</strong> <span>${unmortVal}$</span></div>
@@ -2604,9 +2856,13 @@ jobs:
                   const lastModal = openModals[openModals.length - 1];
                   lastModal.classList.remove("show");
                   if (lastModal.id === "deedModal" && Game.pendingTile) {
-                      const isDbl = Game.pendingTile.isDbl;
+                      const { tile, isDbl } = Game.pendingTile;
                       Game.pendingTile = null;
-                      finishTurn(isDbl);
+                      if (tile.type === "railroad") {
+                          promptRailroadFastTravel(Game.players[Game.turn], tile, isDbl);
+                      } else {
+                          finishTurn(isDbl);
+                      }
                   }
                   if (lastModal.id === "fastTravelModal" && Game.fastTravelData) {
                       const isDbl = Game.fastTravelData.isDbl;
@@ -2615,9 +2871,13 @@ jobs:
                   }
                   if (lastModal.id === "auctionModal" && Game.auction) {
                       stopAuctionTimer();
-                      const isDbl = Game.auction.isDbl;
+                      const { tile, isDbl } = Game.auction;
                       Game.auction = null;
-                      finishTurn(isDbl);
+                      if (tile.type === "railroad") {
+                          promptRailroadFastTravel(Game.players[Game.turn], tile, isDbl);
+                      } else {
+                          finishTurn(isDbl);
+                      }
                   }
                   return;
               }
@@ -2816,91 +3076,6 @@ jobs:
           }
           function closeTradeModal() { document.getElementById("tradeModal").classList.remove("show"); Game.tradeData = null; }
 
-          function openPropsModal(pId) {
-              const p = Game.players[pId];
-              document.getElementById("propsModalTitle").innerText = `${p.avatar} ${p.nameAr} (${p.money}$)`;
-              const b = document.getElementById("propsModalBody");
-              b.innerHTML = "";
-              if (p.props.length === 0) {
-                  b.innerHTML = `<div style="text-align:center; color:var(--dim); padding:16px;">لا توجد أي عقارات مملوكة حالياً.</div>`;
-              } else {
-                  p.props.forEach(propId => {
-                      const t = BOARD_TILES[propId];
-                      const d = document.createElement("div");
-                      d.style = "background:var(--box-bg); border-radius:8px; padding:7px 10px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--card-border); flex-wrap:wrap; gap:4px;";
-                      const mortVal = Math.floor(t.price * 0.5);
-                      const unmortVal = Math.floor(mortVal * 1.1);
-
-                      const canManage = (pId === 0) || (Game.mode === 'pvp');
-                      const groupTiles = BOARD_TILES.filter(x => x.group === t.group);
-                      const hasMonopoly = t.owner !== undefined && groupTiles.every(x => x.owner === t.owner);
-                      const curFloors = t.floors || 0;
-                      const floorCost = Math.round(t.price * 0.33);
-                      const refund = Math.round(floorCost * 0.50);
-
-                      let buildingBadge = "";
-                      if (curFloors === 5) {
-                          buildingBadge = ` <span style="background:linear-gradient(135deg,#FDE047,#F59E0B); color:#451A03; font-size:0.65rem; padding:1px 4px; border-radius:3px; font-weight:bold;">🗼 برج إيفل</span>`;
-                      } else if (curFloors > 0) {
-                          buildingBadge = ` <span style="background:#A3E635; color:#142603; font-size:0.65rem; padding:1px 4px; border-radius:3px; font-weight:bold;">🏢 ${curFloors} طوابق</span>`;
-                      }
-
-                      let buildButtons = "";
-                      if (hasMonopoly && canManage) {
-                          const canBuild = canBuildFloor(t.id, pId);
-                          const canDemo = canDemolishFloor(t.id, pId);
-                          buildButtons = `
-                              <div style="display:flex; gap:3px; align-items:center;">
-                                  <button class="btn btn-lime" style="font-size:0.65rem; padding:3px 6px;" onclick="buildFloor(${t.id}, ${pId})" ${canBuild.ok ? '' : 'disabled'}>🏗️ +طابق (${floorCost}$)</button>
-                                  <button class="btn btn-red" style="font-size:0.65rem; padding:3px 6px;" onclick="demolishFloor(${t.id}, ${pId})" ${canDemo.ok ? '' : 'disabled'}>🔨 -طابق (+${refund}$)</button>
-                              </div>
-                          `;
-                      }
-
-                      d.innerHTML = `
-                          <div>
-                              <strong style="color:${t.color||'var(--gold)'};">${t.icon||""} ${getTileName(t.id, Game.lang)}</strong>${buildingBadge}
-                              <div style="font-size:0.74rem; color:var(--dim);">القيمة: ${t.price}$ | الرهن: ${mortVal}$</div>
-                          </div>
-                          <div style="display:flex; gap:4px; align-items:center; flex-wrap:wrap;">
-                              ${buildButtons}
-                              ${canManage ? (
-                                  t.mortgaged ?
-                                  `<button class="btn btn-gold" style="font-size:0.70rem; padding:3px 7px;" onclick="unmortgageProp(${t.id}, ${pId})">فك الرهن (${unmortVal}$)</button>` :
-                                  `<button class="btn btn-red" style="font-size:0.70rem; padding:3px 7px;" onclick="mortgageProp(${t.id}, ${pId})" ${(curFloors > 0) ? 'disabled title="يجب هدم المباني أولاً"' : ''}>رهن (+${mortVal}$)</button>`
-                              ) : (t.mortgaged ? `<span style="color:#EF4444; font-size:0.72rem;">مَرْهُون</span>` : '')}
-                          </div>
-                      `;
-                      b.appendChild(d);
-                  });
-              }
-              document.getElementById("propsModal").classList.add("show");
-          }
-          function closePropsModal() { document.getElementById("propsModal").classList.remove("show"); }
-
-          function mortgageProp(id, pId) {
-              const t = BOARD_TILES[id], p = Game.players[pId];
-              const grp = BOARD_TILES.filter(x => x.group === t.group);
-              if (grp.some(x => (x.floors || 0) > 0)) {
-                  logEvent(Game.lang === 'ar' ? "⚠️ يجب هدم كافة الطوابق في المجموعة قبل رهن العقار!" : "⚠️ Must demolish all buildings before mortgaging!");
-                  return;
-              }
-              if (t.owner === pId && !t.mortgaged) {
-                  t.mortgaged = true; p.money += Math.floor(t.price * 0.5);
-                  AudioFX.play('cash'); updateUI(); openPropsModal(pId);
-                  logEvent(`🏦 رهن ${p.avatar} ${p.nameAr} (${getTileName(t.id, Game.lang)}) واستلم ${Math.floor(t.price * 0.5)}$.`);
-              }
-          }
-          function unmortgageProp(id, pId) {
-              const t = BOARD_TILES[id], p = Game.players[pId];
-              const cost = Math.floor(t.price * 0.5 * 1.1);
-              if (t.owner === pId && t.mortgaged && p.money >= cost) {
-                  t.mortgaged = false; p.money -= cost;
-                  AudioFX.play('cash'); updateUI(); openPropsModal(pId);
-                  logEvent(`🔓 فك ${p.avatar} ${p.nameAr} رهن (${getTileName(t.id, Game.lang)}) مقابل ${cost}$.`);
-              }
-          }
-
           function setTheme(t) {
               Game.theme = t;
               if (t === 'light') {
@@ -2924,8 +3099,9 @@ jobs:
 
               document.getElementById("txtAppTitle").innerText = I18N[l].app;
               document.getElementById("txtBtnRoll").innerText = I18N[l].roll;
-              document.getElementById("txtBtnP0Props").innerText = I18N[l].myProps;
               document.getElementById("txtBtnTrade").innerText = I18N[l].trade;
+              const txtSet = document.getElementById("txtBtnSettings");
+              if (txtSet) txtSet.innerText = I18N[l].settings;
 
               // تحديث أسماء كافة الخانات على الرقعة طبقاً للغة والمجموعة الجغرافية
               BOARD_TILES.forEach(t => {
