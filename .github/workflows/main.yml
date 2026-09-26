@@ -328,7 +328,7 @@ jobs:
           .p-card.active{border-color:var(--gold);box-shadow:0 0 12px rgba(245,158,11,0.45);}
           .p-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.15rem;background:#000;border:2px solid #fff;flex-shrink:0;}
           .p-details{flex:1;margin:0 6px;}
-          .p-name{font-size:0.80rem;font-weight:900;line-height:1.2;}
+          .p-name{font-size:0.80rem;font-weight:900;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
           .p-cash{font-size:0.92rem;font-weight:900;color:var(--gold);line-height:1.2;}
           .p-stats{font-size:0.65rem;color:var(--dim);}
           .p-badge{position:absolute;top:-6px;left:6px;background:var(--gold);color:#000;font-size:0.58rem;font-weight:900;padding:1px 6px;border-radius:10px;}
@@ -388,7 +388,7 @@ jobs:
           .center-btn-roll:disabled{opacity:0.4;cursor:not-allowed;}
           .log-area{width:95%;height:22px;background:rgba(0,0,0,0.15);border-radius:6px;border:1px solid rgba(128,128,128,0.2);display:flex;align-items:center;justify-content:center;padding:0 6px;overflow:hidden;white-space:nowrap;font-size:0.65rem;color:var(--gold);}
 
-          /* إبقاء رقعة اللعب واضحة تماماً دون تضليل أو تشويش */
+          /* النوافذ المنبثقة */
           .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.12);backdrop-filter:none;-webkit-backdrop-filter:none;display:none;align-items:center;justify-content:center;z-index:999;padding:12px;}
           .modal-overlay.show{display:flex;}
           .modal-card{background:var(--modal-bg);color:var(--text);border:2px solid var(--gold);border-radius:16px;width:100%;max-width:380px;box-shadow:0 12px 35px rgba(0,0,0,0.65);overflow:hidden;display:flex;flex-direction:column;}
@@ -421,7 +421,7 @@ jobs:
                   <span id="txtAppTitle">MONOPOLY PRO</span>
               </div>
               <div class="header-controls">
-                  <button class="btn-hdr" onclick="openPropsModal(0)">🎒 <span id="txtBtnP0Props">عقاراتي</span></button>
+                  <button class="btn-hdr" onclick="openPropsModal(Game.turn)">🎒 <span id="txtBtnP0Props">عقاراتي</span></button>
                   <button class="btn-hdr" onclick="openTradeModal()">🤝 <span id="txtBtnTrade">مقايضة</span></button>
                   <button class="btn-hdr" onclick="openSettingsModal()">⚙️</button>
                   <button class="btn-hdr" onclick="openAboutModal()">ℹ️</button>
@@ -433,17 +433,17 @@ jobs:
               <div class="p-card active" id="pCard0" onclick="openPropsModal(0)">
                   <div class="p-avatar" style="border-color:var(--p0);" id="avP0">👑</div>
                   <div class="p-details">
-                      <div class="p-name" style="color:var(--p0);" id="nameP0">الملك (أنت)</div>
-                      <div class="p-cash" id="cashP0">1500$</div>
+                      <div class="p-name" style="color:var(--p0);" id="nameP0">الملك</div>
+                      <div class="p-cash" id="cashP0">3000$</div>
                       <div class="p-stats"><span id="propsP0">عقارات 0</span> <span id="mortP0" style="color:#EF4444;"></span></div>
                   </div>
                   <div class="p-badge" id="turnBadge0">دورك</div>
               </div>
               <div class="p-card" id="pCard1" onclick="openPropsModal(1)">
-                  <div class="p-avatar" style="border-color:var(--p1);" id="avP1">🦅</div>
+                  <div class="p-avatar" style="border-color:var(--p1);" id="avP1">🤖</div>
                   <div class="p-details">
-                      <div class="p-name" style="color:var(--p1);" id="nameP1">الصقر (الذكاء)</div>
-                      <div class="p-cash" id="cashP1">1500$</div>
+                      <div class="p-name" style="color:var(--p1);" id="nameP1">روبوت</div>
+                      <div class="p-cash" id="cashP1">3000$</div>
                       <div class="p-stats"><span id="propsP1">عقارات 0</span> <span id="mortP1" style="color:#EF4444;"></span></div>
                   </div>
                   <div class="p-badge" id="turnBadge1" style="display:none;background:var(--p1);">دور الخصم</div>
@@ -494,7 +494,7 @@ jobs:
                       <div style="font-size:1.15rem; font-weight:900; color:var(--gold); margin-bottom:6px;">بنك الحظ الاحترافي</div>
                       <p style="font-size:0.85rem; color:var(--dim); margin-bottom:18px;">اختر كيف تود بدء رحلتك في عالم التجارة والعقارات:</p>
                       <div style="display:flex; flex-direction:column; gap:10px;">
-                          <button class="btn btn-gold" style="padding:12px; font-size:0.95rem; font-weight:900;" onclick="startNewGameFromModal()">
+                          <button class="btn btn-gold" style="padding:12px; font-size:0.95rem; font-weight:900;" onclick="openNewGameSetupModal(true)">
                               ✨ بدء لعبة جديدة
                           </button>
                           <button class="btn btn-blue" id="btnContinueGame" style="padding:12px; font-size:0.95rem; font-weight:900;" onclick="continueSavedGameFromModal()">
@@ -502,6 +502,67 @@ jobs:
                           </button>
                       </div>
                       <div id="savedGameStatus" style="font-size:0.75rem; color:var(--dim); margin-top:14px;"></div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- 0.1 نافذة إعدادات وخيارات اللعبة الجديدة -->
+          <div class="modal-overlay" id="newGameSetupModal">
+              <div class="modal-card" style="max-height:92vh;">
+                  <div class="modal-header">
+                      <div class="modal-title">🎮 إعدادات لعبة جديدة</div>
+                      <div id="btnCloseSetupModal" style="font-size:1.2rem; cursor:pointer; display:none;" onclick="closeNewGameSetupModal()">✕</div>
+                  </div>
+                  <div class="modal-body" style="padding:14px; max-height:75vh; overflow-y:auto;">
+                      <!-- نمط اللعب -->
+                      <div class="settings-section">
+                          <div class="settings-label">👥 نمط اللعب:</div>
+                          <div class="row-opts">
+                              <button class="btn-pill active" id="btnModeAI" onclick="selectGameMode('ai')">🤖 ضد الكمبيوتر</button>
+                              <button class="btn-pill" id="btnModePvP" onclick="selectGameMode('pvp')">👥 لاعبين اثنين</button>
+                          </div>
+                      </div>
+
+                      <!-- صعوبة اللعب مع الكمبيوتر -->
+                      <div class="settings-section" id="aiDifficultySection">
+                          <div class="settings-label">🧠 مستوى صعوبة الكمبيوتر:</div>
+                          <div class="row-opts">
+                              <button class="btn-pill" id="btnDiffEasy" onclick="selectAIDifficulty('easy')">🟢 سهل</button>
+                              <button class="btn-pill active" id="btnDiffMedium" onclick="selectAIDifficulty('medium')">🟡 متوسط</button>
+                              <button class="btn-pill" id="btnDiffHard" onclick="selectAIDifficulty('hard')">🔴 صعب</button>
+                          </div>
+                          <div id="diffDescription" style="font-size:0.72rem; color:var(--dim); margin-top:-6px; margin-bottom:6px;">🟡 متوسط: توازن معتدل بين الشراء والمزايدة وإدارة الأموال.</div>
+                      </div>
+
+                      <!-- المبلغ المالي لبداية اللعب -->
+                      <div class="settings-section">
+                          <div class="settings-label">💰 المبلغ المالي لبداية اللعب:</div>
+                          <div class="row-opts">
+                              <button class="btn-pill active" id="btnCash3000" onclick="selectStartingCash(3000)">💵 3000$</button>
+                              <button class="btn-pill" id="btnCash6000" onclick="selectStartingCash(6000)">💵 6000$</button>
+                              <button class="btn-pill" id="btnCash9000" onclick="selectStartingCash(9000)">💵 9000$</button>
+                          </div>
+                      </div>
+
+                      <!-- كتابة أسماء اللاعبين -->
+                      <div class="settings-section">
+                          <div class="settings-label">✍️ أسماء اللاعبين:</div>
+                          <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+                              <div>
+                                  <label style="font-size:0.75rem; color:var(--dim); display:block; margin-bottom:3px;" id="lblPlayer1Name">اسم اللاعب 1 (أنت 👑):</label>
+                                  <input type="text" id="inputPlayer1Name" value="الملك" maxlength="16" placeholder="اكتب اسم اللاعب الأول" style="width:100%; padding:8px 10px; background:var(--input-bg); color:var(--text); border:1px solid var(--gold); border-radius:8px; font-size:0.85rem; outline:none;">
+                              </div>
+                              <div id="player2InputContainer">
+                                  <label style="font-size:0.75rem; color:var(--dim); display:block; margin-bottom:3px;" id="lblPlayer2Name">الخصم (الكمبيوتر):</label>
+                                  <input type="text" id="inputPlayer2Name" value="روبوت" maxlength="16" placeholder="اكتب اسم اللاعب الثاني" style="width:100%; padding:8px 10px; background:rgba(128,128,128,0.15); color:var(--text); border:1px solid #4B5563; border-radius:8px; font-size:0.85rem; outline:none;" readonly>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="modal-footer" style="padding:10px 14px;">
+                      <button class="btn btn-gold" style="width:100%; padding:10px; font-size:0.95rem; font-weight:900;" onclick="confirmStartNewGame()">
+                          🚀 ابدأ اللعب الآن
+                      </button>
                   </div>
               </div>
           </div>
@@ -616,7 +677,7 @@ jobs:
                   <div class="modal-body" id="tradeBody">
                       <div id="tradeNotice" style="display:none; padding:8px 12px; border-radius:8px; margin-bottom:10px; font-size:0.82rem; font-weight:bold; line-height:1.4;"></div>
                       <div class="settings-section">
-                          <div class="settings-label">اختر عقار الخصم للشراء:</div>
+                          <div class="settings-label" id="tradeTargetLabel">اختر عقار الخصم للشراء:</div>
                           <select id="tradeTargetProp" onchange="onTradeTargetPropChange()" style="width:100%; padding:8px; background:var(--input-bg); color:var(--text); border-radius:6px; border:1px solid #4B5563; font-size:0.85rem;"></select>
                       </div>
                       <div class="settings-section">
@@ -627,6 +688,23 @@ jobs:
                   <div class="modal-footer">
                       <button class="btn btn-gold" id="btnSubmitTrade" onclick="submitTradeOffer()">إرسال العرض</button>
                       <button class="btn btn-gray" onclick="closeTradeModal()">خروج</button>
+                  </div>
+              </div>
+          </div>
+
+          <!-- 6.1 نافذة موافقة الخصم على المقايضة في نمط لاعبين -->
+          <div class="modal-overlay" id="pvpTradeConfirmModal">
+              <div class="modal-card">
+                  <div class="modal-header">
+                      <div class="modal-title">🤝 عرض مقايضة وارد!</div>
+                  </div>
+                  <div class="modal-body" style="text-align:center; padding:18px 14px;">
+                      <div style="font-size:2.2rem; margin-bottom:8px;">🤝</div>
+                      <div id="pvpTradeDesc" style="font-size:0.9rem; font-weight:bold; line-height:1.5;"></div>
+                  </div>
+                  <div class="modal-footer" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                      <button class="btn btn-gold" onclick="acceptPvPTrade()">قبول الصفقة ✓</button>
+                      <button class="btn btn-red" onclick="rejectPvPTrade()">رفض الصفقة ✕</button>
                   </div>
               </div>
           </div>
@@ -701,12 +779,10 @@ jobs:
                           </div>
                       </div>
                       <div class="settings-section">
-                          <div class="settings-label">👥 نمط اللعب:</div>
-                          <div class="row-opts">
-                              <button class="btn-pill active" id="txtMode" onclick="toggleMode()">لاعب ضد الصقر (الذكاء)</button>
-                          </div>
+                          <div class="settings-label">👥 تفاصيل اللعبة الحالية:</div>
+                          <div id="txtCurrentGameSummary" style="font-size:0.78rem; font-weight:bold; color:var(--gold); line-height:1.6; background:var(--box-bg); padding:8px; border-radius:6px; border:1px solid var(--card-border);"></div>
                       </div>
-                      <button class="btn btn-red" style="width:100%; margin-top:8px;" onclick="restartGame()">🔄 إعادة بدء اللعبة من جديد</button>
+                      <button class="btn btn-gold" style="width:100%; margin-top:4px;" onclick="openNewGameSetupModal(true)">✨ بدء لعبة جديدة مع خيارات مخصصة</button>
                   </div>
               </div>
           </div>
@@ -760,11 +836,11 @@ jobs:
                   </div>
                   <div class="modal-body" style="text-align:center; padding:20px 14px;">
                       <div style="font-size:3rem; margin-bottom:10px;" id="goTrophy">👑</div>
-                      <div style="font-size:1.25rem; font-weight:900; color:var(--gold); margin-bottom:8px;" id="goWinnerText">فاز الملك!</div>
+                      <div style="font-size:1.25rem; font-weight:900; color:var(--gold); margin-bottom:8px;" id="goWinnerText">فاز اللاعب!</div>
                       <p style="font-size:0.85rem; color:var(--dim);" id="goDetails">أفلس الخصم ولم يعد يملك أموالاً أو عقارات لتغطية التكاليف.</p>
                   </div>
                   <div class="modal-footer" style="justify-content:center;">
-                      <button class="btn btn-gold" onclick="restartGame()">🔄 بدء مباراة جديدة</button>
+                      <button class="btn btn-gold" onclick="openNewGameSetupModal(false)">🔄 بدء مباراة جديدة</button>
                   </div>
               </div>
           </div>
@@ -829,8 +905,8 @@ jobs:
           }));
 
           const I18N = {
-              ar: { app:"MONOPOLY PRO", turn:"دورك", opp:"دور الخصم", roll:"ارمي النرد", buy:"شراء", auction:"مزاد علني", trade:"مقايضة", myProps:"عقاراتي", passGo:"مررت بنقطة الانطلاق وحصلت على 200$!", jailed:"أنت في السجن!", finePaid:"دفعت 50$ كفالة وخرجت من السجن.", doublesJail:"مبروك! نرد متطابق وخرجت من السجن!", rolled:"حصلت على", rentPaid:"دفعت إيجاراً قدره", to:"إلى", deedFor:"عقار متاح للشراء", p:"عقارات", m:"مرهون", ai:"لاعب ضد الصقر (الذكاء)", pvp:"لاعب ضد لاعب (محلي)" },
-              en: { app:"MONOPOLY PRO", turn:"Your Turn", opp:"Opponent's Turn", roll:"Roll Dice", buy:"Buy", auction:"Auction", trade:"Trade", myProps:"My Properties", passGo:"Passed GO! Collected 200$!", jailed:"In Jail!", finePaid:"Paid 50$ fine and exited jail.", doublesJail:"Doubles rolled! Exited jail freely!", rolled:"Rolled", rentPaid:"Paid rent of", to:"to", deedFor:"Property available for purchase", p:"Props", m:"Mortgaged", ai:"Player vs Falcon (AI)", pvp:"2 Players (Pass & Play)" }
+              ar: { app:"MONOPOLY PRO", turn:"دورك", opp:"دور الخصم", roll:"ارمي النرد", buy:"شراء", auction:"مزاد علني", trade:"مقايضة", myProps:"عقاراتي", passGo:"مررت بنقطة الانطلاق وحصلت على 200$!", jailed:"أنت في السجن!", finePaid:"دفعت 50$ كفالة وخرجت من السجن.", doublesJail:"مبروك! نرد متطابق وخرجت من السجن!", rolled:"حصل على", rentPaid:"دفع إيجاراً قدره", to:"إلى", deedFor:"عقار متاح للشراء", p:"عقارات", m:"مرهون", ai:"ضد روبوت (الكمبيوتر)", pvp:"لاعبين اثنين (محلي)" },
+              en: { app:"MONOPOLY PRO", turn:"Your Turn", opp:"Opponent's Turn", roll:"Roll Dice", buy:"Buy", auction:"Auction", trade:"Trade", myProps:"My Props", passGo:"Passed GO! Collected 200$!", jailed:"In Jail!", finePaid:"Paid 50$ fine and exited jail.", doublesJail:"Doubles rolled! Exited jail freely!", rolled:"Rolled", rentPaid:"Paid rent of", to:"to", deedFor:"Property available for purchase", p:"Props", m:"Mortgaged", ai:"vs Robot (Computer)", pvp:"2 Players (Pass & Play)" }
           };
 
           const SERVICE_INFO = {
@@ -1061,7 +1137,9 @@ jobs:
               propStyle: 'glow',
               diceSpeed: 'normal',
               moveSpeed: 'normal',
-              mode: 'ai',
+              mode: 'ai',               // 'ai' أو 'pvp'
+              aiDifficulty: 'medium',   // 'easy' أو 'medium' أو 'hard'
+              startingCash: 3000,       // 3000 أو 6000 أو 9000
               turn: 0,
               doublesInRow: 0,
               isRolling: false,
@@ -1071,9 +1149,15 @@ jobs:
               fastTravelData: null,
               isGameOver: false,
               players: [
-                  { id:0, nameAr:"الملك (أنت)", nameEn:"King (You)", avatar:"👑", color:"#EF4444", money:1500, pos:0, inJail:false, jailTurns:0, props:[] },
-                  { id:1, nameAr:"الصقر (الذكاء)", nameEn:"Falcon (AI)", avatar:"🦅", color:"#38BDF8", money:1500, pos:0, inJail:false, jailTurns:0, props:[] }
+                  { id:0, nameAr:"الملك", nameEn:"King", avatar:"👑", color:"#EF4444", money:3000, pos:0, inJail:false, jailTurns:0, props:[] },
+                  { id:1, nameAr:"روبوت", nameEn:"Robot", avatar:"🤖", color:"#38BDF8", money:3000, pos:0, inJail:false, jailTurns:0, props:[] }
               ]
+          };
+
+          let newGameConfig = {
+              mode: 'ai',
+              difficulty: 'medium',
+              cash: 3000
           };
 
           function hasSavedGame() {
@@ -1095,6 +1179,8 @@ jobs:
                       turn: Game.turn,
                       doublesInRow: Game.doublesInRow,
                       mode: Game.mode,
+                      aiDifficulty: Game.aiDifficulty,
+                      startingCash: Game.startingCash,
                       theme: Game.theme,
                       diceSpeed: Game.diceSpeed,
                       moveSpeed: Game.moveSpeed,
@@ -1121,6 +1207,8 @@ jobs:
                   Game.turn = data.turn ?? 0;
                   Game.doublesInRow = data.doublesInRow ?? 0;
                   if (data.mode) Game.mode = data.mode;
+                  if (data.aiDifficulty) Game.aiDifficulty = data.aiDifficulty;
+                  if (data.startingCash) Game.startingCash = data.startingCash;
                   if (data.theme) setTheme(data.theme);
                   if (data.diceSpeed) Game.diceSpeed = data.diceSpeed;
                   if (data.moveSpeed) Game.moveSpeed = data.moveSpeed;
@@ -1170,20 +1258,10 @@ jobs:
                   } catch(e) {
                       statusTxt.innerText = "يوجد لعبة سابقة محفوظة جاهزة للإكمال.";
                   }
+                  document.getElementById("startModal").classList.add("show");
               } else {
-                  btnCont.disabled = true;
-                  btnCont.style.opacity = "0.45";
-                  btnCont.style.cursor = "not-allowed";
-                  btnCont.classList.remove("btn-blue");
-                  btnCont.classList.add("btn-gray");
-                  statusTxt.innerText = "لا توجد لعبة سابقة محفوظة حتى الآن (أول تشغيل بعد التثبيت).";
+                  openNewGameSetupModal(false);
               }
-              document.getElementById("startModal").classList.add("show");
-          }
-
-          function startNewGameFromModal() {
-              document.getElementById("startModal").classList.remove("show");
-              startPlayerTurn();
           }
 
           function continueSavedGameFromModal() {
@@ -1194,8 +1272,171 @@ jobs:
                   logEvent("📂 تم استئناف اللعبة السابقة بنجاح من حيث توقفت!");
                   startPlayerTurn();
               } else {
-                  startNewGameFromModal();
+                  openNewGameSetupModal(false);
               }
+          }
+
+          function openNewGameSetupModal(canCancel = false) {
+              document.getElementById("startModal").classList.remove("show");
+              document.getElementById("settingsModal").classList.remove("show");
+              document.getElementById("gameOverModal").classList.remove("show");
+
+              const btnClose = document.getElementById("btnCloseSetupModal");
+              if (btnClose) {
+                  btnClose.style.display = canCancel ? "block" : "none";
+              }
+
+              newGameConfig.mode = Game.mode || 'ai';
+              newGameConfig.difficulty = Game.aiDifficulty || 'medium';
+              newGameConfig.cash = Game.startingCash || 3000;
+
+              selectGameMode(newGameConfig.mode);
+              selectAIDifficulty(newGameConfig.difficulty);
+              selectStartingCash(newGameConfig.cash);
+
+              document.getElementById("inputPlayer1Name").value = Game.players[0].nameAr || (Game.lang==='ar' ? "الملك" : "King");
+              if (newGameConfig.mode === 'pvp') {
+                  document.getElementById("inputPlayer2Name").value = (Game.players[1].nameAr !== "روبوت") ? Game.players[1].nameAr : (Game.lang==='ar' ? "اللاعب 2" : "Player 2");
+              } else {
+                  document.getElementById("inputPlayer2Name").value = (Game.lang==='ar' ? "روبوت" : "Robot");
+              }
+
+              document.getElementById("newGameSetupModal").classList.add("show");
+          }
+
+          function closeNewGameSetupModal() {
+              document.getElementById("newGameSetupModal").classList.remove("show");
+              if (hasSavedGame()) {
+                  showStartModal();
+              }
+          }
+
+          function selectGameMode(mode) {
+              newGameConfig.mode = mode;
+              const btnAI = document.getElementById("btnModeAI");
+              const btnPvP = document.getElementById("btnModePvP");
+              const aiDiffSec = document.getElementById("aiDifficultySection");
+              const lblP1 = document.getElementById("lblPlayer1Name");
+              const lblP2 = document.getElementById("lblPlayer2Name");
+              const inputP2 = document.getElementById("inputPlayer2Name");
+
+              if (mode === 'ai') {
+                  btnAI.classList.add("active");
+                  btnPvP.classList.remove("active");
+                  aiDiffSec.style.display = "block";
+                  lblP1.innerText = Game.lang === 'ar' ? "اسم اللاعب 1 (أنت 👑):" : "Your Name (Player 1):";
+                  lblP2.innerText = Game.lang === 'ar' ? "الخصم (الكمبيوتر):" : "Computer (Robot):";
+                  inputP2.value = Game.lang === 'ar' ? "روبوت" : "Robot";
+                  inputP2.readOnly = true;
+                  inputP2.style.background = "rgba(128,128,128,0.15)";
+              } else {
+                  btnPvP.classList.add("active");
+                  btnAI.classList.remove("active");
+                  aiDiffSec.style.display = "none";
+                  lblP1.innerText = Game.lang === 'ar' ? "اسم اللاعب الأول 👑:" : "Player 1 Name:";
+                  lblP2.innerText = Game.lang === 'ar' ? "اسم اللاعب الثاني 🦅:" : "Player 2 Name:";
+                  if (inputP2.value === "روبوت" || inputP2.value === "Robot") {
+                      inputP2.value = Game.lang === 'ar' ? "اللاعب 2" : "Player 2";
+                  }
+                  inputP2.readOnly = false;
+                  inputP2.style.background = "var(--input-bg)";
+              }
+          }
+
+          function selectAIDifficulty(diff) {
+              newGameConfig.difficulty = diff;
+              ['easy', 'medium', 'hard'].forEach(d => {
+                  const btn = document.getElementById("btnDiff" + d.charAt(0).toUpperCase() + d.slice(1));
+                  if (btn) {
+                      if (d === diff) btn.classList.add("active");
+                      else btn.classList.remove("active");
+                  }
+              });
+
+              const descEl = document.getElementById("diffDescription");
+              if (descEl) {
+                  if (diff === 'easy') {
+                      descEl.innerText = Game.lang === 'ar' ? "🟢 سهل: قرارات شراء بسيطة، وتفاوض متساهل في المقايضة والمزادات." : "🟢 Easy: Simple AI decisions and generous trades.";
+                  } else if (diff === 'medium') {
+                      descEl.innerText = Game.lang === 'ar' ? "🟡 متوسط: توازن معتدل بين الشراء والمزايدة وإدارة الأموال." : "🟡 Medium: Balanced buying, bidding, and money management.";
+                  } else {
+                      descEl.innerText = Game.lang === 'ar' ? "🔴 صعب: ذكاء شرس! يستحوذ على العقارات باحترافية وينافس بشدة في المزادات." : "🔴 Hard: Aggressive AI! Fights for monopolies and drives hard bargains.";
+                  }
+              }
+          }
+
+          function selectStartingCash(cash) {
+              newGameConfig.cash = parseInt(cash);
+              [3000, 6000, 9000].forEach(c => {
+                  const btn = document.getElementById("btnCash" + c);
+                  if (btn) {
+                      if (c === cash) btn.classList.add("active");
+                      else btn.classList.remove("active");
+                  }
+              });
+          }
+
+          function confirmStartNewGame() {
+              const p1Input = document.getElementById("inputPlayer1Name").value.trim();
+              const p1Name = p1Input || (Game.lang === 'ar' ? "الملك" : "King");
+
+              let p2Name;
+              if (newGameConfig.mode === 'ai') {
+                  p2Name = Game.lang === 'ar' ? "روبوت" : "Robot";
+              } else {
+                  const p2Input = document.getElementById("inputPlayer2Name").value.trim();
+                  p2Name = p2Input || (Game.lang === 'ar' ? "اللاعب 2" : "Player 2");
+              }
+
+              Game.mode = newGameConfig.mode;
+              Game.aiDifficulty = newGameConfig.difficulty;
+              Game.startingCash = newGameConfig.cash;
+
+              Game.players[0].nameAr = p1Name;
+              Game.players[0].nameEn = p1Name;
+              Game.players[0].avatar = "👑";
+              Game.players[0].money = Game.startingCash;
+              Game.players[0].pos = 0;
+              Game.players[0].inJail = false;
+              Game.players[0].jailTurns = 0;
+              Game.players[0].props = [];
+
+              Game.players[1].nameAr = p2Name;
+              Game.players[1].nameEn = p2Name;
+              Game.players[1].avatar = (Game.mode === 'ai') ? "🤖" : "🦅";
+              Game.players[1].money = Game.startingCash;
+              Game.players[1].pos = 0;
+              Game.players[1].inJail = false;
+              Game.players[1].jailTurns = 0;
+              Game.players[1].props = [];
+
+              BOARD_TILES.forEach(t => {
+                  t.owner = undefined;
+                  t.mortgaged = false;
+              });
+
+              Game.turn = 0;
+              Game.doublesInRow = 0;
+              Game.isRolling = false;
+              Game.pendingTile = null;
+              Game.auction = null;
+              Game.tradeData = null;
+              Game.fastTravelData = null;
+              Game.isGameOver = false;
+
+              localStorage.removeItem(SAVE_KEY);
+              saveCurrentGame();
+
+              document.getElementById("newGameSetupModal").classList.remove("show");
+              document.getElementById("startModal").classList.remove("show");
+              document.getElementById("gameOverModal").classList.remove("show");
+              document.getElementById("settingsModal").classList.remove("show");
+
+              updatePawns();
+              updateUI();
+              const diffText = Game.mode === 'ai' ? (Game.aiDifficulty === 'easy' ? " (سهل)" : (Game.aiDifficulty === 'hard' ? " (صعب)" : " (متوسط)")) : "";
+              logEvent(`🎮 بدأت لعبة جديدة برصيد ${Game.startingCash}$! دور ${Game.players[0].avatar} ${Game.players[0].nameAr}${diffText}.`);
+              startPlayerTurn();
           }
 
           function getGridCoords(i) {
@@ -1291,8 +1532,14 @@ jobs:
               document.getElementById("pCard1").className = "p-card" + (Game.turn === 1 ? " active" : "");
               document.getElementById("turnBadge0").style.display = Game.turn === 0 ? "block" : "none";
               document.getElementById("turnBadge1").style.display = Game.turn === 1 ? "block" : "none";
-              document.getElementById("turnBadge0").innerText = I18N[Game.lang].turn;
-              document.getElementById("turnBadge1").innerText = I18N[Game.lang].opp;
+
+              if (Game.mode === 'pvp') {
+                  document.getElementById("turnBadge0").innerText = Game.lang==='ar' ? "دورك" : "Turn";
+                  document.getElementById("turnBadge1").innerText = Game.lang==='ar' ? "دورك" : "Turn";
+              } else {
+                  document.getElementById("turnBadge0").innerText = I18N[Game.lang].turn;
+                  document.getElementById("turnBadge1").innerText = I18N[Game.lang].opp;
+              }
 
               const cur = Game.players[Game.turn];
               document.getElementById("turnAnnouncer").innerText = `${I18N[Game.lang].turn}: ${cur.avatar} ${Game.lang==='ar'?cur.nameAr:cur.nameEn}`;
@@ -1300,6 +1547,13 @@ jobs:
               document.getElementById("avP1").innerText = p1.avatar;
               document.getElementById("nameP0").innerText = Game.lang==='ar'?p0.nameAr:p0.nameEn;
               document.getElementById("nameP1").innerText = Game.lang==='ar'?p1.nameAr:p1.nameEn;
+
+              const summaryEl = document.getElementById("txtCurrentGameSummary");
+              if (summaryEl) {
+                  const modeTxt = Game.mode === 'ai' ? (Game.lang==='ar'?"ضد روبوت 🤖":"vs Robot 🤖") : (Game.lang==='ar'?"لاعبين اثنين 👥":"2 Players 👥");
+                  const diffTxt = Game.mode === 'ai' ? (Game.aiDifficulty === 'easy' ? " (سهل)" : (Game.aiDifficulty === 'hard' ? " (صعب)" : " (متوسط)")) : "";
+                  summaryEl.innerText = `${modeTxt}${diffTxt} | ${Game.lang==='ar'?"البداية":"Cash"}: ${Game.startingCash}$`;
+              }
 
               updateBoardVisual();
           }
@@ -1337,9 +1591,12 @@ jobs:
               if (Game.isRolling || Game.isGameOver) return;
               const cur = Game.players[Game.turn];
               if (cur.inJail) {
-                  if (Game.turn === 0) openJailModal();
-                  else {
-                      if (cur.money >= 300) payJailFine();
+                  if (Game.turn === 0 || Game.mode === 'pvp') {
+                      openJailModal();
+                  } else {
+                      const diff = Game.aiDifficulty || 'medium';
+                      const fineThreshold = (diff === 'hard') ? 100 : ((diff === 'easy') ? 600 : 300);
+                      if (cur.money >= fineThreshold) payJailFine();
                       else rollForJail();
                   }
                   return;
@@ -1366,13 +1623,13 @@ jobs:
 
                   const sum = val0 + val1;
                   const isDbl = (val0 === val1);
-                  logEvent(`${cur.avatar} ${I18N[Game.lang].rolled} ${sum} (${val0}+${val1})${isDbl ? " 🔥 متطابق!" : ""}`);
+                  logEvent(`${cur.avatar} ${cur.nameAr} ${I18N[Game.lang].rolled} ${sum} (${val0}+${val1})${isDbl ? " 🔥 متطابق!" : ""}`);
 
                   if (isDbl) {
                       Game.doublesInRow++;
                       if (Game.doublesInRow >= 3) {
                           Game.doublesInRow = 0;
-                          logEvent("🚔 3 رميات متطابقة! أُرسل إلى السجن.");
+                          logEvent(`🚔 3 رميات متطابقة! أُرسل ${cur.nameAr} إلى السجن.`);
                           sendToJail(cur); finishTurn(false); return;
                       }
                   } else { Game.doublesInRow = 0; }
@@ -1403,7 +1660,7 @@ jobs:
                   if (player.pos === 0) {
                       player.money += 200;
                       AudioFX.play('cash');
-                      logEvent(I18N[Game.lang].passGo);
+                      logEvent(`🏁 ${player.avatar} ${player.nameAr}: ${I18N[Game.lang].passGo}`);
                       updateUI();
                   }
                   rem--;
@@ -1425,7 +1682,7 @@ jobs:
               if (tile.type === "tax") {
                   player.money -= tile.price;
                   AudioFX.play('cash');
-                  logEvent(`💸 ${player.avatar} دفع ${tile.price}$ (${Game.lang==='ar'?tile.nameAr:tile.nameEn}).`);
+                  logEvent(`💸 ${player.avatar} ${player.nameAr} دفع ${tile.price}$ (${Game.lang==='ar'?tile.nameAr:tile.nameEn}).`);
                   if (checkBankruptcy(player)) return;
                   updateUI(); finishTurn(isDbl); return;
               }
@@ -1436,7 +1693,7 @@ jobs:
 
               if (["property", "railroad", "utility"].includes(tile.type)) {
                   if (tile.owner === undefined) {
-                      if (player.id === 0) {
+                      if (player.id === 0 || Game.mode === 'pvp') {
                           promptBuyProperty(tile, isDbl);
                       } else {
                           handleAIBuyDecision(player, tile, isDbl);
@@ -1448,21 +1705,19 @@ jobs:
                           player.money -= rent;
                           Game.players[tile.owner].money += rent;
                           AudioFX.play('cash');
-                          logEvent(`🏷️ دفع ${player.avatar} ${rent}$ إيجار إلى ${Game.players[tile.owner].avatar} (${Game.lang==='ar'?tile.nameAr:tile.nameEn}).`);
+                          logEvent(`🏷️ دفع ${player.avatar} ${player.nameAr} ${rent}$ إيجار إلى ${Game.players[tile.owner].avatar} ${Game.players[tile.owner].nameAr} (${Game.lang==='ar'?tile.nameAr:tile.nameEn}).`);
                           if (checkBankruptcy(player)) return;
                           updateUI();
                       } else {
                           logEvent(`العقار (${Game.lang==='ar'?tile.nameAr:tile.nameEn}) مَرْهُون، معفى من الإيجار.`);
                       }
 
-                      // فحص السفر السريع لمحطات القطار للخصم إذا تم شراء كافة المحطات
                       if (tile.type === "railroad") {
                           promptRailroadFastTravel(player, tile, isDbl);
                           return;
                       }
                       finishTurn(isDbl); return;
                   } else {
-                      // هبط اللاعب على محطته
                       if (tile.type === "railroad") {
                           promptRailroadFastTravel(player, tile, isDbl); return;
                       }
@@ -1496,25 +1751,22 @@ jobs:
               Game.isGameOver = true;
               localStorage.removeItem(SAVE_KEY);
               const winner = Game.players[winnerId];
+              const loser = Game.players[winnerId === 0 ? 1 : 0];
               document.getElementById("goTrophy").innerText = winner.avatar;
               document.getElementById("goWinnerText").innerText = Game.lang === 'ar' ? `فاز ${winner.nameAr} باللعبة! 🏆` : `${winner.nameEn} Won the Game! 🏆`;
-              document.getElementById("goDetails").innerText = Game.lang === 'ar' ? "أفلس الخصم ولم يعد يملك أموالاً أو عقارات لتغطية التكاليف." : "The opponent went bankrupt with no cash or assets remaining.";
+              document.getElementById("goDetails").innerText = Game.lang === 'ar' ? `أفلس ${loser.nameAr} ولم يعد يملك أموالاً أو عقارات كافية.` : `${loser.nameEn} went bankrupt with no cash or assets remaining.`;
               document.getElementById("gameOverModal").classList.add("show");
           }
 
-          // لا يتم السفر السريع بين محطات القطار إلا بعد شراء كافة المحطات (الأربع)
-          // ويكون السفر مجانياً (0$) لصاحب المحطات
           function promptRailroadFastTravel(player, currentTile, isDbl) {
               const allRails = BOARD_TILES.filter(t => t.type === "railroad");
               const allRailsBought = allRails.every(t => t.owner !== undefined);
 
-              // شرط أساسي: لا يتم السفر لأي لاعب إلا إذا تم شراء كافة المحطات
               if (!allRailsBought) {
                   finishTurn(isDbl);
                   return;
               }
 
-              // التحقق هل اللاعب هو صاحب المحطات (أو مالك المحطة)
               const isOwner = (currentTile.owner === player.id) || allRails.every(t => t.owner === player.id);
               const cost = isOwner ? 0 : 200;
 
@@ -1523,7 +1775,7 @@ jobs:
                   return;
               }
 
-              if (player.id === 0) {
+              if (player.id === 0 || Game.mode === 'pvp') {
                   const otherRails = allRails.filter(t => t.id !== currentTile.id);
                   Game.fastTravelData = { player, currentTile, otherRails, cost, isDbl };
 
@@ -1570,9 +1822,9 @@ jobs:
                   updatePawns(player.id);
                   updateUI();
                   if (cost === 0) {
-                      logEvent(`🚂 سافر ${player.avatar} مجاناً إلى محطة (${Game.lang==='ar'?dest.nameAr:dest.nameEn}).`);
+                      logEvent(`🚂 سافر ${player.avatar} ${player.nameAr} مجاناً إلى محطة (${Game.lang==='ar'?dest.nameAr:dest.nameEn}).`);
                   } else {
-                      logEvent(`🚂 سافر ${player.avatar} سريعاً إلى محطة (${Game.lang==='ar'?dest.nameAr:dest.nameEn}) مقابل ${cost}$.`);
+                      logEvent(`🚂 سافر ${player.avatar} ${player.nameAr} سريعاً إلى محطة (${Game.lang==='ar'?dest.nameAr:dest.nameEn}) مقابل ${cost}$.`);
                   }
               }
               finishTurn(isDbl);
@@ -1602,18 +1854,20 @@ jobs:
 
           function promptBuyProperty(tile, isDbl) {
               Game.pendingTile = { tile, isDbl };
+              const cur = Game.players[Game.turn];
               const baseRent = Math.round(tile.price * 0.20);
               const monoRent = Math.round(tile.price * 0.40);
               document.getElementById("deedTitle").innerText = `${tile.icon||""} ${Game.lang==='ar'?tile.nameAr:tile.nameEn}`;
               document.getElementById("deedBody").innerHTML = `
                   <div style="text-align:center; margin-bottom:8px;">
+                      <div style="font-size:0.8rem; color:var(--dim); margin-bottom:4px;">دور الشراء: <strong style="color:var(--text);">${cur.avatar} ${cur.nameAr}</strong> (الرصيد: <strong style="color:var(--gold);">${cur.money}$</strong>)</div>
                       <span style="display:inline-block; width:14px; height:14px; background:${tile.color}; border-radius:50%; vertical-align:middle;"></span>
                       <strong style="font-size:1.15rem; color:var(--gold); margin:0 6px;">${tile.price}$</strong>
                   </div>
                   <div style="font-size:0.82rem; color:var(--text); text-align:center;">إيجار العقار الأساسي (20%): <strong style="color:var(--gold);">${baseRent}$</strong></div>
                   <div style="font-size:0.75rem; color:var(--dim); text-align:center; margin-top:4px;">(عند احتكار كامل المجموعة يرتفع الإيجار إلى 40%: <strong style="color:var(--gold);">${monoRent}$</strong>)</div>
               `;
-              const canAfford = Game.players[0].money >= tile.price;
+              const canAfford = cur.money >= tile.price;
               document.getElementById("btnBuyProp").disabled = !canAfford;
               document.getElementById("deedModal").classList.add("show");
           }
@@ -1629,7 +1883,7 @@ jobs:
 
           function confirmBuyProp() {
               if (!Game.pendingTile) return;
-              const cur = Game.players[0];
+              const cur = Game.players[Game.turn];
               const t = Game.pendingTile.tile;
               if (cur.money >= t.price) {
                   buyProp(cur, t, t.price);
@@ -1689,7 +1943,7 @@ jobs:
               document.getElementById("auctionModal").classList.add("show");
               updateAuctionUI();
               startAuctionTimer();
-              if (Game.turn === 1) setTimeout(handleAIAuction, 1000);
+              if (Game.mode === 'ai' && Game.turn === 1) setTimeout(handleAIAuction, 1000);
           }
 
           function updateAuctionUI() {
@@ -1698,10 +1952,12 @@ jobs:
               document.getElementById("aucPropDetails").innerText = `${a.tile.icon || "🏙️"} ${Game.lang==='ar'?a.tile.nameAr:a.tile.nameEn}`;
               document.getElementById("aucBasePriceVal").innerText = a.tile.price + "$";
               document.getElementById("aucCurrentBid").innerText = a.currentBid + "$";
-              document.getElementById("aucHighestBidder").innerText = a.highestBidder !== null ? `${Game.players[a.highestBidder].avatar} (${Game.players[a.highestBidder].money}$)` : (Game.lang==='ar'?"لا يوجد مزايد بعد":"No bids yet");
+              document.getElementById("aucHighestBidder").innerText = a.highestBidder !== null ? `${Game.players[a.highestBidder].avatar} ${Game.players[a.highestBidder].nameAr} (${Game.players[a.highestBidder].money}$)` : (Game.lang==='ar'?"لا يوجد مزايد بعد":"No bids yet");
               const cur = Game.players[a.bidTurn];
-              document.getElementById("aucTurnPrompt").innerText = `دور: ${cur.avatar} ${Game.lang==='ar'?cur.nameAr:cur.nameEn}`;
-              document.getElementById("aucControls").style.display = (a.bidTurn === 0) ? "flex" : "none";
+              document.getElementById("aucTurnPrompt").innerText = `دور: ${cur.avatar} ${cur.nameAr} (رصيده: ${cur.money}$)`;
+              
+              const isHumanTurn = (Game.mode === 'pvp') || (a.bidTurn === 0);
+              document.getElementById("aucControls").style.display = isHumanTurn ? "flex" : "none";
           }
 
           function placeAuctionBid(inc) {
@@ -1713,7 +1969,7 @@ jobs:
               if (p.money >= nextBid) {
                   a.currentBid = nextBid;
                   a.highestBidder = bidder;
-                  logEvent(`🔨 زاد ${p.avatar} المزاد إلى ${a.currentBid}$!`);
+                  logEvent(`🔨 زاد ${p.avatar} ${p.nameAr} المزاد إلى ${a.currentBid}$!`);
                   nextAuctionTurn();
               } else {
                   startAuctionTimer();
@@ -1723,7 +1979,7 @@ jobs:
           function foldAuctionBid() {
               const a = Game.auction; if (!a) return;
               stopAuctionTimer();
-              logEvent(`❌ انسحب ${Game.players[a.bidTurn].avatar} من المزاد.`);
+              logEvent(`❌ انسحب ${Game.players[a.bidTurn].avatar} ${Game.players[a.bidTurn].nameAr} من المزاد.`);
               a.active = a.active.filter(id => id !== a.bidTurn);
               if (a.active.length === 1 && a.highestBidder !== null) {
                   concludeAuction();
@@ -1740,7 +1996,7 @@ jobs:
               a.bidTurn = (a.bidTurn === 0) ? 1 : 0;
               updateAuctionUI();
               startAuctionTimer();
-              if (a.bidTurn === 1 && a.active.includes(1)) setTimeout(handleAIAuction, 1000);
+              if (Game.mode === 'ai' && a.bidTurn === 1 && a.active.includes(1)) setTimeout(handleAIAuction, 1000);
           }
 
           function concludeAuction() {
@@ -1748,7 +2004,7 @@ jobs:
               stopAuctionTimer();
               document.getElementById("auctionModal").classList.remove("show");
               const winner = Game.players[a.highestBidder];
-              logEvent(`🏆 فاز ${winner.avatar} بمزاد (${Game.lang==='ar'?a.tile.nameAr:a.tile.nameEn}) بمبلغ ${a.currentBid}$!`);
+              logEvent(`🏆 فاز ${winner.avatar} ${winner.nameAr} بمزاد (${Game.lang==='ar'?a.tile.nameAr:a.tile.nameEn}) بمبلغ ${a.currentBid}$!`);
               buyProp(winner, a.tile, a.currentBid);
               const isDbl = a.isDbl; Game.auction = null; finishTurn(isDbl);
           }
@@ -1756,16 +2012,59 @@ jobs:
           function handleAIAuction() {
               const a = Game.auction; if (!a || a.bidTurn !== 1) return;
               const ai = Game.players[1];
-              let val = a.tile.price * 0.9;
-              if (checkMonopolyPot(1, a.tile.group)) val = a.tile.price * 1.35;
-              if (a.currentBid + 15 <= val && ai.money >= a.currentBid + 40) placeAuctionBid(15);
-              else foldAuctionBid();
+              const diff = Game.aiDifficulty || 'medium';
+
+              let maxValMultiplier = 0.9;
+              let minCashBuffer = 40;
+              let bidStep = 10;
+
+              const myPot = checkMonopolyPot(1, a.tile.group);
+              const oppPot = checkMonopolyPot(0, a.tile.group);
+
+              if (diff === 'easy') {
+                  maxValMultiplier = 0.70;
+                  minCashBuffer = 120;
+                  bidStep = 10;
+              } else if (diff === 'medium') {
+                  maxValMultiplier = myPot ? 1.35 : 1.0;
+                  minCashBuffer = 40;
+                  bidStep = 15;
+              } else { // hard
+                  maxValMultiplier = (myPot || oppPot) ? 1.85 : 1.4;
+                  minCashBuffer = 10;
+                  bidStep = 25;
+              }
+
+              const maxBidAI = Math.floor(a.tile.price * maxValMultiplier);
+              if (a.currentBid + bidStep <= maxBidAI && ai.money >= a.currentBid + bidStep + minCashBuffer) {
+                  placeAuctionBid(bidStep);
+              } else {
+                  foldAuctionBid();
+              }
           }
 
           function handleAIBuyDecision(player, tile, isDbl) {
-              const hasCash = player.money >= tile.price + 100;
+              const diff = Game.aiDifficulty || 'medium';
+              let shouldBuy = false;
               const pot = checkMonopolyPot(1, tile.group);
-              if (hasCash || pot) {
+
+              if (diff === 'easy') {
+                  if (player.money >= tile.price + 450 && Math.random() > 0.35) {
+                      shouldBuy = true;
+                  }
+              } else if (diff === 'medium') {
+                  const hasCash = player.money >= tile.price + 100;
+                  if (hasCash || pot) {
+                      shouldBuy = true;
+                  }
+              } else { // hard
+                  const opponentPot = checkMonopolyPot(0, tile.group);
+                  if (player.money >= tile.price && (player.money >= tile.price + 50 || pot || opponentPot || tile.type === 'railroad')) {
+                      shouldBuy = true;
+                  }
+              }
+
+              if (shouldBuy) {
                   buyProp(player, tile, tile.price);
                   finishTurn(isDbl);
               } else {
@@ -1786,7 +2085,7 @@ jobs:
               tile.owner = player.id;
               player.props.push(tile.id);
               AudioFX.play('cash');
-              logEvent(`🎉 اشترى ${player.avatar} (${Game.lang==='ar'?tile.nameAr:tile.nameEn}) مقابل ${price}$.`);
+              logEvent(`🎉 اشترى ${player.avatar} ${player.nameAr} (${Game.lang==='ar'?tile.nameAr:tile.nameEn}) مقابل ${price}$.`);
               updateUI();
           }
 
@@ -1814,7 +2113,7 @@ jobs:
           function sendToJail(p) {
               p.pos = 10; p.inJail = true; p.jailTurns = 3;
               AudioFX.play('jail'); updatePawns(p.id); updateUI();
-              logEvent(`🚔 دَخَل ${p.avatar} السجن!`);
+              logEvent(`🚔 دَخَل ${p.avatar} ${p.nameAr} السجن!`);
           }
 
           function openJailModal() {
@@ -1830,7 +2129,7 @@ jobs:
                   document.getElementById("jailModal").classList.remove("show");
                   AudioFX.play('cash');
                   updateUI();
-                  logEvent(I18N[Game.lang].finePaid);
+                  logEvent(`${cur.avatar} ${cur.nameAr}: ${I18N[Game.lang].finePaid}`);
                   if (Game.turn === 1 && Game.mode === 'ai') {
                       setTimeout(rollDice, 550);
                   } else {
@@ -1851,7 +2150,7 @@ jobs:
               if (v0 === v1) {
                   cur.inJail = false;
                   cur.jailTurns = 0;
-                  logEvent(I18N[Game.lang].doublesJail);
+                  logEvent(`${cur.avatar} ${cur.nameAr}: ${I18N[Game.lang].doublesJail}`);
                   updateUI();
                   moveSteps(cur, v0 + v1, false);
               } else {
@@ -1860,11 +2159,11 @@ jobs:
                       cur.money = Math.max(0, cur.money - 50);
                       cur.inJail = false;
                       cur.jailTurns = 0;
-                      logEvent(Game.lang==='ar' ? "انتهت مدة السجن وتم دفع 50$ كفالة إجبارية." : "Jail sentence finished; paid 50$ fine.");
+                      logEvent(Game.lang==='ar' ? `انتهت مدة السجن لـ ${cur.nameAr} ودفع 50$ كفالة إجبارية.` : `Jail sentence finished; paid 50$ fine.`);
                       updateUI();
                       moveSteps(cur, v0 + v1, false);
                   } else {
-                      logEvent(Game.lang==='ar' ? `لم يتطابق النرد (${v0}+${v1})! بقي في السجن.` : `No doubles (${v0}+${v1})! Still in Jail.`);
+                      logEvent(Game.lang==='ar' ? `لم يتطابق النرد (${v0}+${v1})! بقي ${cur.nameAr} في السجن.` : `No doubles (${v0}+${v1})! Still in Jail.`);
                       finishTurn(false);
                   }
               }
@@ -1874,7 +2173,7 @@ jobs:
               Game.isRolling = false;
               if (Game.isGameOver) return;
               if (isDbl && !Game.players[Game.turn].inJail) {
-                  logEvent(`🔥 رمية متطابقة! يحصل ${Game.players[Game.turn].avatar} على رمية إضافية.`);
+                  logEvent(`🔥 رمية متطابقة! يحصل ${Game.players[Game.turn].avatar} ${Game.players[Game.turn].nameAr} على رمية إضافية.`);
                   startPlayerTurn();
                   return;
               }
@@ -1891,12 +2190,14 @@ jobs:
               if (Game.turn === 0) {
                   document.getElementById("btnRoll").disabled = false;
               } else {
-                  document.getElementById("btnRoll").disabled = true;
                   if (Game.mode === 'ai') {
+                      document.getElementById("btnRoll").disabled = true;
                       setTimeout(() => {
                           if (Game.isGameOver || Game.turn !== 1) return;
                           if (cur.inJail) {
-                              if (cur.money >= 300) payJailFine();
+                              const diff = Game.aiDifficulty || 'medium';
+                              const fineThreshold = (diff === 'hard') ? 100 : ((diff === 'easy') ? 600 : 300);
+                              if (cur.money >= fineThreshold) payJailFine();
                               else rollForJail();
                           } else {
                               rollDice();
@@ -1916,7 +2217,7 @@ jobs:
 
               if (t.type === "property") {
                   titleEl.innerText = `${t.icon||"🏙️"} ${isAr?t.nameAr:t.nameEn}`;
-                  const ownerTxt = t.owner !== undefined ? `${Game.players[t.owner].avatar} ${isAr?Game.players[t.owner].nameAr:Game.players[t.owner].nameEn}` : (isAr?"متاح للبيع من البنك":"Available for Sale");
+                  const ownerTxt = t.owner !== undefined ? `${Game.players[t.owner].avatar} ${Game.players[t.owner].nameAr}` : (isAr?"متاح للبيع من البنك":"Available for Sale");
                   const statusTxt = t.mortgaged ? (isAr?"مَرْهُون ⚠️":"MORTGAGED ⚠️") : (isAr?"نشط وفعال ✓":"Active ✓");
                   const mortVal = Math.floor(t.price * 0.5);
                   const unmortVal = Math.floor(mortVal * 1.1);
@@ -1949,7 +2250,7 @@ jobs:
 
                   let ownershipExtra = "";
                   if (t.type === "railroad" || t.type === "utility") {
-                      const ownerTxt = t.owner !== undefined ? `${Game.players[t.owner].avatar} ${isAr?Game.players[t.owner].nameAr:Game.players[t.owner].nameEn}` : (isAr?"متاح للشراء":"Available for purchase");
+                      const ownerTxt = t.owner !== undefined ? `${Game.players[t.owner].avatar} ${Game.players[t.owner].nameAr}` : (isAr?"متاح للشراء":"Available for purchase");
                       ownershipExtra = `
                           <div style="background:rgba(128,128,128,0.08); border-radius:6px; padding:6px 10px; margin-top:8px; display:flex; justify-content:space-between; font-size:0.78rem;">
                               <span>${isAr?"المالك الحالي:":"Owner:"} <strong>${ownerTxt}</strong></span>
@@ -2034,15 +2335,21 @@ jobs:
               }
           }
 
-          // فتح نافذة المقايضة - مع دعم إعادة الفتح عند الرفض مع الاحتفاظ بنفس العقار وتنبيه الرفض
           function openTradeModal(selectedPropId = null, previousOffer = null, wasRejected = false) {
+              const curPlayer = Game.players[Game.turn];
+              const oppPlayer = Game.players[Game.turn === 0 ? 1 : 0];
               const sel = document.getElementById("tradeTargetProp");
               sel.innerHTML = "";
-              const oppProps = BOARD_TILES.filter(t => t.owner === 1 && !t.mortgaged);
+              
+              const oppProps = BOARD_TILES.filter(t => t.owner === oppPlayer.id && !t.mortgaged);
               const btnSubmit = document.getElementById("btnSubmitTrade");
+              const targetLabel = document.getElementById("tradeTargetLabel");
+              if (targetLabel) {
+                  targetLabel.innerText = Game.lang === 'ar' ? `اختر عقار (${oppPlayer.nameAr}) للشراء:` : `Select ${oppPlayer.nameEn}'s property:`;
+              }
 
               if (oppProps.length === 0) {
-                  sel.innerHTML = "<option value=''>لا يملك الخصم عقارات متاحة</option>";
+                  sel.innerHTML = `<option value=''>لا يملك ${oppPlayer.nameAr} عقارات متاحة</option>`;
                   btnSubmit.disabled = true;
               } else {
                   btnSubmit.disabled = false;
@@ -2067,14 +2374,14 @@ jobs:
                   notice.style.background = "rgba(239, 68, 68, 0.15)";
                   notice.style.border = "1px solid #EF4444";
                   notice.style.color = "#EF4444";
-                  notice.innerHTML = `⚠️ <strong>تم رفض العرض!</strong> رفض الخصم بيع (${propName}) بمبلغ <strong>${previousOffer}$</strong>.<br>يمكنك رفع السعر وإعادة المحاولة أو الخروج.`;
+                  notice.innerHTML = `⚠️ <strong>تم رفض العرض!</strong> رفض ${oppPlayer.nameAr} بيع (${propName}) بمبلغ <strong>${previousOffer}$</strong>.<br>يمكنك رفع السعر وإعادة المحاولة أو الخروج.`;
                   const suggestedOffer = previousOffer ? (previousOffer + 50) : (prop.price + 50);
-                  inputCash.value = Math.min(Game.players[0].money, suggestedOffer);
+                  inputCash.value = Math.min(curPlayer.money, suggestedOffer);
                   btnSubmit.innerText = Game.lang === 'ar' ? "زيادة العرض وإعادة الإرسال" : "Increase Offer & Resubmit";
               } else {
                   notice.style.display = "none";
                   notice.innerText = "";
-                  btnSubmit.innerText = Game.lang === 'ar' ? "إرسال العرض" : "Send Offer";
+                  btnSubmit.innerText = Game.lang === 'ar' ? `إرسال العرض إلى ${oppPlayer.nameAr}` : `Send Offer to ${oppPlayer.nameEn}`;
                   if (oppProps.length > 0) {
                       const curProp = selectedPropId !== null ? BOARD_TILES[selectedPropId] : oppProps[0];
                       if (curProp) inputCash.value = curProp.price;
@@ -2088,7 +2395,8 @@ jobs:
               const propId = parseInt(document.getElementById("tradeTargetProp").value);
               const notice = document.getElementById("tradeNotice");
               notice.style.display = "none";
-              document.getElementById("btnSubmitTrade").innerText = Game.lang === 'ar' ? "إرسال العرض" : "Send Offer";
+              const oppPlayer = Game.players[Game.turn === 0 ? 1 : 0];
+              document.getElementById("btnSubmitTrade").innerText = Game.lang === 'ar' ? `إرسال العرض إلى ${oppPlayer.nameAr}` : `Send Offer to ${oppPlayer.nameEn}`;
               if (!isNaN(propId)) {
                   const p = BOARD_TILES[propId];
                   if (p) document.getElementById("tradeOfferCash").value = p.price;
@@ -2096,11 +2404,14 @@ jobs:
           }
 
           function submitTradeOffer() {
+              const curPlayer = Game.players[Game.turn];
+              const oppPlayer = Game.players[Game.turn === 0 ? 1 : 0];
               const propId = parseInt(document.getElementById("tradeTargetProp").value);
               const offerCash = parseInt(document.getElementById("tradeOfferCash").value);
               const notice = document.getElementById("tradeNotice");
+
               if (isNaN(propId) || isNaN(offerCash) || offerCash <= 0) return;
-              if (Game.players[0].money < offerCash) {
+              if (curPlayer.money < offerCash) {
                   notice.style.display = "block";
                   notice.style.background = "rgba(239, 68, 68, 0.15)";
                   notice.style.border = "1px solid #EF4444";
@@ -2111,26 +2422,80 @@ jobs:
               const targetTile = BOARD_TILES[propId];
               closeTradeModal();
 
-              const td = { buyerId:0, sellerId:1, tile:targetTile, offer:offerCash };
+              const td = { buyerId:curPlayer.id, sellerId:oppPlayer.id, tile:targetTile, offer:offerCash };
               Game.tradeData = td;
-              evaluateAITrade(td);
+
+              if (Game.mode === 'ai') {
+                  evaluateAITrade(td);
+              } else {
+                  promptPvPTradeDecision(td);
+              }
           }
 
           function evaluateAITrade(td) {
               const ai = Game.players[1];
+              const diff = Game.aiDifficulty || 'medium';
               let ok = false;
-              if (td.offer >= td.tile.price * 1.35) ok = true;
-              if (checkMonopolyPot(1, td.tile.group) && td.offer >= td.tile.price * 1.5) ok = true;
+
+              const myPot = checkMonopolyPot(1, td.tile.group);
+              const oppPot = checkMonopolyPot(0, td.tile.group);
+
+              let threshold = 1.35;
+              if (diff === 'easy') {
+                  threshold = myPot ? 1.30 : 1.10;
+              } else if (diff === 'medium') {
+                  threshold = myPot ? 1.60 : 1.35;
+              } else { // hard
+                  threshold = (myPot || oppPot) ? 2.50 : 1.75;
+              }
+
+              if (td.offer >= td.tile.price * threshold) {
+                  ok = true;
+              }
+
               if (ok) {
                   execTrade(td);
-                  logEvent(`🤝 وافق الصقر على بيع (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}) مقابل ${td.offer}$.`);
+                  logEvent(`🤝 وافق ${ai.nameAr} على بيع (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}) مقابل ${td.offer}$.`);
               } else {
-                  logEvent(`❌ رفض الصقر عرض المقايضة لعقار (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}) بمبلغ ${td.offer}$.`);
-                  // عند الرفض: تظهر نافذة المقايضة مرة أخرى لنفس العقار لإعطاء خيار زيادة السعر أو الخروج
+                  logEvent(`❌ رفض ${ai.nameAr} عرض المقايضة لعقار (${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}) بمبلغ ${td.offer}$.`);
                   setTimeout(() => {
                       openTradeModal(td.tile.id, td.offer, true);
                   }, 500);
               }
+          }
+
+          function promptPvPTradeDecision(td) {
+              const buyer = Game.players[td.buyerId];
+              const seller = Game.players[td.sellerId];
+              const descEl = document.getElementById("pvpTradeDesc");
+              descEl.innerHTML = `
+                  <span style="color:var(--gold); font-size:1.05rem;">${buyer.avatar} ${buyer.nameAr}</span><br>
+                  يعرض عليك مبلغ <strong style="color:var(--gold); font-size:1.25rem;">${td.offer}$</strong><br>
+                  لشراء عقارك (<strong style="color:var(--text);">${Game.lang==='ar'?td.tile.nameAr:td.tile.nameEn}</strong>).<br><br>
+                  هل توافق يا <span style="color:var(--p1); font-size:1.05rem;">${seller.avatar} ${seller.nameAr}</span>؟
+              `;
+              document.getElementById("pvpTradeConfirmModal").classList.add("show");
+          }
+
+          function acceptPvPTrade() {
+              if (!Game.tradeData) return;
+              const td = Game.tradeData;
+              document.getElementById("pvpTradeConfirmModal").classList.remove("show");
+              execTrade(td);
+              const seller = Game.players[td.sellerId];
+              logEvent(`🤝 وافق ${seller.nameAr} على الصفقة!`);
+              Game.tradeData = null;
+          }
+
+          function rejectPvPTrade() {
+              if (!Game.tradeData) return;
+              const td = Game.tradeData;
+              document.getElementById("pvpTradeConfirmModal").classList.remove("show");
+              const seller = Game.players[td.sellerId];
+              logEvent(`❌ رفض ${seller.nameAr} عرض المقايضة.`);
+              setTimeout(() => {
+                  openTradeModal(td.tile.id, td.offer, true);
+              }, 400);
           }
 
           function execTrade(td) {
@@ -2155,16 +2520,19 @@ jobs:
                       d.style = "background:var(--box-bg); border-radius:8px; padding:8px 12px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; border:1px solid var(--card-border);";
                       const mortVal = Math.floor(t.price * 0.5);
                       const unmortVal = Math.floor(mortVal * 1.1);
+
+                      const canManage = (pId === 0) || (Game.mode === 'pvp');
+
                       d.innerHTML = `
                           <div>
                               <strong style="color:${t.color||'var(--gold)'};">${t.icon||""} ${Game.lang==='ar'?t.nameAr:t.nameEn}</strong>
                               <div style="font-size:0.75rem; color:var(--dim);">القيمة: ${t.price}$ | الرهن: ${mortVal}$</div>
                           </div>
                           <div>
-                              ${pId === 0 ? (
+                              ${canManage ? (
                                   t.mortgaged ?
-                                  `<button class="btn btn-gold" style="font-size:0.72rem; padding:4px 8px;" onclick="unmortgageProp(${t.id})">فك الرهن (${unmortVal}$)</button>` :
-                                  `<button class="btn btn-red" style="font-size:0.72rem; padding:4px 8px;" onclick="mortgageProp(${t.id})">رهن (+${mortVal}$)</button>`
+                                  `<button class="btn btn-gold" style="font-size:0.72rem; padding:4px 8px;" onclick="unmortgageProp(${t.id}, ${pId})">فك الرهن (${unmortVal}$)</button>` :
+                                  `<button class="btn btn-red" style="font-size:0.72rem; padding:4px 8px;" onclick="mortgageProp(${t.id}, ${pId})">رهن (+${mortVal}$)</button>`
                               ) : (t.mortgaged ? `<span style="color:#EF4444; font-size:0.75rem;">مَرْهُون</span>` : '')}
                           </div>
                       `;
@@ -2175,21 +2543,21 @@ jobs:
           }
           function closePropsModal() { document.getElementById("propsModal").classList.remove("show"); }
 
-          function mortgageProp(id) {
-              const t = BOARD_TILES[id], p = Game.players[0];
-              if (t.owner === 0 && !t.mortgaged) {
+          function mortgageProp(id, pId) {
+              const t = BOARD_TILES[id], p = Game.players[pId];
+              if (t.owner === pId && !t.mortgaged) {
                   t.mortgaged = true; p.money += Math.floor(t.price * 0.5);
-                  AudioFX.play('cash'); updateUI(); openPropsModal(0);
-                  logEvent(`🏦 رهن الملك (${Game.lang==='ar'?t.nameAr:t.nameEn}) واستلم ${Math.floor(t.price * 0.5)}$.`);
+                  AudioFX.play('cash'); updateUI(); openPropsModal(pId);
+                  logEvent(`🏦 رهن ${p.avatar} ${p.nameAr} (${Game.lang==='ar'?t.nameAr:t.nameEn}) واستلم ${Math.floor(t.price * 0.5)}$.`);
               }
           }
-          function unmortgageProp(id) {
-              const t = BOARD_TILES[id], p = Game.players[0];
+          function unmortgageProp(id, pId) {
+              const t = BOARD_TILES[id], p = Game.players[pId];
               const cost = Math.floor(t.price * 0.5 * 1.1);
-              if (t.owner === 0 && t.mortgaged && p.money >= cost) {
+              if (t.owner === pId && t.mortgaged && p.money >= cost) {
                   t.mortgaged = false; p.money -= cost;
-                  AudioFX.play('cash'); updateUI(); openPropsModal(0);
-                  logEvent(`🔓 فك الملك رهن (${Game.lang==='ar'?t.nameAr:t.nameEn}) مقابل ${cost}$.`);
+                  AudioFX.play('cash'); updateUI(); openPropsModal(pId);
+                  logEvent(`🔓 فك ${p.avatar} ${p.nameAr} رهن (${Game.lang==='ar'?t.nameAr:t.nameEn}) مقابل ${cost}$.`);
               }
           }
 
@@ -2212,7 +2580,6 @@ jobs:
               document.getElementById("btnLangAr").className = "btn-pill" + (l==='ar'?" active":"");
               document.getElementById("btnLangEn").className = "btn-pill" + (l==='en'?" active":"");
               document.getElementById("txtAppTitle").innerText = I18N[l].app;
-              document.getElementById("txtMode").innerText = Game.mode === 'ai' ? I18N[l].ai : I18N[l].pvp;
               document.getElementById("txtBtnRoll").innerText = I18N[l].roll;
               BOARD_TILES.forEach(t => {
                   const el = document.getElementById("tName-" + t.id);
@@ -2255,17 +2622,6 @@ jobs:
           function closeSettingsModal() { document.getElementById("settingsModal").classList.remove("show"); }
           function openAboutModal() { document.getElementById("aboutModal").classList.add("show"); }
           function closeAboutModal() { document.getElementById("aboutModal").classList.remove("show"); }
-          function toggleMode() {
-              Game.mode = Game.mode === 'ai' ? 'pvp' : 'ai';
-              if (Game.mode === 'ai') { Game.players[1].nameAr = "الصقر (الذكاء)"; Game.players[1].nameEn = "Falcon (AI)"; }
-              else { Game.players[1].nameAr = "اللاعب 2 (الصقر)"; Game.players[1].nameEn = "Player 2 (Falcon)"; }
-              document.getElementById("txtMode").innerText = Game.mode === 'ai' ? I18N[Game.lang].ai : I18N[Game.lang].pvp;
-              logEvent(`🎮 نمط اللعب: ${document.getElementById("txtMode").innerText}`); updateUI();
-          }
-          function restartGame() {
-              localStorage.removeItem(SAVE_KEY);
-              location.reload();
-          }
 
           window.addEventListener("DOMContentLoaded", () => {
               renderBoard();
@@ -2284,7 +2640,7 @@ jobs:
               with open(path, "w", encoding="utf-8") as f:
                   f.write(content)
 
-          print("✅ All project files created successfully with all fixes!")
+          print("✅ All project files created successfully with all features!")
           PYEOF
 
       - name: 🔨 إعطاء صلاحيات التشغيل لـ Gradle Wrapper
