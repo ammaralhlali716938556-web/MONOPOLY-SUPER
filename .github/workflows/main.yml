@@ -173,7 +173,7 @@ jobs:
               print("✅ تم تعيين icon.png المرفوعة كأيقونة رسمية للتطبيق!")
           else:
               print("⚠️ لم يتم العثور على icon.png في المستودع")
-          """
+          
 
           # 10. Layout (ملء الشاشة وإلغاء شريط التمرير الافتراضي)
           files["app/src/main/res/layout/activity_main.xml"] = """<?xml version="1.0" encoding="utf-8"?>
