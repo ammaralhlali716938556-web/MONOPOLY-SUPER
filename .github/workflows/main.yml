@@ -167,8 +167,8 @@ jobs:
           # 9. App Icon (نسخ صورتك المرفوعة في المستودع إلى مجلد التطبيق)
           import shutil
           os.makedirs("app/src/main/res/drawable", exist_ok=True)
-          if os.path.exists("my_icon.png"):
-              shutil.copy("my_icon.png", "app/src/main/res/drawable/ic_monopoly.png")
+          if os.path.exists("icon.png"):
+              shutil.copy("icon.png", "app/src/main/res/drawable/ic_monopoly.png")
           
 
           # 10. Layout (ملء الشاشة وإلغاء شريط التمرير الافتراضي)
