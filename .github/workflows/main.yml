@@ -169,7 +169,7 @@ jobs:
           os.makedirs("app/src/main/res/drawable", exist_ok=True)
           if os.path.exists("my_icon.png"):
               shutil.copy("my_icon.png", "app/src/main/res/drawable/ic_monopoly.png")
-          """
+          
 
           # 10. Layout (ملء الشاشة وإلغاء شريط التمرير الافتراضي)
           files["app/src/main/res/layout/activity_main.xml"] = """<?xml version="1.0" encoding="utf-8"?>
